@@ -48,7 +48,7 @@
     </p>
   </div>
 
-  <div ng-show="browse.medium" class="videogular-container">
+  <div ng-show="browse.medium" class="videogular-container" ng-click="addOnClick($event)">
     <videogular vg-player-ready="onPlayerReady($API)">
       <vg-media vg-src="browse.mediumSrc"></vg-media>
       <vg-controls>

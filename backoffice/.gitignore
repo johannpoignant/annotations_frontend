@@ -1,0 +1,9 @@
+node_modules
+dist
+.tmp
+.sass-cache
+src/javascripts/bower_components
+src/javascripts/config.js
+src/styles/*.css
+build/require
+src/css

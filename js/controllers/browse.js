@@ -3,14 +3,17 @@ angular.module('camomileApp.controllers.browse', [
     "com.2fdevs.videogular",
     "com.2fdevs.videogular.plugins.controls",
   ])
-  .controller('BrowseCtrl', ['$scope', '$sce', 'Camomile', '$log', '$window', function ($scope, $sce, Camomile, $log, $window) {
+  .controller('BrowseCtrl', ['$scope', '$sce', 'Camomile', '$log', '$window',
+                              function ($scope, $sce, Camomile, $log, $window, $event) {
     $scope.Math = window.Math;
 
+    // Video player API
     $scope.API = null;
+
+    // Methods corresponding
     $scope.onPlayerReady = function(API) {
       $scope.API = API;
     }
-
     $scope.alertTimestamp = function() {
       $window.alert($scope.API.currentTime);
     }
@@ -30,6 +33,26 @@ angular.module('camomileApp.controllers.browse', [
       $scope.API.pause();
       if ($scope.Math.floor($scope.API.currentTime / 1000) > 0)
         $scope.API.seekTime($scope.Math.floor($scope.API.currentTime / 1000) - 1, false);
+    }
+
+    // Annotations
+    $scope.annotation = {};
+    $scope.annotation.visible = false;
+
+    // Points
+    $scope.annotation.points = [];
+
+    $scope.addOnClick = function(event) {
+      var x = event.offsetX;
+      var y = event.offsetY;
+      $scope.annotation.points.push({
+        x: x,
+        y: y
+      });
+
+      for (var p of $scope.annotation.points) {
+        $log.log("Point found at " + p.x + "; " + p.y);
+      }
     }
 
     // browsing stauts
@@ -75,6 +98,7 @@ angular.module('camomileApp.controllers.browse', [
         } else {
           media = data;
         }
+
         // nested in $scope.$apply to make sure a change event is triggered
         // for (var i = 0; i < media.length; i++) {
         //   var val = media[i];
