@@ -31,15 +31,25 @@
     </div>
   </form>
 
-  <div class="col-sm-12">
+  <div>
     <h3>Informations</h3>
-    <p>
-      infos
+    <ul>
+      <li>Name: </li>
+      <li>Description: </li>
+      <li>Floor: </li>
+      <li>Room: </li>
+      <li>Parent: </li>
+    </ul>
+  </div>
+
+  <div ng-if="browse.media.length > 0">
+    <p ng-repeat="medium in browse.media">
+      <list-view video="medium"></list-view>
     </p>
   </div>
 
   <div ng-show="browse.medium" class="videogular-container">
-    <videogular>
+    <videogular vg-player-ready="onPlayerReady($API)">
       <vg-media vg-src="browse.mediumSrc"></vg-media>
       <vg-controls>
         <vg-play-pause-button></vg-play-pause-button>
@@ -55,11 +65,15 @@
       </vg-controls>
     </videogular>
   </div>
-  <div class="col-mg-12">
-    <p>
-      Contenu
-    </p>
+
+  <div>
+    <button type="button" name="button" ng-click="alertTimestamp()">Alert le timestamp vidéo</button>
+    <button type="button" name="button" ng-click="videoEnd()">Début vidéo</button>
+    <button type="button" name="button" ng-click="videoBegin()">Fin vidéo</button>
+    <button type="button" name="button" ng-click="nextFrame()">Image suivante</button>
+    <button type="button" name="button" ng-click="previousFrame()">Image précédente</button>
   </div>
+
 </div>
 <div ng-hide="user" class="text-center">
   <h2>Not logged in. Please log in first.</h2>

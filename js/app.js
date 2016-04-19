@@ -2,6 +2,7 @@ var camomileApp = angular.module('camomileApp', ['camomile.controllers',
     'camomile.services',
     'camomileApp.production',
     'camomileApp.controllers.browse',
+    'camomileApp.directives',
     'ngRoute'
 ])
 .config(['$routeProvider', function($routeProvider) {

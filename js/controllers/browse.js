@@ -3,7 +3,34 @@ angular.module('camomileApp.controllers.browse', [
     "com.2fdevs.videogular",
     "com.2fdevs.videogular.plugins.controls",
   ])
-  .controller('BrowseCtrl', ['$scope', '$sce', 'Camomile', function ($scope, $sce, Camomile) {
+  .controller('BrowseCtrl', ['$scope', '$sce', 'Camomile', '$log', '$window', function ($scope, $sce, Camomile, $log, $window) {
+    $scope.Math = window.Math;
+
+    $scope.API = null;
+    $scope.onPlayerReady = function(API) {
+      $scope.API = API;
+    }
+
+    $scope.alertTimestamp = function() {
+      $window.alert($scope.API.currentTime);
+    }
+    $scope.videoBegin = function() {
+      $scope.API.pause();
+      $scope.API.seekTime(100, true);
+    }
+    $scope.videoEnd = function() {
+      $scope.API.pause();
+      $scope.API.seekTime(0, true);
+    }
+    $scope.nextFrame = function() {
+      $scope.API.pause();
+      $scope.API.seekTime($scope.Math.floor($scope.API.currentTime / 1000) + 1, false);
+    }
+    $scope.previousFrame = function() {
+      $scope.API.pause();
+      if ($scope.Math.floor($scope.API.currentTime / 1000) > 0)
+        $scope.API.seekTime($scope.Math.floor($scope.API.currentTime / 1000) - 1, false);
+    }
 
     // browsing stauts
     $scope.browse = {};
@@ -49,9 +76,29 @@ angular.module('camomileApp.controllers.browse', [
           media = data;
         }
         // nested in $scope.$apply to make sure a change event is triggered
+        // for (var i = 0; i < media.length; i++) {
+        //   var val = media[i];
+        //   media[i] = [
+        //     val,
+        //     [{
+        //       src: $sce.trustAsResourceUrl(Camomile.getMediumURL(val, "mp4")),
+        //       type: "video/mp4"
+        //     }, {
+        //       src: $sce.trustAsResourceUrl(Camomile.getMediumURL(val, "ogg")),
+        //       type: "video/ogg"
+        //     }],
+        //     i
+        //   ];
+        // }
+        // $log.log(media[1]);
+
         $scope.$apply(function () {
           $scope.browse.media = media;
         });
+
+        // for (var d of $scope.browse.media) {
+        //   $log.log(d);
+        // }
       }, {
         'filter': {
           'id_corpus': $scope.browse.corpus
@@ -99,6 +146,7 @@ angular.module('camomileApp.controllers.browse', [
         src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, "ogg")),
         type: "video/ogg"
       }];
+      $log.log($scope.browse.mediumSrc);
     });
 
   }]);
