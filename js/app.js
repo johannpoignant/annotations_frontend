@@ -2,6 +2,7 @@ var camomileApp = angular.module('camomileApp', ['camomile.controllers',
     'camomile.services',
     'camomileApp.production',
     'camomileApp.controllers.browse',
+    'camomileApp.controllers.backoffice',
     'camomileApp.directives',
     'ngRoute',
     'ui.bootstrap',
@@ -11,7 +12,7 @@ var camomileApp = angular.module('camomileApp', ['camomile.controllers',
     $routeProvider
       .when('/backoffice', {
         templateUrl: 'views/backoffice.html',
-        controller: ''
+        controller: 'BackofficeCtrl'
       })
       .when('/list', {
         templateUrl: 'views/list.html',
