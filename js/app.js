@@ -3,7 +3,9 @@ var camomileApp = angular.module('camomileApp', ['camomile.controllers',
     'camomileApp.production',
     'camomileApp.controllers.browse',
     'camomileApp.directives',
-    'ngRoute'
+    'ngRoute',
+    'ui.bootstrap',
+    'ngAnimate'
 ])
 .config(['$routeProvider', function($routeProvider) {
     $routeProvider
@@ -14,6 +16,10 @@ var camomileApp = angular.module('camomileApp', ['camomile.controllers',
       .when('/list', {
         templateUrl: 'views/list.html',
         controller: 'BrowseCtrl'
+      })
+      .when('/objects', {
+        templateUrl: '',
+        controller: ''
       })
       .otherwise({
         redirectTo: '/list'

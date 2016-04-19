@@ -31,22 +31,11 @@
     </div>
   </form>
 
-  <div>
-    <h3>Informations</h3>
-    <ul>
-      <li>Name: </li>
-      <li>Description: </li>
-      <li>Floor: </li>
-      <li>Room: </li>
-      <li>Parent: </li>
-    </ul>
-  </div>
-
-  <div ng-if="browse.media.length > 0">
+  <!-- <div ng-if="browse.media.length > 0">
     <p ng-repeat="medium in browse.media">
       <list-view video="medium"></list-view>
     </p>
-  </div>
+  </div> -->
 
   <div ng-show="browse.medium" class="videogular-container" ng-click="addOnClick($event)">
     <videogular vg-player-ready="onPlayerReady($API)">
@@ -66,13 +55,15 @@
     </videogular>
   </div>
 
-  <div>
-    <button type="button" name="button" ng-click="alertTimestamp()">Alert le timestamp vidéo</button>
-    <button type="button" name="button" ng-click="videoEnd()">Début vidéo</button>
-    <button type="button" name="button" ng-click="videoBegin()">Fin vidéo</button>
-    <button type="button" name="button" ng-click="nextFrame()">Image suivante</button>
-    <button type="button" name="button" ng-click="previousFrame()">Image précédente</button>
-  </div>
+  <uib-accordion close-others="true" ng-show="browse.medium">
+    <uib-accordion-group heading="Controls">
+      <button type="button" name="button" ng-click="alertTimestamp()">Alert le timestamp vidéo</button>
+      <button type="button" name="button" ng-click="videoEnd()">Début vidéo</button>
+      <button type="button" name="button" ng-click="videoBegin()">Fin vidéo</button>
+      <button type="button" name="button" ng-click="nextFrame()">Image suivante</button>
+      <button type="button" name="button" ng-click="previousFrame()">Image précédente</button>
+    </uib-accordion-group>
+  </uib-accordion>
 
 </div>
 <div ng-hide="user" class="text-center">
