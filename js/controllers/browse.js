@@ -158,19 +158,21 @@ angular.module('camomileApp.controllers.browse', [
 
     // update list of media and layers when selected corpus changes
     $scope.$watch('browse.corpus', function () {
-      getMedia();
-      getLayers();
+      if ($scope.browse.corpus) {
+        getMedia();
+        getLayers();
+      }
     });
 
     $scope.$watch('browse.medium', function () {
-      $scope.browse.mediumSrc = [{
-        src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, "mp4")),
-        type: "video/mp4"
-      }, {
-        src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, "ogg")),
-        type: "video/ogg"
-      }];
-      $log.log($scope.browse.mediumSrc);
+      if ($scope.browse.medium) {
+        $scope.browse.mediumSrc = [{
+          src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, "mp4")),
+          type: "video/mp4"
+        }, {
+          src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, "ogg")),
+          type: "video/ogg"
+        }];
+      }
     });
-
   }]);
