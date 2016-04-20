@@ -3,26 +3,28 @@
     <h3>Backoffice (admin)</h3>
   </div>
 </div>
+<hr>
 <div class="row">
   <div class="col-sm-4">
     <h4>Add user</h4>
     <form>
       <div class="form-group">
         <label for="username">User name</label>
-        <input class="form-control" type="text" id="username" ng-model="userCreation.name">
+        <input class="form-control" type="text" id="username" ng-model="creation.user.name">
       </div>
       <div class="form-group">
         <label for="userpassword">User password</label>
-        <input class="form-control" type="password" id="userpassword" ng-model="userCreation.password">
+        <input class="form-control" type="password" id="userpassword" ng-model="creation.user.password">
       </div>
       <div class="form-group">
         <label for="usertype">User role</label>
-        <select class="form-control" id="usertype" ng-model="userCreation.role">
+        <select class="form-control" id="usertype" ng-model="creation.user.role">
           <option value="user" selected>User</option>
           <option value="admin">Admin</option>
         </select>
       </div>
-      <button type="button" class="btn btn-default form-control" ng-click="createNewUser()">Create</button>
+      <button type="button" class="btn btn-default form-control" ng-click="setDescription()">Customize description</button>
+      <button type="button" class="btn btn-primary form-control" ng-click="createNewUser()">Create</button>
     </form>
   </div>
   <div class="col-sm-4">
@@ -30,7 +32,7 @@
     <form>
       <div class="form-group">
         <label for="groupname">Group name</label>
-        <input class="form-control" type="text" id="groupname" ng-model="groupCreation.name">
+        <input class="form-control" type="text" id="groupname" ng-model="creation.group.name">
       </div>
       <button type="button" class="btn btn-default form-control" ng-click="createNewGroup()">Create</button>
     </form>
@@ -40,7 +42,7 @@
     <form>
       <div class="form-group">
         <label for="corpusname">Corpus name</label>
-        <input class="form-control" type="text" id="corpusname" ng-model="corpusCreation.name">
+        <input class="form-control" type="text" id="corpusname" ng-model="creation.corpus.name">
       </div>
       <button type="button" class="btn btn-default form-control" ng-click="createNewCorpus()">Create</button>
     </form>

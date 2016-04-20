@@ -1,27 +1,44 @@
 angular.module("camomileApp.controllers.backoffice", [])
-.controller('BackofficeCtrl', ['$scope', '$log', 'Camomile', function($scope, $log, Camomile) {
-  $scope.userCreation = {
-    name: '',
-    password: '',
-    description: [],
-    role: 'admin'
-  };
-  $scope.corpusCreation = {
-    name: '',
-    description: []
-  };
-  $scope.groupCreation = {
-    name: '',
-    description: []
-  };
-  $scope.mediumCreation = {
-    name: '',
-    description: []
-  };
-  $scope.layerCreation = {
-    name: '',
-    description: []
-  };
+.controller('BackofficeCtrl', ['$scope', '$log', 'Camomile', '$uibModal', function($scope, $log, Camomile, $uibModal) {
+  $scope.setDescription = function() {
+    var modalInstance = $uibModal.open({
+      animation: true,
+      templateUrl: 'views/customizeDescription.html',
+      controller: 'CustomizeDescriptionCtrl',
+      size: 'small'
+      /*resolve: {
+        items: function () {
+          return $scope.items;
+        }
+      }*/
+    });
+
+    modalInstance.result.then(function (description) {
+      $scope.description = description;
+    }, function () {
+      $log.info('Modal dismissed at: ' + new Date());
+    });
+  }
+
+  $scope.creation = {
+    user: {
+      name: '',
+      password: '',
+      description: [],
+      role: 'admin'
+    },
+    group: {
+      name: '',
+      description: []
+    },
+    corpus: {
+      name: '',
+      description: []
+    },
+    medium: {
+
+    }
+  }
 
   // Array of users
   $scope.usersExisting = undefined;
@@ -92,7 +109,7 @@ angular.module("camomileApp.controllers.backoffice", [])
         $scope.getAllUsers();
       }
     }
-    Camomile.createUser($scope.userCreation.name, $scope.userCreation.password, undefined, $scope.userCreation.role, callback);
+    Camomile.createUser($scope.creation.user.name, $scope.creation.user.password, undefined, $scope.creation.user.role, callback);
   }
 
   $scope.createNewGroup = function() {
@@ -103,7 +120,7 @@ angular.module("camomileApp.controllers.backoffice", [])
         $scope.getAllGroups();
       }
     }
-    Camomile.createGroup($scope.groupCreation.name, callback);
+    Camomile.createGroup($scope.creation.group.name, callback);
   }
 
   $scope.createNewCorpus = function() {
@@ -114,7 +131,7 @@ angular.module("camomileApp.controllers.backoffice", [])
         $scope.getAllCorpora();
       }
     }
-    Camomile.createCorpus($scope.corpusCreation.name, callback);
+    Camomile.createCorpus($scope.creation.corpus.name, callback);
   }
 
   $scope.createNewMedium = function() {
@@ -125,7 +142,7 @@ angular.module("camomileApp.controllers.backoffice", [])
         $scope.getAllMedia();
       }
     }
-    Camomile.createMedium($scope.mediumCreation.name, callback);
+    Camomile.createMedium($scope.creation.medium.name, callback);
   }
 
   // Delete
@@ -135,4 +152,22 @@ angular.module("camomileApp.controllers.backoffice", [])
 
 
   $scope.init();
+}])
+.controller('CustomizeDescriptionCtrl', ['$scope', '$uibModalInstance', function($scope, $uibModalInstance) {
+  $scope.ve = [];
+
+  $scope.addField = function() {
+    if (!$scope.ve[0] || $scope.ve[$scope.ve.length - 1].key != "")
+      $scope.ve.push({key: '', value: ''});
+  };
+
+  $scope.ok = function () {
+    $uibModalInstance.close($scope.ve);
+  };
+
+  $scope.cancel = function () {
+    $uibModalInstance.dismiss('cancel');
+  };
+
+  $scope.addField();
 }]);
