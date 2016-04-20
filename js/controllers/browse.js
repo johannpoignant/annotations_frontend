@@ -3,8 +3,8 @@ angular.module('camomileApp.controllers.browse', [
     "com.2fdevs.videogular",
     "com.2fdevs.videogular.plugins.controls",
   ])
-  .controller('BrowseCtrl', ['$scope', '$sce', 'Camomile', '$log', '$window',
-                              function ($scope, $sce, Camomile, $log, $window, $event) {
+  .controller('BrowseCtrl', ['$scope', '$sce', 'Camomile', '$log', '$window', '$timeout',
+                    function ($scope, $sce, Camomile, $log, $window, $timeout) {
     $scope.Math = window.Math;
 
     // Video player API
@@ -26,13 +26,32 @@ angular.module('camomileApp.controllers.browse', [
       $scope.API.seekTime(0, true);
     }
     $scope.nextFrame = function() {
-      $scope.API.pause();
-      $scope.API.seekTime($scope.Math.floor($scope.API.currentTime / 1000) + 1, false);
+      //$scope.API.seekTime($scope.Math.floor($scope.API.currentTime / 1000) + 1, false);
+      // $scope.API.play();
+      // $timeout(function() {
+      //   $scope.API.pause();
+      // }, (1 / 25));
+      var ta = $scope.API.currentTime;
+      $scope.API.seekTime(ta / 1000 + 1 / 25, false);
     }
     $scope.previousFrame = function() {
-      $scope.API.pause();
-      if ($scope.Math.floor($scope.API.currentTime / 1000) > 0)
-        $scope.API.seekTime($scope.Math.floor($scope.API.currentTime / 1000) - 1, false);
+      $scope.API.play();
+      $timeout(function() {
+        $scope.API.pause();
+      }, (1 / 25));
+    }
+    $scope.testFrame = function() {
+      $log.log($scope.API);
+      var tt = $scope.API.totalTime, ta = $scope.API.currentTime;
+      // 1 sec = 100 / tt
+      /*
+        EX: 1 sec sur une vidéo de 100s: 100 / 100: 1%
+        1 / 25 sec : 100 / (1 / 25)
+        Pour ajouter une frame, il faut transformer le temps actuel en %
+        Ex: on est a 2s sur 10s: 2000 / 10000 + 100 / (1 / 25)
+      */
+      //$scope.API.seekTime(ta / tt + 100 / (1 / 25), true);
+      $scope.API.seekTime(0.05, true);
     }
 
     // Annotations
@@ -82,10 +101,10 @@ angular.module('camomileApp.controllers.browse', [
         } else {
           corpora = data;
         }
-        // nested in $scope.$apply to make sure a change event is triggered
-        $scope.$apply(function () {
+
+        $timeout(function() {
           $scope.browse.corpora = corpora;
-        });
+        }, 0);
       });
     };
 

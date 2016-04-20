@@ -99,8 +99,10 @@
   </nav>
 
   <div class="container">
-    <div ng-view></div>
-
+    <div ng-view ng-show="user"></div>
+    <div ng-hide="user">
+      <h2>Not logged in. Please log in first.</h2>
+    </div>
     <hr>
     <footer>
       <p>&copy; CNRS 2015</p>

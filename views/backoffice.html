@@ -23,7 +23,7 @@
           <option value="admin">Admin</option>
         </select>
       </div>
-      <button type="button" class="btn btn-default form-control" ng-click="setDescription()">Customize description</button>
+      <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.user)">Customize description</button>
       <button type="button" class="btn btn-primary form-control" ng-click="createNewUser()">Create</button>
     </form>
   </div>
@@ -34,7 +34,8 @@
         <label for="groupname">Group name</label>
         <input class="form-control" type="text" id="groupname" ng-model="creation.group.name">
       </div>
-      <button type="button" class="btn btn-default form-control" ng-click="createNewGroup()">Create</button>
+      <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.group)">Customize description</button>
+      <button type="button" class="btn btn-primary form-control" ng-click="createNewGroup()">Create</button>
     </form>
   </div>
   <div class="col-sm-4">
@@ -44,7 +45,8 @@
         <label for="corpusname">Corpus name</label>
         <input class="form-control" type="text" id="corpusname" ng-model="creation.corpus.name">
       </div>
-      <button type="button" class="btn btn-default form-control" ng-click="createNewCorpus()">Create</button>
+      <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.corpus)">Customize description</button>
+      <button type="button" class="btn btn-primary form-control" ng-click="createNewCorpus()">Create</button>
     </form>
   </div>
 </div>
