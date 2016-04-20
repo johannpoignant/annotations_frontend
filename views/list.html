@@ -37,7 +37,8 @@
     </p>
   </div> -->
 
-  <div ng-show="browse.medium" class="videogular-container" ng-click="addOnClick($event)">
+  <div ng-show="browse.medium" class="videogular-container">
+    <canvas id="transparent-plan" height="595" width="1140" style="position: absolute; z-index: 100;"  ng-click="addOnClick($event)"></canvas>
     <videogular vg-player-ready="onPlayerReady($API)">
       <vg-media vg-src="browse.mediumSrc"></vg-media>
       <vg-controls>
@@ -53,29 +54,6 @@
         </vg-volume>
       </vg-controls>
     </videogular>
-    <div id="transparent-plan"></div>
-    <!-- <video id="player"
-      cm-video-player
-      ng-src={{browser.mediumSrc}}
-      height="360px">
-    </video>
-    <div class="controls">
-      <div id="play-button">
-        <button type="button" class="video-control" id="play-pause"
-        ng-click="model.toggle_play()">
-        {{ model.play_label }}
-      </button>
-    </div>
-    <div id="control-bar" title="Drag to reference frame">
-      <div id="controlsoverlay">
-        <input width="100%" type="range" id="seek-bar"
-        min="{{ model.infbndsec }}" max="{{ model.supbndsec }}"
-        step="{{ (model.supbndsec - model.infbndsec) / 400 }}" ng-model="model.current_time">
-      </div>
-    </div>
-    <div id="time-display">
-      <label>{{ model.current_time_display }}</label>
-    </div> -->
   </div>
 
   <uib-accordion close-others="true" ng-show="browse.medium">
@@ -86,6 +64,7 @@
       <button type="button" name="button" ng-click="nextFrame()">Image suivante</button>
       <button type="button" name="button" ng-click="previousFrame()">Image précédente</button>
       <button type="button" name="button" ng-click="testFrame()">Test</button>
+      <button type="button" name="button" ng-click="clearCanvas(true)">Clear canvas</button>
     </uib-accordion-group>
   </uib-accordion>
 </div>
