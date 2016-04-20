@@ -63,18 +63,13 @@ angular.module('camomileApp.controllers.browse', [
     // Setup the canvas, using the points from the annotation object in this scope
     $scope.setupCanvas = function() {
       $scope.clearCanvas();
-      $log.log($scope.annotation.points);
       var points = $scope.annotation.points;
       if (points.length > 1) {
-        $log.info('Drawing!...');
-        $log.info($scope.annotation.points);
-        $log.info(points);
         $scope.context.beginPath();
         $scope.context.strokeStyle = "#f00"; // COULEUR DU TRAIT
         $scope.context.moveTo(points[0].x, points[0].y);
         for (p of points.slice(1, points.length)) {
           $scope.context.lineTo(p.x, p.y);
-          $log.log('Point!');
         }
         $scope.context.stroke();
         $scope.context.closePath();
