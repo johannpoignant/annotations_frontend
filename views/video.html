@@ -15,7 +15,7 @@
       </vg-volume>
     </vg-controls> -->
   </videogular>
-  <div class="row text-center" style="margin-top: 12px; width: 100%;">
+  <div class="row text-center" style="margin-top: 12px;">
     <div class="col-sm-12">
       <rzslider
            rz-slider-model="slider.value"
@@ -23,18 +23,20 @@
     </div>
   </div>
   <div class="row text-center" style="margin-top: 12px; width: 100%;">
+    <button type="button" class="btn btn-default" name="button" ng-click="videoBegin()">Début vidéo</button>
     <button type="button" class="btn btn-default" name="button" ng-click="videoPlay()">Play</button>
     <button type="button" class="btn btn-default" name="button" ng-click="videoPause()">Pause</button>
     <button type="button" class="btn btn-default" name="button" ng-click="videoStop()">Stop</button>
+    <button type="button" class="btn btn-default" name="button" ng-click="videoEnd()">Fin vidéo</button>
   </div>
   <div class="text-center btn-group" style="margin-top: 12px; width: 100%;">
-    <div class="col-sm-6">
-      <button type="button" class="btn btn-default" name="button" ng-click="videoEnd()">Début vidéo</button>
+    <div class="col-sm-7">
+      <button type="button" class="btn btn-default" name="button" ng-click="nextFrame()">Seconde précédente</button>
       <button type="button" class="btn btn-default" name="button" ng-click="previousFrame()">Image précédente</button>
       <button type="button" class="btn btn-default" name="button" ng-click="nextFrame()">Image suivante</button>
-      <button type="button" class="btn btn-default" name="button" ng-click="videoBegin()">Fin vidéo</button>
+      <button type="button" class="btn btn-default" name="button" ng-click="nextFrame()">Seconde suivante</button>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-5">
       <button type="button" class="btn btn-default" name="button" ng-click="alertTimestamp()">Timestamp vidéo</button>
       <button type="button" class="btn btn-default" name="button" ng-click="testFrame()">Test</button>
       <button type="button" class="btn btn-default" name="button" ng-click="clearCanvas(true)">Clear canvas</button>
@@ -46,7 +48,7 @@
       <h4>Options</h4>
       <div>
         <label for="">Forme</label>
-        <select class="" name="" ng-model="annotation.drawStyle">
+        <select class="" ng-model="annotation.drawStyle">
           <option value="rectangle">Rectangle</option>
           <option value="circle">Cercle</option>
           <option value="free">Libre</option>

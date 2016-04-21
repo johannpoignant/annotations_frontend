@@ -60,7 +60,7 @@
           <input class="form-control" type="text" id="corpusname" ng-model="creation.layer.name">
         </div>
         <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.layer)">Customize description</button>
-        <button type="button" class="btn btn-primary form-control" ng-click="createLayer()">Create</button>
+        <button type="button" class="btn btn-primary form-control" ng-click="createNewLayer()">Create</button>
       </form>
     </div>
     <div class="col-sm-4">
@@ -79,7 +79,7 @@
           <select class="form-control" ng-options="c._id as c.name for c in corporaExisting" ng-model="creation.medium.corpus"></select>
         </div>
         <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.medium)">Customize description</button>
-        <button type="button" class="btn btn-primary form-control" ng-click="createMedium()">Create</button>
+        <button type="button" class="btn btn-primary form-control" ng-click="createNewMedium()">Create</button>
       </form>
     </div>
     <div class="col-sm-4">
@@ -154,6 +154,8 @@
       </tbody>
     </table>
   </div>
+</div>
+<div class="row">
   <div class="col-sm-6">
     <h4>Existing corpora</h4>
     <table class="table">
@@ -196,6 +198,38 @@
         <tr ng-repeat="p in layersExisting">
           <td ng-repeat="v in p">
             <a href="" ng-if="v == p._id" ng-click="deleteLayer(v)">{{v}}</a>
+            <span ng-if="v != p._id">{{v}}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row">  
+  <div class="col-sm-6">
+    <h4>Existing media</h4>
+    <table class="table">
+      <thead>
+        <th>
+          ID
+        </th>
+        <th>
+          Name
+        </th>
+        <th>
+          Url
+        </th>
+        <th>
+          Corpus
+        </th>
+        <th>
+          Description
+        </th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="p in mediaExisting">
+          <td ng-repeat="v in p">
+            <a href="" ng-if="v == p._id" ng-click="deleteMedium(v)">{{v}}</a>
             <span ng-if="v != p._id">{{v}}</span>
           </td>
         </tr>

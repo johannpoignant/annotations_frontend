@@ -27,7 +27,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       name: '',
       password: '',
       description: [],
-      role: 'admin'
+      role: 'user'
     },
     group: {
       name: '',
@@ -136,6 +136,7 @@ angular.module("camomileApp.controllers.backoffice", [])
 
   // Create
   $scope.createNewUser = function() {
+    var da = $scope.creation.user;
     var callback = function(err, data) {
       if (err) {
         window.alert("User creation failed.");
@@ -143,10 +144,11 @@ angular.module("camomileApp.controllers.backoffice", [])
         $scope.getAllUsers();
       }
     }
-    Camomile.createUser($scope.creation.user.name, $scope.creation.user.password, $scope.arrayFromDescObject($scope.creation.user.description), $scope.creation.user.role, callback);
+    Camomile.createUser(da.name, da.password, $scope.arrayFromDescObject(da.description), da.role, callback);
   }
 
   $scope.createNewGroup = function() {
+    var da = $scope.creation.group;
     var callback = function(err, data) {
       if (err) {
         window.alert("Group creation failed.");
@@ -154,10 +156,11 @@ angular.module("camomileApp.controllers.backoffice", [])
         $scope.getAllGroups();
       }
     }
-    Camomile.createGroup($scope.creation.group.name, $scope.arrayFromDescObject($scope.creation.group.description), callback);
+    Camomile.createGroup(da.name, $scope.arrayFromDescObject(da.description), callback);
   }
 
   $scope.createNewCorpus = function() {
+    var da = $scope.creation.corpus;
     var callback = function(err, data) {
       if (err) {
         window.alert("Corpus creation failed.");
@@ -165,10 +168,11 @@ angular.module("camomileApp.controllers.backoffice", [])
         $scope.getAllCorpora();
       }
     }
-    Camomile.createCorpus($scope.creation.corpus.name, $scope.arrayFromDescObject($scope.creation.corpus.description), callback);
+    Camomile.createCorpus(da.name, $scope.arrayFromDescObject(da.description), callback);
   }
 
   $scope.createNewMedium = function() {
+    var da = $scope.creation.medium;
     var callback = function(err, data) {
       if (err) {
         window.alert("Medium creation failed.");
@@ -176,10 +180,11 @@ angular.module("camomileApp.controllers.backoffice", [])
         $scope.getAllMedia();
       }
     }
-    Camomile.createMedium($scope.creation.medium.name, $scope.arrayFromDescObject($scope.creation.medium.description), callback);
+    Camomile.createMedium(da.corpus, da.name, da.url, $scope.arrayFromDescObject(da.description), callback);
   }
 
   $scope.createNewLayer = function() {
+    var da = $scope.creation.layer;
     var callback = function(err, data) {
       if (err) {
         window.alert("Layer creation failed.");
@@ -187,10 +192,11 @@ angular.module("camomileApp.controllers.backoffice", [])
         $scope.getAllLayers();
       }
     }
-    Camomile.createLayer($scope.creation.layer.name, $scope.arrayFromDescObject($scope.creation.layer.description), callback);
+    Camomile.createLayer(da.name, $scope.arrayFromDescObject(da.description), callback);
   }
 
   $scope.addUserToGroup = function() {
+    var da = $scope.creation.userToGroup;
     var callback = function(err, data) {
       if (err) {
         window.alert("User not added to group.");
@@ -198,7 +204,7 @@ angular.module("camomileApp.controllers.backoffice", [])
         $scope.getAllGroups();
       }
     }
-    Camomile.addUserToGroup($scope.creation.userToGroup.userId, $scope.creation.userToGroup.groupId, callback);
+    Camomile.addUserToGroup(da.userId, da.groupId, callback);
   }
 
   // Transforms an object {key: "...", value: "..."} into ["...", "..."]

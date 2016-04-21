@@ -121,7 +121,7 @@ angular.module('camomileApp.video', [
    */
   $scope.videoBegin = function() {
     $scope.API.pause();
-    $scope.API.seekTime(100, true);
+    $scope.API.seekTime(0, true);
   };
 
   /**
@@ -130,7 +130,7 @@ angular.module('camomileApp.video', [
    */
   $scope.videoEnd = function() {
     $scope.API.pause();
-    $scope.API.seekTime(0, true);
+    $scope.API.seekTime(100, true);
   };
 
   /**
@@ -149,6 +149,24 @@ angular.module('camomileApp.video', [
   $scope.previousFrame = function() {
     var ta = $scope.API.currentTime;
     $scope.API.seekTime(ta / 1000 - 1 / 25, false);
+  };
+
+  /**
+   * Next second on the video playing
+   * @return {undefined}
+   */
+  $scope.nextSecond = function() {
+    var ta = $scope.API.currentTime;
+    $scope.API.seekTime(ta / 1000 + 1, false);
+  };
+
+  /**
+   * Previous second on the video playing
+   * @return {undefined}
+   */
+  $scope.previousSecond = function() {
+    var ta = $scope.API.currentTime;
+    $scope.API.seekTime(ta / 1000 - 1, false);
   };
 
   /**
