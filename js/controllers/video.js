@@ -1,7 +1,7 @@
 /**
  * Module angular for camomileApp; declaring the video directive
  */
-angular.module('camomileApp.video', [
+angular.module('camomileApp.controllers.video', [
   "ngSanitize",
   "com.2fdevs.videogular",
   "com.2fdevs.videogular.plugins.controls",
