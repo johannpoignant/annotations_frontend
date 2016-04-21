@@ -35,7 +35,7 @@
       position: relative;
     }
 
-    .btn {
+    .cview .btn {
       margin-top: 10px;
     }
   </style>
@@ -97,14 +97,13 @@
                 <li ng-click="logout()" role="presentation"><a data-target="#">Log out</a></li>
               </ul>
             </div>
-
           </form>
         </div>
       </div><!--/.navbar-collapse -->
     </div>
   </nav>
 
-  <div class="container">
+  <div class="container cview">
     <div ng-view ng-show="user"></div>
     <div ng-hide="user">
       <h2>Not logged in. Please log in first.</h2>

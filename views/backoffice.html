@@ -101,7 +101,8 @@
       <tbody>
         <tr ng-repeat="p in usersExisting">
           <td ng-repeat="v in p">
-            {{v}}
+            <a href="" ng-if="v == p._id" ng-click="deleteUser(v)">{{v}}</a>
+            <span ng-if="v != p._id">{{v}}</span>
           </td>
         </tr>
       </tbody>
@@ -127,7 +128,8 @@
       <tbody>
         <tr ng-repeat="p in groupsExisting">
           <td ng-repeat="v in p">
-            {{v}}
+            <a href="" ng-if="v == p._id" ng-click="deleteGroup(v)">{{v}}</a>
+            <span ng-if="v != p._id">{{v}}</span>
           </td>
         </tr>
       </tbody>
@@ -150,7 +152,8 @@
       <tbody>
         <tr ng-repeat="p in corporaExisting">
           <td ng-repeat="v in p">
-            {{v}}
+            <a href="" ng-if="v == p._id" ng-click="deleteCorpus(v)">{{v}}</a>
+            <span ng-if="v != p._id">{{v}}</span>
           </td>
         </tr>
       </tbody>
@@ -173,7 +176,8 @@
       <tbody>
         <tr ng-repeat="p in layersExisting">
           <td ng-repeat="v in p">
-            {{v}}
+            <a href="" ng-if="v == p._id" ng-click="deleteLayer(v)">{{v}}</a>
+            <span ng-if="v != p._id">{{v}}</span>
           </td>
         </tr>
       </tbody>

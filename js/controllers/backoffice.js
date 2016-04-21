@@ -77,7 +77,9 @@ angular.module("camomileApp.controllers.backoffice", [])
       if (err) {
         $scope.usersExisting = [];
       } else {
-        $scope.usersExisting = data;
+        $scope.$apply(function() {
+          $scope.usersExisting = data;
+        });
       }
     });
   }
@@ -87,7 +89,9 @@ angular.module("camomileApp.controllers.backoffice", [])
       if (err) {
         $scope.groupsExisting = [];
       } else {
-        $scope.groupsExisting = data;
+        $scope.$apply(function() {
+          $scope.groupsExisting = data;
+        });
       }
     });
   }
@@ -97,7 +101,9 @@ angular.module("camomileApp.controllers.backoffice", [])
       if (err) {
         $scope.corporaExisting = [];
       } else {
-        $scope.corporaExisting = data;
+        $scope.$apply(function() {
+          $scope.corporaExisting = data;
+        });
       }
     });
   }
@@ -107,7 +113,9 @@ angular.module("camomileApp.controllers.backoffice", [])
       if (err) {
         $scope.mediaExisting = [];
       } else {
-        $scope.mediaExisting = window.JSON.stringify(data);
+        $scope.$apply(function() {
+          $scope.mediaExisting = data;
+        });
       }
     });
   }
@@ -117,7 +125,9 @@ angular.module("camomileApp.controllers.backoffice", [])
       if (err) {
         $scope.layersExisting = [];
       } else {
-        $scope.layersExisting = data;
+        $scope.$apply(function() {
+          $scope.layersExisting = data;
+        });
       }
     });
   }
@@ -183,7 +193,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       if (err) {
         window.alert("User not added to group.");
       } else {
-        $scope.getAllUsers();
+        $scope.getAllGroups();
       }
     }
     Camomile.addUserToGroup($scope.creation.userToGroup.userId, $scope.creation.userToGroup.groupId, callback);
@@ -200,7 +210,6 @@ angular.module("camomileApp.controllers.backoffice", [])
 
   // Delete
   $scope.deleteUser = function(id) {
-    // ****
     var callback = function(err, data) {
       if (err) {
         window.alert('Deletion of user failed.');
@@ -211,6 +220,49 @@ angular.module("camomileApp.controllers.backoffice", [])
     Camomile.deleteUser(id, callback);
   }
 
+  $scope.deleteGroup = function(id) {
+    var callback = function(err, data) {
+      if (err) {
+        window.alert('Deletion of group failed.');
+      } else {
+        $scope.getAllGroups();
+      }
+    }
+    Camomile.deleteGroup(id, callback);
+  }
+
+  $scope.deleteCorpus = function(id) {
+    var callback = function(err, data) {
+      if (err) {
+        window.alert('Deletion of corpus failed.');
+      } else {
+        $scope.getAllCorpora();
+      }
+    }
+    Camomile.deleteCorpus(id, callback);
+  }
+
+  $scope.deleteMedium = function(id) {
+    var callback = function(err, data) {
+      if (err) {
+        window.alert('Deletion of medium failed.');
+      } else {
+        $scope.getAllMedia();
+      }
+    }
+    Camomile.deleteMedium(id, callback);
+  }
+
+  $scope.deleteLayer = function(id) {
+    var callback = function(err, data) {
+      if (err) {
+        window.alert('Deletion of layer failed.');
+      } else {
+        $scope.getAllLayers();
+      }
+    }
+    Camomile.deleteLayer(id, callback);
+  }
 
   $scope.init();
 }])
