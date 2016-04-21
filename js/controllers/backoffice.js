@@ -38,7 +38,16 @@ angular.module("camomileApp.controllers.backoffice", [])
       description: []
     },
     medium: {
-      name: ''
+      name: '',
+      description: []
+    },
+    layer: {
+      name: '',
+      description: []
+    },
+    userToGroup: {
+      userId: '',
+      groupId: ''
     }
   }
 
@@ -51,7 +60,7 @@ angular.module("camomileApp.controllers.backoffice", [])
   // Array of medium
   $scope.mediaExisting = undefined;
   // Array of layer
-  $scope.layerExisting = undefined;
+  $scope.layersExisting = undefined;
 
   // Runs at init of module
   $scope.init = function() {
@@ -59,6 +68,7 @@ angular.module("camomileApp.controllers.backoffice", [])
     $scope.getAllGroups();
     $scope.getAllCorpora();
     $scope.getAllMedia();
+    $scope.getAllLayers();
   }
 
   // Read (getters)
@@ -67,7 +77,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       if (err) {
         $scope.usersExisting = [];
       } else {
-        $scope.usersExisting = window.JSON.stringify(data);
+        $scope.usersExisting = data;
       }
     });
   }
@@ -77,7 +87,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       if (err) {
         $scope.groupsExisting = [];
       } else {
-        $scope.groupsExisting = window.JSON.stringify(data);
+        $scope.groupsExisting = data;
       }
     });
   }
@@ -87,7 +97,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       if (err) {
         $scope.corporaExisting = [];
       } else {
-        $scope.corporaExisting = window.JSON.stringify(data);
+        $scope.corporaExisting = data;
       }
     });
   }
@@ -98,6 +108,16 @@ angular.module("camomileApp.controllers.backoffice", [])
         $scope.mediaExisting = [];
       } else {
         $scope.mediaExisting = window.JSON.stringify(data);
+      }
+    });
+  }
+
+  $scope.getAllLayers = function() {
+    Camomile.getLayers(function(err, data) {
+      if (err) {
+        $scope.layersExisting = [];
+      } else {
+        $scope.layersExisting = data;
       }
     });
   }
@@ -145,6 +165,28 @@ angular.module("camomileApp.controllers.backoffice", [])
       }
     }
     Camomile.createMedium($scope.creation.medium.name, $scope.arrayFromDescObject($scope.creation.medium.description), callback);
+  }
+
+  $scope.createNewLayer = function() {
+    var callback = function(err, data) {
+      if (err) {
+        window.alert("Layer creation failed.");
+      } else {
+        $scope.getAllLayers();
+      }
+    }
+    Camomile.createLayer($scope.creation.layer.name, $scope.arrayFromDescObject($scope.creation.layer.description), callback);
+  }
+
+  $scope.addUserToGroup = function() {
+    var callback = function(err, data) {
+      if (err) {
+        window.alert("User not added to group.");
+      } else {
+        $scope.getAllUsers();
+      }
+    }
+    Camomile.addUserToGroup($scope.creation.userToGroup.userId, $scope.creation.userToGroup.groupId, callback);
   }
 
   // Transforms an object {key: "...", value: "..."} into ["...", "..."]

@@ -5,63 +5,178 @@
 </div>
 <hr>
 <div class="row">
-  <div class="col-sm-4">
-    <h4>Add user</h4>
-    <form>
-      <div class="form-group">
-        <label for="username">User name</label>
-        <input class="form-control" type="text" id="username" ng-model="creation.user.name">
-      </div>
-      <div class="form-group">
-        <label for="userpassword">User password</label>
-        <input class="form-control" type="password" id="userpassword" ng-model="creation.user.password">
-      </div>
-      <div class="form-group">
-        <label for="usertype">User role</label>
-        <select class="form-control" id="usertype" ng-model="creation.user.role">
-          <option value="user" selected>User</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
-      <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.user)">Customize description</button>
-      <button type="button" class="btn btn-primary form-control" ng-click="createNewUser()">Create</button>
-    </form>
+  <div class="row">
+    <div class="col-sm-4">
+      <h4>Add user</h4>
+      <form>
+        <div class="form-group">
+          <label for="username">User name</label>
+          <input class="form-control" type="text" id="username" ng-model="creation.user.name">
+        </div>
+        <div class="form-group">
+          <label for="userpassword">User password</label>
+          <input class="form-control" type="password" id="userpassword" ng-model="creation.user.password">
+        </div>
+        <div class="form-group">
+          <label for="usertype">User role</label>
+          <select class="form-control" id="usertype" ng-model="creation.user.role">
+            <option value="user" selected>User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.user)">Customize description</button>
+        <button type="button" class="btn btn-primary form-control" ng-click="createNewUser()">Create</button>
+      </form>
+    </div>
+    <div class="col-sm-4">
+      <h4>Add group</h4>
+      <form>
+        <div class="form-group">
+          <label for="groupname">Group name</label>
+          <input class="form-control" type="text" id="groupname" ng-model="creation.group.name">
+        </div>
+        <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.group)">Customize description</button>
+        <button type="button" class="btn btn-primary form-control" ng-click="createNewGroup()">Create</button>
+      </form>
+    </div>
+    <div class="col-sm-4">
+      <h4>Add corpus</h4>
+      <form>
+        <div class="form-group">
+          <label for="corpusname">Corpus name</label>
+          <input class="form-control" type="text" id="corpusname" ng-model="creation.corpus.name">
+        </div>
+        <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.corpus)">Customize description</button>
+        <button type="button" class="btn btn-primary form-control" ng-click="createNewCorpus()">Create</button>
+      </form>
+    </div>
   </div>
-  <div class="col-sm-4">
-    <h4>Add group</h4>
-    <form>
-      <div class="form-group">
-        <label for="groupname">Group name</label>
-        <input class="form-control" type="text" id="groupname" ng-model="creation.group.name">
-      </div>
-      <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.group)">Customize description</button>
-      <button type="button" class="btn btn-primary form-control" ng-click="createNewGroup()">Create</button>
-    </form>
-  </div>
-  <div class="col-sm-4">
-    <h4>Add corpus</h4>
-    <form>
-      <div class="form-group">
-        <label for="corpusname">Corpus name</label>
-        <input class="form-control" type="text" id="corpusname" ng-model="creation.corpus.name">
-      </div>
-      <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.corpus)">Customize description</button>
-      <button type="button" class="btn btn-primary form-control" ng-click="createNewCorpus()">Create</button>
-    </form>
+  <div class="row">
+    <div class="col-sm-4">
+      <h4>Add layer</h4>
+      <form>
+        <div class="form-group">
+          <label for="corpusname">Layer name</label>
+          <input class="form-control" type="text" id="corpusname" ng-model="creation.layer.name">
+        </div>
+        <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.layer)">Customize description</button>
+        <button type="button" class="btn btn-primary form-control" ng-click="createLayer()">Create</button>
+      </form>
+    </div>
+    <div class="col-sm-4">
+      <h4>Add user into a group</h4>
+      <form>
+        <div class="form-group" ng-show="usersExisting">
+          <label for="userselect">Add user...</label>
+          <select class="form-control" ng-options="u._id as u.username for u in usersExisting" id="userselect" ng-model="creation.userToGroup.userId"></select>
+        </div>
+        <div class="form-group" ng-show="usersExisting">
+          <label for="groupselect">To group...</label>
+          <select class="form-control" ng-options="g._id as g.name for g in groupsExisting" id="groupselect" ng-model="creation.userToGroup.groupId"></select>
+        </div>
+        <button type="button" class="btn btn-primary form-control" ng-click="addUserToGroup()">Add</button>
+      </form>
+    </div>
   </div>
 </div>
 <hr>
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-sm-6">
     <h4>Existing users</h4>
-    <textarea name="users" rows="8" cols="40" readonly>{{usersExisting}}</textarea>
+    <table class="table">
+      <thead>
+        <th>
+          ID
+        </th>
+        <th>
+          Name
+        </th>
+        <th>
+          Role
+        </th>
+        <th>
+          Description
+        </th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="p in usersExisting">
+          <td ng-repeat="v in p">
+            {{v}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <div class="col-sm-4">
+  <div class="col-sm-6">
     <h4>Existing groups</h4>
-    <textarea name="users" rows="8" cols="40" readonly>{{groupsExisting}}</textarea>
+    <table class="table">
+      <thead>
+        <th>
+          ID
+        </th>
+        <th>
+          Name
+        </th>
+        <th>
+          Users
+        </th>
+        <th>
+          Description
+        </th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="p in groupsExisting">
+          <td ng-repeat="v in p">
+            {{v}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <div class="col-sm-4">
+  <div class="col-sm-6">
     <h4>Existing corpora</h4>
-    <textarea name="users" rows="8" cols="40" readonly>{{corporaExisting}}</textarea>
+    <table class="table">
+      <thead>
+        <th>
+          ID
+        </th>
+        <th>
+          Name
+        </th>
+        <th>
+          Description
+        </th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="p in corporaExisting">
+          <td ng-repeat="v in p">
+            {{v}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-sm-6">
+    <h4>Existing layers</h4>
+    <table class="table">
+      <thead>
+        <th>
+          ID
+        </th>
+        <th>
+          Name
+        </th>
+        <th>
+          Description
+        </th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="p in layersExisting">
+          <td ng-repeat="v in p">
+            {{v}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
