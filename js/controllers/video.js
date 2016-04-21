@@ -266,7 +266,6 @@ angular.module('camomileApp.video', [
 
   $scope.setupCanvas(); // Initial setup of the canvas with the annotation from the server
 
-  // Add a point on click on the canvas
   /**
    * Adds a point on click on the canvas
    * @param {unknown} event js object
