@@ -1,9 +1,31 @@
+/**
+ * Module angular for camomileApp; declaring the video directive
+ */
 angular.module('camomileApp.video', [
   "ngSanitize",
   "com.2fdevs.videogular",
   "com.2fdevs.videogular.plugins.controls",
   "rzModule"
-]).directive('camomileVideo', function() {
+])
+/**
+ * Constant for this module
+ * @return {undefined}
+ */
+.constant('camomileConfigVideo', {
+  canvas: {
+    fillColor: '#f00',
+    strokeColor: '#f00'
+  }
+})
+/**
+ * Directive to be used in your HTML. Simply import this module and use
+ * the directive with <camomile-video src="yourVideoSrc"></camomile-video>
+ * NOTE: your video must be trusted by $sce before sent here
+ * @param  {string} 'camomileVideo' the directive name
+ * @param  {function} function(
+ * @return {Object}                 returns the directive
+ */
+.directive('camomileVideo', function() {
   return {
     templateUrl: 'views/video.html',
     restrict: 'E',
@@ -11,11 +33,30 @@ angular.module('camomileApp.video', [
       src: '='
     }
   }
-}).controller('VideoCtrl', function($scope, $sce, $log, $interval) {
-  // Video player API
+})
+/**
+ * Controller for the video directive
+ * @param  {string} 'VideoCtrl'      Name of the controller
+ * @param  {function} function($scope, $log,         $interval function executed
+ * @return {undefined}
+ */
+.controller('VideoCtrl', function($scope, $log, $interval, camomileConfigVideo) {
+  /**
+   * API of the player
+   * @type {Object}
+   */
   $scope.API = undefined;
+
+  /**
+   * Math shortcut
+   * @type {Object}
+   */
   $scope.Math = window.Math;
 
+  /**
+   * Slider object for using as timeline below video.
+   * @type {Object}
+   */
   $scope.slider = {
     value: 0,
     lastValue: 0,
@@ -32,39 +73,88 @@ angular.module('camomileApp.video', [
     }
   };
 
-  // Methods corresponding
+  /**
+   * Store the API of the player when it is ready
+   * @param  {[type]} API [description]
+   * @return {[type]}     [description]
+   */
   $scope.onPlayerReady = function(API) {
     $scope.API = API;
   };
+
+  /**
+   * Alerts the timestamp
+   * @return {undefined}
+   */
   $scope.alertTimestamp = function() {
     window.alert($scope.API.currentTime);
   };
+
+  /**
+   * Plays the video
+   * @return {undefined}
+   */
   $scope.videoPlay = function() {
     $scope.API.play();
   };
+
+  /**
+   * Pauses the video
+   * @return {undefined}
+   */
   $scope.videoPause = function() {
     $scope.API.pause();
   };
+
+  /**
+   * Stops the video
+   * @return {undefined}
+   */
   $scope.videoStop = function() {
     $scope.API.pause();
     $scope.API.seekTime(100, true);
   };
+
+  /**
+   * Stops the video and sets the timeline at 0
+   * @return {undefined}
+   */
   $scope.videoBegin = function() {
     $scope.API.pause();
     $scope.API.seekTime(100, true);
   };
+
+  /**
+   * Stops the video and sets the timeline at the end
+   * @return {undefined}
+   */
   $scope.videoEnd = function() {
     $scope.API.pause();
     $scope.API.seekTime(0, true);
   };
+
+  /**
+   * Next frame on the video playing
+   * @return {undefined}
+   */
   $scope.nextFrame = function() {
     var ta = $scope.API.currentTime;
     $scope.API.seekTime(ta / 1000 + 1 / 25, false);
   };
+
+  /**
+   * Previous frame on the video playing
+   * @return {undefined}
+   */
   $scope.previousFrame = function() {
     var ta = $scope.API.currentTime;
     $scope.API.seekTime(ta / 1000 - 1 / 25, false);
   };
+
+  /**
+   * Test method, use this for debug
+   * @return {undefined}
+   */
   $scope.testFrame = function() { // Use this as test button
     //$log.log($scope.API);
     //var tt = $scope.API.totalTime, ta = $scope.API.currentTime;
@@ -82,7 +172,6 @@ angular.module('camomileApp.video', [
 
   // Annotations
   $scope.annotation = {}; // The annotation object
-  $scope.annotation.visible = false; // Is the annotation visible?
 
   // Points
   $scope.annotation.points = []; // Array of points
@@ -91,10 +180,13 @@ angular.module('camomileApp.video', [
   // Canvas
   $scope.canvas = window.document.getElementById('transparent-plan');
   $scope.context = $scope.canvas.getContext('2d');
-  $scope.context.strokeStyle = "#f00"; // COULEUR DU TRAIT
-  $scope.context.fillStyle = "#f00"; // COULEUR DU FILL
+  $scope.context.strokeStyle = camomileConfigVideo.canvas.strokeColor;
+  $scope.context.fillStyle = camomileConfigVideo.canvas.fillColor;
 
-  // Setup the canvas, using the points from the annotation object in this scope
+  /**
+   * Used to setup the canvas on the video
+   * @return {undefined}
+   */
   $scope.setupCanvas = function() {
     $scope.clearCanvas();
     var points = $scope.annotation.points;
@@ -123,6 +215,12 @@ angular.module('camomileApp.video', [
     }
   }
 
+  /**
+   * Allow to know if the current drawing has reached the maximum of points it
+   * can have
+   * @return {boolean} true if the drawing has reached the max. of points it can
+   * have, false otherwise
+   */
   $scope.annotation.isComplete = function() {
     if ($scope.annotation.drawStyle == "rectangle" && $scope.annotation.points.length > 1)
       return true;
@@ -134,7 +232,12 @@ angular.module('camomileApp.video', [
       return false;
   }
 
-  // Clears the canvas, and if clearPoints is provided and set to true, will also empty the points array
+  /**
+   * Clears the canvas, and if clearPoints is provided and set to true, will
+   * also empty the points array
+   * @param {boolean} clearPoints
+   * @return {undefined}
+   */
   $scope.clearCanvas = function(clearPoints) {
     clearPoints = clearPoints !== undefined ? clearPoints : false;
     if (clearPoints) {
@@ -146,6 +249,11 @@ angular.module('camomileApp.video', [
   $scope.setupCanvas(); // Initial setup of the canvas with the annotation from the server
 
   // Add a point on click on the canvas
+  /**
+   * Adds a point on click on the canvas
+   * @param {unknown} event js object
+   * @return {undefined}
+   */
   $scope.addOnClick = function(event) {
     var x = event.offsetX;
     var y = event.offsetY;
@@ -157,10 +265,12 @@ angular.module('camomileApp.video', [
       });
     }
 
-
     $scope.setupCanvas();
   };
 
+  /**
+   * Set up the interval for the synchronisation of the slider with the player
+   */
   $interval(function() {
     if ($scope.API) {
       var nval = $scope.slider.value, lastVal = $scope.slider.lastValue;
