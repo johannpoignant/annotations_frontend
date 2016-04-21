@@ -17,7 +17,7 @@ angular.module("camomileApp.controllers.backoffice", [])
     modalInstance.result.then(function () {
       $log.info('Finished with description');
     }, function () {
-      $log.info('Modal dismissed at: ' + new Date());
+      $log.info('Canceled edit');
     });
   }
 
@@ -39,6 +39,8 @@ angular.module("camomileApp.controllers.backoffice", [])
     },
     medium: {
       name: '',
+      url: '',
+      corpus: '',
       description: []
     },
     layer: {
