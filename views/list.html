@@ -38,33 +38,7 @@
   </div> -->
 
   <div ng-show="browse.medium" class="videogular-container">
-    <canvas id="transparent-plan" height="595" width="1140" style="position: absolute; z-index: 100;"  ng-click="addOnClick($event)"></canvas>
-    <videogular vg-player-ready="onPlayerReady($API)">
-      <vg-media vg-src="browse.mediumSrc"></vg-media>
-      <vg-controls>
-        <vg-play-pause-button></vg-play-pause-button>
-        <vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
-        <vg-scrub-bar>
-          <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-        </vg-scrub-bar>
-        <vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
-        <vg-volume>
-          <vg-mute-button></vg-mute-button>
-          <vg-volume-bar></vg-volume-bar>
-        </vg-volume>
-      </vg-controls>
-    </videogular>
+    <camomile-video src="browse.mediumSrc"></camomile-video>
   </div>
 
-  <uib-accordion close-others="true" ng-show="browse.medium">
-    <uib-accordion-group heading="Controls">
-      <button type="button" name="button" ng-click="alertTimestamp()">Alert le timestamp vidéo</button>
-      <button type="button" name="button" ng-click="videoEnd()">Début vidéo</button>
-      <button type="button" name="button" ng-click="videoBegin()">Fin vidéo</button>
-      <button type="button" name="button" ng-click="nextFrame()">Image suivante</button>
-      <button type="button" name="button" ng-click="previousFrame()">Image précédente</button>
-      <button type="button" name="button" ng-click="testFrame()">Test</button>
-      <button type="button" name="button" ng-click="clearCanvas(true)">Clear canvas</button>
-    </uib-accordion-group>
-  </uib-accordion>
 </div>

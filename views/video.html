@@ -1,0 +1,64 @@
+<div ng-controller='VideoCtrl'>
+  <canvas id="transparent-plan" height="595" width="1140" style="position: absolute; z-index: 100;"  ng-click="addOnClick($event)"></canvas>
+  <videogular vg-player-ready="onPlayerReady($API)">
+    <vg-media vg-src="src"></vg-media>
+    <vg-controls>
+      <vg-play-pause-button></vg-play-pause-button>
+      <vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
+      <vg-scrub-bar>
+        <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+      </vg-scrub-bar>
+      <vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+      <vg-volume>
+        <vg-mute-button></vg-mute-button>
+        <vg-volume-bar></vg-volume-bar>
+      </vg-volume>
+    </vg-controls>
+  </videogular>
+  <div class="row text-center" style="margin-top: 12px; width: 100%;">
+    <div class="col-sm-12">
+      <rzslider
+           rz-slider-model="slider.value"
+           rz-slider-options="slider.options"></rzslider>
+    </div>
+  </div>
+  <div class="row text-center" style="margin-top: 12px; width: 100%;">
+    <button type="button" class="btn btn-default" name="button" ng-click="videoPlay()">Play</button>
+    <button type="button" class="btn btn-default" name="button" ng-click="videoPause()">Pause</button>
+    <button type="button" class="btn btn-default" name="button" ng-click="videoStop()">Stop</button>
+  </div>
+  <div class="text-center btn-group" style="margin-top: 12px; width: 100%;">
+    <div class="col-sm-6">
+      <button type="button" class="btn btn-default" name="button" ng-click="videoEnd()">Début vidéo</button>
+      <button type="button" class="btn btn-default" name="button" ng-click="previousFrame()">Image précédente</button>
+      <button type="button" class="btn btn-default" name="button" ng-click="nextFrame()">Image suivante</button>
+      <button type="button" class="btn btn-default" name="button" ng-click="videoBegin()">Fin vidéo</button>
+    </div>
+    <div class="col-sm-6">
+      <button type="button" class="btn btn-default" name="button" ng-click="alertTimestamp()">Timestamp vidéo</button>
+      <button type="button" class="btn btn-default" name="button" ng-click="testFrame()">Test</button>
+      <button type="button" class="btn btn-default" name="button" ng-click="clearCanvas(true)">Clear canvas</button>
+    </div>
+  </div>
+  <div class="row">
+    <h3>Annotation</h3>
+    <div class="col-sm-6">
+      <h4>Options</h4>
+      <div>
+        <label for="">Forme</label>
+        <select class="" name="" ng-model="annotation.drawStyle">
+          <option value="rectangle">Rectangle</option>
+          <option value="circle">Cercle</option>
+          <option value="free">Libre</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <h4>Annotation actuelle</h4>
+      <div>
+        <label for="">Nom</label>
+        <input type="text" name="name" value="Name">
+      </div>
+    </div>
+  </div>
+</div>

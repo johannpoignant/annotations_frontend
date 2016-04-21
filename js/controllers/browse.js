@@ -2,102 +2,11 @@ angular.module('camomileApp.controllers.browse', [
     "ngSanitize",
     "com.2fdevs.videogular",
     "com.2fdevs.videogular.plugins.controls",
+    "camomileApp.video"
   ])
   .controller('BrowseCtrl', ['$scope', '$sce', 'Camomile', '$log', '$window', '$timeout',
                     function ($scope, $sce, Camomile, $log, $window, $timeout) {
     $scope.Math = window.Math;
-
-    // Video player API
-    $scope.API = null;
-
-    // Methods corresponding
-    $scope.onPlayerReady = function(API) {
-      $scope.API = API;
-    };
-    $scope.alertTimestamp = function() {
-      $window.alert($scope.API.currentTime);
-    };
-    $scope.videoBegin = function() {
-      $scope.API.pause();
-      $scope.API.seekTime(100, true);
-    };
-    $scope.videoEnd = function() {
-      $scope.API.pause();
-      $scope.API.seekTime(0, true);
-    };
-    $scope.nextFrame = function() {
-      var ta = $scope.API.currentTime;
-      $scope.API.seekTime(ta / 1000 + 1 / 25, false);
-    };
-    $scope.previousFrame = function() {
-      var ta = $scope.API.currentTime;
-      $scope.API.seekTime(ta / 1000 - 1 / 25, false);
-    };
-    $scope.testFrame = function() { // Use this as test button
-      //$log.log($scope.API);
-      //var tt = $scope.API.totalTime, ta = $scope.API.currentTime;
-      // 1 sec = 100 / tt
-      /*
-        OBSOLETE
-        EX: 1 sec sur une vidéo de 100s: 100 / 100: 1%
-        1 / 25 sec : 100 / (1 / 25)
-        Pour ajouter une frame, il faut transformer le temps actuel en %
-        Ex: on est a 2s sur 10s: 2000 / 10000 + 100 / (1 / 25)
-      */
-      //$scope.API.seekTime(ta / tt + 100 / (1 / 25), true);
-      //$scope.API.seekTime(0.05, true);
-    };
-
-    // Annotations
-    $scope.annotation = {}; // The annotation object
-    $scope.annotation.visible = false; // Is the annotation visible?
-
-    // Points
-    $scope.annotation.points = []; // Array of points
-    $scope.annotation.drawStyle = "free"; // The drawing style (free, rectangles, circles....)
-
-    // Canvas
-    $scope.canvas = window.document.getElementById('transparent-plan');
-    $scope.context = $scope.canvas.getContext('2d');
-
-    // Setup the canvas, using the points from the annotation object in this scope
-    $scope.setupCanvas = function() {
-      $scope.clearCanvas();
-      var points = $scope.annotation.points;
-      if (points.length > 1) {
-        $scope.context.beginPath();
-        $scope.context.strokeStyle = "#f00"; // COULEUR DU TRAIT
-        $scope.context.moveTo(points[0].x, points[0].y);
-        for (p of points.slice(1, points.length)) {
-          $scope.context.lineTo(p.x, p.y);
-        }
-        $scope.context.stroke();
-        $scope.context.closePath();
-      }
-    }
-
-    // Clears the canvas, and if clearPoints is provided and set to true, will also empty the points array
-    $scope.clearCanvas = function(clearPoints) {
-      clearPoints = clearPoints !== undefined ? clearPoints : false;
-      if (clearPoints) {
-        $scope.annotation.points = [];
-      }
-      $scope.context.clearRect(0, 0, $scope.canvas.width, $scope.canvas.height);
-    }
-
-    $scope.setupCanvas(); // Initial setup of the canvas with the annotation from the server
-
-    // Add a point on click on the canvas
-    $scope.addOnClick = function(event) {
-      var x = event.offsetX;
-      var y = event.offsetY;
-      $scope.annotation.points.push({
-        x: x,
-        y: y
-      });
-
-      $scope.setupCanvas();
-    };
 
     // browsing stauts
     $scope.browse = {};

@@ -1,5 +1,6 @@
 angular.module("camomileApp.controllers.backoffice", [])
 .controller('BackofficeCtrl', ['$scope', '$log', 'Camomile', '$uibModal', function($scope, $log, Camomile, $uibModal) {
+  // Creates modal allowing to edit the description of the object selected
   $scope.setDescription = function(descObject) {
     var modalInstance = $uibModal.open({
       animation: true,
@@ -20,6 +21,7 @@ angular.module("camomileApp.controllers.backoffice", [])
     });
   }
 
+  // Object containing all the informations on the view (use these)
   $scope.creation = {
     user: {
       name: '',
@@ -36,7 +38,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       description: []
     },
     medium: {
-
+      name: ''
     }
   }
 
@@ -59,7 +61,7 @@ angular.module("camomileApp.controllers.backoffice", [])
     $scope.getAllMedia();
   }
 
-  // Read
+  // Read (getters)
   $scope.getAllUsers = function() {
     Camomile.getUsers(function(err, data) {
       if (err) {
@@ -145,6 +147,8 @@ angular.module("camomileApp.controllers.backoffice", [])
     Camomile.createMedium($scope.creation.medium.name, $scope.arrayFromDescObject($scope.creation.medium.description), callback);
   }
 
+  // Transforms an object {key: "...", value: "..."} into ["...", "..."]
+  // Needed to be able to send the description to the server
   $scope.arrayFromDescObject = function(object) {
     var narray = [];
     for (v of object)
@@ -168,23 +172,27 @@ angular.module("camomileApp.controllers.backoffice", [])
 
   $scope.init();
 }])
+// Controller for the description modal
 .controller('CustomizeDescriptionCtrl', function($scope, $uibModalInstance, $log, descObject) {
-  $scope.ve = descObject.description;
+  $scope.ve = descObject.description; // Gets the description
   $scope.descObject = descObject;
 
+  // Adds a new field in ve if needed
   $scope.addField = function() {
     if (!$scope.ve[0] || $scope.ve[$scope.ve.length - 1].key != "")
       $scope.ve.push({key: '', value: ''});
   };
 
+  // Validate the entries
   $scope.ok = function () {
     $scope.descObject.description = $scope.ve.slice(0, $scope.ve.length - 1);
     $uibModalInstance.close();
   };
 
+  // Cancels everything, data will be lost
   $scope.cancel = function () {
     $uibModalInstance.dismiss('cancel');
   };
 
-  $scope.addField();
+  $scope.addField(); // Add a field if needed
 });
