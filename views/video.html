@@ -22,6 +22,14 @@
            rz-slider-options="slider.options"></rzslider>
     </div>
   </div>
+  <div class="row" style="margin-top: 12px;">
+    <div class="col-sm-12">
+      <div ng-repeat="e in events">
+        <div class="event" style="margin-left: {{e.begin}}px; width: {{e.duration}}px;"></div>
+      </div>
+      <div id="eventLine"></div>
+    </div>
+  </div>
   <div class="row text-center" style="margin-top: 12px; width: 100%;">
     <button type="button" class="btn btn-default" name="button" ng-click="videoBegin()"><img src="icons/control-skip-180.png" alt="Début vidéo" /></button>
     <button type="button" class="btn btn-default" name="button" ng-click="previousSecond()"><img src="icons/control-double-180.png" alt="Seconde précédente" /></button>
@@ -43,6 +51,7 @@
     <div class="col-sm-5">
     </div>
   </div> -->
+
   <div class="row">
     <h3>Annotation</h3>
     <div class="col-sm-6">

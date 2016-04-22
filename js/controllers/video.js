@@ -42,6 +42,12 @@ angular.module('camomileApp.controllers.video', [
  * @return {undefined}
  */
 .controller('VideoCtrl', function($scope, $log, $interval, camomileConfigVideo) {
+  $scope.events = [{begin: 20, duration: 20}, {begin: 48, duration: 125}];
+
+  $scope.$watch($scope.events, function() {
+    $log.log('Events changed!');
+  });
+
   /**
    * API of the player
    * @type {Object}
@@ -208,7 +214,7 @@ angular.module('camomileApp.controllers.video', [
 
   /**
    * Draws the point p on the canvas
-   * @param {Object} the point containing the data of the point
+   * @param {Object} p the point containing the data of the point
    * @return {undefined}
    */
   var drawPoint = function(p) {
