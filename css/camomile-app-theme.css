@@ -41,3 +41,26 @@
   overflow: auto;
   color: white;
 }
+
+.inf-msg {
+  -webkit-transition:all linear 0.5s;
+  transition:all linear 0.5s;
+
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 800px;
+  height: 120px;
+  border: 1px solid black;
+  padding: 20px 10px 10px 10px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px #444;
+  font-size: 250%;
+  text-align: center;
+  z-index: 101;
+  background: white;
+}
+
+.inf-msg.ng-hide {
+  opacity: 0;
+}

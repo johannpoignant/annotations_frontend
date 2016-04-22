@@ -5,7 +5,8 @@ angular.module('camomileApp.controllers.video', [
   "ngSanitize",
   "com.2fdevs.videogular",
   "com.2fdevs.videogular.plugins.controls",
-  "rzModule"
+  "rzModule",
+  "ngAnimate"
 ])
 /**
  * Constant for this module
@@ -41,7 +42,21 @@ angular.module('camomileApp.controllers.video', [
  * @param  {function} function($scope, $log,         $interval function executed
  * @return {undefined}
  */
-.controller('VideoCtrl', function($scope, $log, $interval, camomileConfigVideo) {
+.controller('VideoCtrl', function($scope, $log, $interval, $timeout, camomileConfigVideo) {
+  $scope.infMsg = {
+    show: false,
+    message: ''
+  };
+
+  $scope.showMessage = function(message, duration) {
+    duration = duration === undefined ? 5000 : duration;
+    $scope.infMsg.show = true;
+    $scope.infMsg.message = message;
+    $timeout(function() {
+      $scope.infMsg.show = false;
+    }, duration);
+  };
+
   /**
    * An array containing all the events displayed on the eventLine
    * @type {Array}
@@ -232,11 +247,11 @@ angular.module('camomileApp.controllers.video', [
 
   // Points
   $scope.annotations = [];
-  $scope.annotation.points = []; // Array of points
+  $scope.annotation.name = ""; // The name of the annotation or whatever
   $scope.annotation.drawStyle = "free"; // The drawing style (free, rectangles, circles....)
   $scope.annotation.timestamp = 0; // The timestamp of the points (beginning time, in ms)
-  $scope.annotation.name = ""; // The name of the annotation or whatever
   $scope.annotation.duration = 2000; // The duration (in ms)
+  $scope.annotation.points = []; // Array of points
 
   // Canvas
   $scope.canvas = window.document.getElementById('transparent-plan');
@@ -345,6 +360,8 @@ angular.module('camomileApp.controllers.video', [
       $scope.annotation.timestamp = $scope.API.currentTime;
       $scope.annotations.push(JSON.parse(JSON.stringify($scope.annotation)));
       $scope.clearCanvas(true);
+
+      $scope.showMessage("Saved annotation!");
     }
   };
 

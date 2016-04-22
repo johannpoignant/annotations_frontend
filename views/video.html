@@ -54,27 +54,57 @@
 
   <div class="row">
     <h3>Annotation</h3>
-    <div class="col-sm-6">
-      <h4>Options</h4>
-      <div>
-        <label for="">Forme</label>
-        <select class="" ng-model="annotation.drawStyle">
-          <option value="rectangle">Rectangle</option>
-          <option value="circle">Cercle</option>
-          <option value="free">Libre</option>
-        </select>
+    <div class="col-sm-12">
+      <div class="row">
+        <div class="col-sm-6" style="height: 200px;">
+          <h4>Options</h4>
+          <div>
+            <label for="">Forme</label>
+            <select class="" ng-model="annotation.drawStyle">
+              <option value="rectangle">Rectangle</option>
+              <option value="circle">Cercle</option>
+              <option value="free">Libre</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-6" ng-show="annotation.points.length > 1">
+          <h4>Annotation actuelle</h4>
+          <form class="form">
+            <div class="form-group">
+              <label for="aname">Nom</label>
+              <input type="text" class="form-control" name="aname" id="aname" ng-model="annotation.name">
+            </div>
+            <div class="form-group">
+              <label for="aduration">Durée (en millisecondes)</label>
+              <input type="number" class="form-control" name="aduration" id="aduration" step="250" ng-model="annotation.duration">
+            </div>
+          </form>
+        </div>
+      </div>
+      <hr>
+      <h4>Annotations existantes {{infMsg.show}}</h4>
+      <div class="row">
+        <div class="col-sm-12">
+          <table class="table">
+            <thead>
+              <th>Nom</th>
+              <th>Forme</th>
+              <th>Temps de début</th>
+              <th>Durée</th>
+              <th>Points (en JSON)</th>
+            </thead>
+            <tbody>
+              <tr ng-repeat="a in annotations">
+                <td ng-repeat="p in a">{{p}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-    <div class="col-sm-6">
-      <h4>Annotation actuelle</h4>
-      <div>
-        <label for="">Nom</label>
-        <input type="text" name="name" ng-model="annotation.name">
-      </div>
-      <div>
-        <label for="">Durée</label>
-        <input type="number" name="name" ng-model="annotation.duration"> millisecondes (1000ms = 1s)
-      </div>
-    </div>
+  </div>
+
+  <div class="inf-msg" ng-show="infMsg.show">
+    <b>Message:</b> {{infMsg.message}}
   </div>
 </div>
