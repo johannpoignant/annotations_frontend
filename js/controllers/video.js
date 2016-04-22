@@ -30,7 +30,8 @@ angular.module('camomileApp.controllers.video', [
     templateUrl: 'views/video.html',
     restrict: 'E',
     scope: {
-      src: '='
+      src: '=',
+      video: '='
     }
   }
 })
@@ -192,8 +193,12 @@ angular.module('camomileApp.controllers.video', [
   $scope.annotation = {}; // The annotation object
 
   // Points
+  $scope.annotations = [];
   $scope.annotation.points = []; // Array of points
   $scope.annotation.drawStyle = "free"; // The drawing style (free, rectangles, circles....)
+  $scope.annotation.timestamp = 0; // The timestamp of the points (beginning time, in ms)
+  $scope.annotation.name = ""; // The name of the annotation or whatever
+  $scope.annotation.duration = 2000; // The duration (in ms)
 
   // Canvas
   $scope.canvas = window.document.getElementById('transparent-plan');
@@ -201,37 +206,63 @@ angular.module('camomileApp.controllers.video', [
   $scope.context.strokeStyle = camomileConfigVideo.canvas.strokeColor;
   $scope.context.fillStyle = camomileConfigVideo.canvas.fillColor;
 
+  var drawPoint = function(p) {
+    if (p.points.length > 1) {
+      $scope.context.beginPath();
+      if (p.drawStyle == "rectangle") {
+        drawRectangle(p.points);
+      } else if (p.drawStyle == "circle") {
+        drawCircle(p.points);
+      } else if ($scope.annotation.drawStyle == "free") {
+        drawFree(p.points);
+      }
+      $scope.context.stroke();
+      $scope.context.closePath();
+    } else if (p.points.length == 1) {
+      $scope.context.beginPath();
+      $scope.context.arc(p.points[0].x, p.points[0].y, 1, 0, 2 * Math.PI);
+      $scope.context.fill();
+      $scope.context.closePath();
+    }
+  }
+
+  var drawRectangle = function(r) {
+    let w = r[1].x - r[0].x, h = r[1].y - r[0].y;
+    $scope.context.rect(r[0].x, r[0].y, w, h);
+  }
+
+  var drawCircle = function(c) {
+    let m = $scope.Math; // Math js lib
+    // Radius
+    let r = m.abs(m.sqrt(m.pow(c[0].x - c[1].x, 2) + m.pow(c[0].y - c[1].y, 2)));
+    $scope.context.arc(c[0].x, c[0].y, r, 0, 2 * Math.PI);
+  }
+
+  var drawFree = function(f) {
+    $scope.context.moveTo(f[0].x, f[0].y); // We move to the first point
+    for (p of f.slice(1, f.length)) {
+      $scope.context.lineTo(p.x, p.y); // And we draw a line to each point
+    }
+  }
+
   /**
    * Used to setup the canvas on the video
    * @return {undefined}
    */
   $scope.setupCanvas = function() {
     $scope.clearCanvas();
-    var points = $scope.annotation.points;
-    if (points.length > 1) {
-      $scope.context.beginPath();
-      if ($scope.annotation.drawStyle == "rectangle") {
-        var w = points[1].x - points[0].x, h = points[1].y - points[0].y;
-        $scope.context.rect(points[0].x, points[0].y, w, h);
-      } else if ($scope.annotation.drawStyle == "circle") {
-        var m = $scope.Math;
-        var r = m.abs(m.sqrt(m.pow(points[0].x - points[1].x, 2) + m.pow(points[0].y - points[1].y, 2)));
-        $scope.context.arc(points[0].x, points[0].y, r, 0, 2 * Math.PI);
-      } else if ($scope.annotation.drawStyle == "free") {
-        $scope.context.moveTo(points[0].x, points[0].y);
-        for (p of points.slice(1, points.length)) {
-          $scope.context.lineTo(p.x, p.y);
+
+    if ($scope.API) {
+      let time = $scope.API.currentTime;
+      for (a of $scope.annotations) {
+        if (time >= a.timestamp && time <= a.timestamp + a.duration) {
+          drawPoint(a);
         }
       }
-      $scope.context.stroke();
-      $scope.context.closePath();
-    } else if (points.length == 1) {
-      $scope.context.beginPath();
-      $scope.context.arc(points[0].x, points[0].y, 1, 0, 2 * Math.PI);
-      $scope.context.fill();
-      $scope.context.closePath();
+
+      drawPoint($scope.annotation);
     }
-  }
+  };
 
   /**
    * Allow to know if the current drawing has reached the maximum of points it
@@ -248,7 +279,16 @@ angular.module('camomileApp.controllers.video', [
       return true;
     else
       return false;
-  }
+  };
+
+  $scope.saveAnnotation = function() {
+    var JSON = window.JSON;
+    if ($scope.annotation.points.length > 1 && $scope.annotation.name != "") {
+      $scope.annotation.timestamp = $scope.API.currentTime;
+      $scope.annotations.push(JSON.parse(JSON.stringify($scope.annotation)));
+      $scope.clearCanvas(true);
+    }
+  };
 
   /**
    * Clears the canvas, and if clearPoints is provided and set to true, will
@@ -259,9 +299,16 @@ angular.module('camomileApp.controllers.video', [
   $scope.clearCanvas = function(clearPoints) {
     clearPoints = clearPoints !== undefined ? clearPoints : false;
     if (clearPoints) {
-      $scope.annotation.points = [];
+      resetAnnotation();
     }
     $scope.context.clearRect(0, 0, $scope.canvas.width, $scope.canvas.height);
+  };
+
+  var resetAnnotation = function() {
+    $scope.annotation.points = [];
+    $scope.annotation.name = "";
+    $scope.annotation.duration = 2000;
+    $scope.annotation.timestamp = 0;
   }
 
   $scope.setupCanvas(); // Initial setup of the canvas with the annotation from the server
@@ -302,5 +349,6 @@ angular.module('camomileApp.controllers.video', [
       }
     }
     $scope.slider.lastValue = $scope.slider.value;
-  }, 200);
+    $scope.setupCanvas();
+  }, 100);
 });

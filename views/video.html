@@ -23,25 +23,26 @@
     </div>
   </div>
   <div class="row text-center" style="margin-top: 12px; width: 100%;">
-    <button type="button" class="btn btn-default" name="button" ng-click="videoBegin()">Début vidéo</button>
-    <button type="button" class="btn btn-default" name="button" ng-click="videoPlay()">Play</button>
-    <button type="button" class="btn btn-default" name="button" ng-click="videoPause()">Pause</button>
-    <button type="button" class="btn btn-default" name="button" ng-click="videoStop()">Stop</button>
-    <button type="button" class="btn btn-default" name="button" ng-click="videoEnd()">Fin vidéo</button>
+    <button type="button" class="btn btn-default" name="button" ng-click="videoBegin()"><img src="icons/control-skip-180.png" alt="Début vidéo" /></button>
+    <button type="button" class="btn btn-default" name="button" ng-click="previousSecond()"><img src="icons/control-double-180.png" alt="Seconde précédente" /></button>
+    <button type="button" class="btn btn-default" name="button" ng-click="previousFrame()"><img src="icons/control-stop-180.png" alt="Image précédente" /></button>
+    <button type="button" class="btn btn-default" name="button" ng-click="videoPlay()"><img src="icons/control.png" alt="Play" /></button>
+    <button type="button" class="btn btn-default" name="button" ng-click="videoPause()"><img src="icons/control-pause.png" alt="Pause" /></button>
+    <button type="button" class="btn btn-default" name="button" ng-click="videoStop()"><img src="icons/control-stop-square.png" alt="Stop" /></button>
+    <button type="button" class="btn btn-default" name="button" ng-click="nextFrame()"><img src="icons/control-stop.png" alt="Image suivante" /></button>
+    <button type="button" class="btn btn-default" name="button" ng-click="nextSecond()"><img src="icons/control-double.png" alt="Seconde suivante" /></button>
+    <button type="button" class="btn btn-default" name="button" ng-click="videoEnd()"><img src="icons/control-skip.png" alt="Fin vidéo" /></button>
+    <button type="button" class="btn btn-default" name="button" ng-click="alertTimestamp()"><img src="icons/information.png" alt="Info" /></button>
+    <button type="button" class="btn btn-default" name="button" ng-click="testFrame()"><img src="icons/hammer.png" alt="Debug" /></button>
+    <button type="button" class="btn btn-default" name="button" ng-click="clearCanvas(true)"><img src="icons/prohibition.png" alt="Clear canvas" /></button>
+    <button type="button" class="btn btn-default" name="button" ng-click="saveAnnotation()"><img src="icons/film--plus.png" alt="Save annotaion" /></button>
   </div>
-  <div class="text-center btn-group" style="margin-top: 12px; width: 100%;">
+  <!-- <div class="text-center btn-group" style="margin-top: 12px; width: 100%;">
     <div class="col-sm-7">
-      <button type="button" class="btn btn-default" name="button" ng-click="nextFrame()">Seconde précédente</button>
-      <button type="button" class="btn btn-default" name="button" ng-click="previousFrame()">Image précédente</button>
-      <button type="button" class="btn btn-default" name="button" ng-click="nextFrame()">Image suivante</button>
-      <button type="button" class="btn btn-default" name="button" ng-click="nextFrame()">Seconde suivante</button>
     </div>
     <div class="col-sm-5">
-      <button type="button" class="btn btn-default" name="button" ng-click="alertTimestamp()">Timestamp vidéo</button>
-      <button type="button" class="btn btn-default" name="button" ng-click="testFrame()">Test</button>
-      <button type="button" class="btn btn-default" name="button" ng-click="clearCanvas(true)">Clear canvas</button>
     </div>
-  </div>
+  </div> -->
   <div class="row">
     <h3>Annotation</h3>
     <div class="col-sm-6">
@@ -59,7 +60,11 @@
       <h4>Annotation actuelle</h4>
       <div>
         <label for="">Nom</label>
-        <input type="text" name="name" value="Name">
+        <input type="text" name="name" ng-model="annotation.name">
+      </div>
+      <div>
+        <label for="">Durée</label>
+        <input type="number" name="name" ng-model="annotation.duration"> millisecondes (1000ms = 1s)
       </div>
     </div>
   </div>
