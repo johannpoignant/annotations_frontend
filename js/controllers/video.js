@@ -59,6 +59,12 @@ angular.module('camomileApp.controllers.video', [
     message: ''
   };
 
+  /**
+   * Shows a message
+   * @param  {string} message  the message to show
+   * @param  {int} duration the duration to show it
+   * @return {undefined}
+   */
   $scope.showMessage = function(message, duration) {
     duration = duration === undefined ? 5000 : duration;
     $scope.infMsg.show = true;
