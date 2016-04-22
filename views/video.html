@@ -1,5 +1,7 @@
 <div ng-controller='VideoCtrl'>
-  <canvas id="transparent-plan" height="650" width="1140" style="position: absolute; z-index: 100;"  ng-click="addOnClick($event)"></canvas>
+
+  <canvas id="transparent-plan" height="650" width="1140" ng-click="addOnClick($event)"></canvas>
+
   <videogular vg-player-ready="onPlayerReady($API)">
     <vg-media vg-src="src"></vg-media>
     <!-- <vg-controls>
@@ -15,6 +17,7 @@
       </vg-volume>
     </vg-controls> -->
   </videogular>
+
   <div class="row text-center" style="margin-top: 12px;">
     <div class="col-sm-12">
       <rzslider
@@ -22,6 +25,7 @@
            rz-slider-options="slider.options"></rzslider>
     </div>
   </div>
+
   <div class="row" style="margin-top: 12px;">
     <div class="col-sm-12">
       <div ng-repeat="e in events">
@@ -30,6 +34,7 @@
       <div id="eventLine"></div>
     </div>
   </div>
+
   <div class="row text-center" style="margin-top: 12px; width: 100%;">
     <button type="button" class="btn btn-default" name="button" ng-click="videoBegin()"><img src="icons/control-skip-180.png" alt="Début vidéo" /></button>
     <button type="button" class="btn btn-default" name="button" ng-click="previousSecond()"><img src="icons/control-double-180.png" alt="Seconde précédente" /></button>
@@ -45,27 +50,27 @@
     <button type="button" class="btn btn-default" name="button" ng-click="clearCanvas(true)"><img src="icons/prohibition.png" alt="Clear canvas" /></button>
     <button type="button" class="btn btn-default" name="button" ng-click="saveAnnotation()"><img src="icons/film--plus.png" alt="Save annotaion" /></button>
   </div>
-  <!-- <div class="text-center btn-group" style="margin-top: 12px; width: 100%;">
-    <div class="col-sm-7">
-    </div>
-    <div class="col-sm-5">
-    </div>
-  </div> -->
 
   <div class="row">
     <h3>Annotation</h3>
     <div class="col-sm-12">
       <div class="row">
-        <div class="col-sm-6" style="height: 200px;">
+        <div class="col-sm-6">
           <h4>Options</h4>
-          <div>
-            <label for="">Forme</label>
-            <select class="" ng-model="annotation.drawStyle">
-              <option value="rectangle">Rectangle</option>
-              <option value="circle">Cercle</option>
-              <option value="free">Libre</option>
-            </select>
-          </div>
+          <form class="form">
+            <div class="form-group">
+              <label>Forme</label>
+              <select class="form-control" ng-options="o.key as o.description for o in config.annotation.drawStyles" ng-model="config.annotation.drawStyle"></select>
+            </div>
+            <div class="form-group">
+              <label>Couleur du trait</label>
+              <select class="form-control" ng-options="o.color as o.description for o in config.annotation.colors" ng-model="config.annotation.strokeColor"></select>
+            </div>
+            <div class="form-group">
+              <label>Largeur du trait</label>
+              <input class="form-control" type="number" ng-model="config.annotation.strokeWidth">
+            </div>
+          </form>
         </div>
         <div class="col-sm-6" ng-show="annotation.points.length > 1">
           <h4>Annotation actuelle</h4>

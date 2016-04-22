@@ -9,16 +9,6 @@ angular.module('camomileApp.controllers.video', [
   "ngAnimate"
 ])
 /**
- * Constant for this module
- * @return {undefined}
- */
-.constant('camomileConfigVideo', {
-  canvas: {
-    fillColor: '#f00',
-    strokeColor: '#f00'
-  }
-})
-/**
  * Directive to be used in your HTML. Simply import this module and use
  * the directive with <camomile-video src="yourVideoSrc"></camomile-video>
  * NOTE: your video must be trusted by $sce before sent here
@@ -42,7 +32,28 @@ angular.module('camomileApp.controllers.video', [
  * @param  {function} function($scope, $log,         $interval function executed
  * @return {undefined}
  */
-.controller('VideoCtrl', function($scope, $log, $interval, $timeout, camomileConfigVideo) {
+.controller('VideoCtrl', function($scope, $log, $interval, $timeout) {
+  var JSON = window.JSON;
+
+  $scope.config = {};
+  $scope.config.annotation = {
+    strokeColor: '#fff',
+    fillColor: '#fff',
+    colors: [
+      {color: '#f00', description: 'Red'},
+      {color: '#00f', description: 'Blue'},
+      {color: '#0f0', description: 'Green'},
+      {color: '#fff', description: 'White'}
+    ],
+    drawStyle: 'free',
+    drawStyles: [
+      {key: 'free', description: 'Free form'},
+      {key: 'rectangle', description: 'Rectangle'},
+      {key: 'circle', description: 'Circle'}
+    ],
+    strokeWidth: 2
+  };
+
   $scope.infMsg = {
     show: false,
     message: ''
@@ -90,7 +101,6 @@ angular.module('camomileApp.controllers.video', [
    */
   $scope.addEvent = function() {
     if ($scope.event.begin && $scope.event.duration && $scope.event.text) {
-      var JSON = window.JSON;
       $scope.events.push(JSON.parse(JSON.stringify($scope.event)));
     }
   };
@@ -248,16 +258,28 @@ angular.module('camomileApp.controllers.video', [
   // Points
   $scope.annotations = [];
   $scope.annotation.name = ""; // The name of the annotation or whatever
-  $scope.annotation.drawStyle = "free"; // The drawing style (free, rectangles, circles....)
+  $scope.annotation.drawStyle = ''; // Declarative (doesn't do anything else)
   $scope.annotation.timestamp = 0; // The timestamp of the points (beginning time, in ms)
   $scope.annotation.duration = 2000; // The duration (in ms)
   $scope.annotation.points = []; // Array of points
 
+  // Watcher to automatically change the value
+  $scope.$watch("config.annotation.drawStyle", function() {
+    $scope.annotation.drawStyle = $scope.config.annotation.drawStyle;
+  });
+
   // Canvas
   $scope.canvas = window.document.getElementById('transparent-plan');
   $scope.context = $scope.canvas.getContext('2d');
-  $scope.context.strokeStyle = camomileConfigVideo.canvas.strokeColor;
-  $scope.context.fillStyle = camomileConfigVideo.canvas.fillColor;
+  $scope.$watch("config.annotation.strokeColor", function() {
+    $scope.context.strokeStyle = $scope.config.annotation.strokeColor;
+  });
+  $scope.$watch("config.annotation.fillColor", function() {
+    $scope.context.fillStyle = $scope.config.annotation.fillColor;
+  });
+  $scope.$watch("config.annotation.strokeWidth", function() {
+    $scope.context.lineWidth = $scope.config.annotation.strokeWidth;
+  });
 
   /**
    * Draws the point p on the canvas
@@ -355,7 +377,6 @@ angular.module('camomileApp.controllers.video', [
   };
 
   $scope.saveAnnotation = function() {
-    var JSON = window.JSON;
     if ($scope.annotation.points.length > 1 && $scope.annotation.name != "") {
       $scope.annotation.timestamp = $scope.API.currentTime;
       $scope.annotations.push(JSON.parse(JSON.stringify($scope.annotation)));

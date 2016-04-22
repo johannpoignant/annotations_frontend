@@ -21,6 +21,8 @@
 
 #transparent-plan {
   cursor: pointer;
+  position: absolute;
+  z-index: 3;
 }
 
 #eventLine {
@@ -57,7 +59,7 @@
   box-shadow: 0 0 10px #444;
   font-size: 250%;
   text-align: center;
-  z-index: 101;
+  z-index: 4;
   background: white;
 }
 
