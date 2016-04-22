@@ -206,6 +206,11 @@ angular.module('camomileApp.controllers.video', [
   $scope.context.strokeStyle = camomileConfigVideo.canvas.strokeColor;
   $scope.context.fillStyle = camomileConfigVideo.canvas.fillColor;
 
+  /**
+   * Draws the point p on the canvas
+   * @param {Object} the point containing the data of the point
+   * @return {undefined}
+   */
   var drawPoint = function(p) {
     if (p.points.length > 1) {
       $scope.context.beginPath();
@@ -226,24 +231,39 @@ angular.module('camomileApp.controllers.video', [
     }
   }
 
+  /**
+   * Draws a rectangle
+   * @param  {Array} r the points
+   * @return {undefined}
+   */
   var drawRectangle = function(r) {
     let w = r[1].x - r[0].x, h = r[1].y - r[0].y;
     $scope.context.rect(r[0].x, r[0].y, w, h);
-  }
+  };
 
+  /**
+   * Draws a circle
+   * @param  {Array} c the points
+   * @return {undefined}
+   */
   var drawCircle = function(c) {
     let m = $scope.Math; // Math js lib
     // Radius
     let r = m.abs(m.sqrt(m.pow(c[0].x - c[1].x, 2) + m.pow(c[0].y - c[1].y, 2)));
     $scope.context.arc(c[0].x, c[0].y, r, 0, 2 * Math.PI);
-  }
+  };
 
+  /**
+   * Draws a free shape
+   * @param  {Array} f the points
+   * @return {undefined}
+   */
   var drawFree = function(f) {
     $scope.context.moveTo(f[0].x, f[0].y); // We move to the first point
     for (p of f.slice(1, f.length)) {
       $scope.context.lineTo(p.x, p.y); // And we draw a line to each point
     }
-  }
+  };
 
   /**
    * Used to setup the canvas on the video
