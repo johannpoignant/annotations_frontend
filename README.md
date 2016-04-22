@@ -10,7 +10,16 @@ It is composed of several views (one for the editing and one for the backoffice 
 
 ## Screenshots
 
-![Screenshot](/screenshot2.png)
+![Screenshot](/screenshot3_1.png)
+![Screenshot2](/screenshot3_2.png)
+
+## Changelog
+
+Added timeline for events
+
+## Working on...
+
+The D3 graphs, with NVD3 for angular
 
 ## Credits
 CNRS 2015 - 2016
