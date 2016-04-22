@@ -42,11 +42,43 @@ angular.module('camomileApp.controllers.video', [
  * @return {undefined}
  */
 .controller('VideoCtrl', function($scope, $log, $interval, camomileConfigVideo) {
-  $scope.events = [{begin: 20, duration: 20}, {begin: 48, duration: 125}];
+  /**
+   * An array containing all the events displayed on the eventLine
+   * @type {Array}
+   */
+  $scope.events = [{begin: 20, duration: 20, text: "Test"}, {begin: 48, duration: 125, text: "Test 2"}];
 
+  /**
+   * The local event var. Contain temporary informations
+   * @type {Object}
+   */
+  $scope.event = {
+    begin: 0,
+    end: 0,
+    text: ""
+  };
+
+  /**
+   * Watcher on $scope.event; exec function when the events array changed
+   * @param  {Array} $scope.events the events Array
+   * @param  {function} function(     the function to be executed when a change
+   * is made (the watcher will automatically trigger it)
+   * @return {undefined}
+   */
   $scope.$watch($scope.events, function() {
     $log.log('Events changed!');
   });
+
+  /**
+   * Adds the event in the scope to the list of events displayed on the eventLine
+   * @return {undefined}
+   */
+  $scope.addEvent = function() {
+    if ($scope.event.begin && $scope.event.duration && $scope.event.text) {
+      var JSON = window.JSON;
+      $scope.events.push(JSON.parse(JSON.stringify($scope.event)));
+    }
+  };
 
   /**
    * API of the player

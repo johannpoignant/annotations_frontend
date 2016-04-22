@@ -1,0 +1,43 @@
+.list-view {
+  width: 100%;
+  border: 1px solid black;
+}
+
+.annotation {
+  position: absolute;
+  border: 3px solid green;
+  width: 100px;
+  height: 100px;
+  z-index: 230;
+}
+
+.videogular-container {
+  position: relative;
+}
+
+.cview .btn {
+  margin-top: 10px;
+}
+
+#transparent-plan {
+  cursor: pointer;
+}
+
+#eventLine {
+  border: 1px solid black;
+  width: 1140px;
+  height: 25px;
+  border: 1px solid grey;
+  border-radius: 6px;
+}
+
+.event {
+  position: absolute;
+  height: 23px;
+  background-color: #07f;
+  margin-top: 1px;
+  text-align: center;
+  padding-top: 2px;
+  overflow: auto;
+  color: white;
+}

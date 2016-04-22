@@ -25,7 +25,7 @@
   <div class="row" style="margin-top: 12px;">
     <div class="col-sm-12">
       <div ng-repeat="e in events">
-        <div class="event" style="margin-left: {{e.begin}}px; width: {{e.duration}}px;"></div>
+        <div class="event" style="margin-left: {{e.begin}}px; width: {{e.duration}}px;">{{e.text}}</div>
       </div>
       <div id="eventLine"></div>
     </div>
