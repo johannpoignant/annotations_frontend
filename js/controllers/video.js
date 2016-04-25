@@ -34,13 +34,24 @@ angular.module('camomileApp.controllers.video', [
  * @return {undefined}
  */
 .controller('VideoCtrl', function($scope, $log, $interval, $timeout) {
+  /**
+   * JSON shortcut
+   * @type {Object}
+   */
   var JSON = window.JSON;
 
   /**
+   * Math shortcut
+   * @type {Object}
+   */
+  $scope.Math = window.Math;
+
+  /**
    * Class used for the canvas
+   * Using random generated int for identification
    * @type {String}
    */
-  $scope.videoClass = "video-div";
+  $scope.videoClass = "video-div-" + $scope.Math.floor($scope.Math.random() * 1000 + 1);
 
   /**
    * Dimensions of several object
@@ -64,18 +75,24 @@ angular.module('camomileApp.controllers.video', [
    * @return {undefined}
    */
   $scope.setStyles = function() {
+    // If the styles are correct, don't update them
     if ($scope.dimensions.height == angular.element(document.querySelector('.' + $scope.videoClass))[0].offsetHeight) {
       return;
     }
 
+    // Global dimensions
     $scope.dimensions.height = angular.element(document.querySelector('.' + $scope.videoClass))[0].offsetHeight;
     $scope.dimensions.width = angular.element(document.querySelector('.' + $scope.videoClass))[0].offsetWidth;
 
+    // Video player dimensions
     $scope.dimensions.video.height = angular.element(document.querySelector('.' + $scope.videoClass + ' videogular'))[0].offsetHeight;
     $scope.dimensions.video.width = angular.element(document.querySelector('.' + $scope.videoClass + ' videogular'))[0].offsetWidth;
 
+    // Controls and infos pannel dimensions
     $scope.dimensions.others.height = angular.element(document.querySelector('.' + $scope.videoClass + ' .others'))[0].offsetHeight;
     $scope.dimensions.others.width = angular.element(document.querySelector('.' + $scope.videoClass + ' .others'))[0].offsetWidth;
+
+    $scope.graphAPI.refresh();
   };
 
   /**
@@ -83,14 +100,14 @@ angular.module('camomileApp.controllers.video', [
    * @return {Object} The curves with titles and color
    */
   var sinAndCos = function () {
-    var sin = [],sin2 = [],
+    var sin = [], sin2 = [],
     cos = [];
 
     //Data is represented as an array of {x,y} pairs.
     for (var i = 0; i < 100; i++) {
       sin.push({x: i, y: Math.sin(i/10)});
-      sin2.push({x: i, y: i % 10 == 5 ? null : Math.sin(i/10) *0.25 + 0.5});
-      cos.push({x: i, y: .5 * Math.cos(i/10+ 2) + Math.random() / 10});
+      sin2.push({x: i, y: i % 10 == 5 ? null : Math.sin(i/10) * 0.25 + 0.5});
+      cos.push({x: i, y: .5 * Math.cos(i/10 + 2) + Math.random() / 10});
     }
 
     //Line chart data should be sent as an array of series objects.
@@ -109,7 +126,7 @@ angular.module('camomileApp.controllers.video', [
         values: sin2,
         key: 'Another sine wave',
         color: '#7777ff',
-        area: true      //area - set to true if you want this line to turn into a filled area chart.
+        area: true      // area - set to true if you want this line to turn into a filled area chart.
       }
     ];
   };
@@ -129,26 +146,26 @@ angular.module('camomileApp.controllers.video', [
           bottom: 40,
           left: 55
         },
-        x: function(d){ return d.x; },
-        y: function(d){ return d.y; },
+        x: function(d) { return d.x; },
+        y: function(d) { return d.y; },
         useInteractiveGuideline: true,
         dispatch: {
-          stateChange: function(e){ console.log("stateChange"); },
-          changeState: function(e){ console.log("changeState"); },
-          tooltipShow: function(e){ console.log("tooltipShow"); },
-          tooltipHide: function(e){ console.log("tooltipHide"); }
+          stateChange: function(e) { console.log("stateChange"); },
+          changeState: function(e) { console.log("changeState"); },
+          tooltipShow: function(e) { console.log("tooltipShow"); },
+          tooltipHide: function(e) { console.log("tooltipHide"); }
         },
         xAxis: {
           axisLabel: 'Time (ms)'
         },
         yAxis: {
           axisLabel: 'Voltage (v)',
-          tickFormat: function(d){
+          tickFormat: function(d) {
             return d3.format('.02f')(d);
           },
           axisLabelDistance: -10
         },
-        callback: function(chart){
+        callback: function(chart) {
           console.log("!!! lineChart callback !!!");
         }
       },
@@ -176,28 +193,50 @@ angular.module('camomileApp.controllers.video', [
     data: sinAndCos()
   };
 
+  $scope.graphCallback = function(scope, element) {
+    // this code will be applied once directive has been created
+    // scope - is the directive internal scope
+    // element - directive DOM element
+    var api = scope.api;
+    // var chart = scope.chart;
+    // var svg = scope.svg;
+
+    $scope.graphAPI = api;
+    // ... do smth
+  };
+
+  // Initial empty object
   $scope.config = {};
+
+  /**
+   * Contains the configuration of the annotation module
+   * @type {Object}
+   */
   $scope.config.annotation = {
-    strokeColor: '#fff',
-    fillColor: '#fff',
-    colors: [
+    strokeColor: '#fff', // Stroke color choosen
+    fillColor: '#fff', // Fill color choosen
+    colors: [ // Colors available
       {color: '#f00', description: 'Red'},
       {color: '#00f', description: 'Blue'},
       {color: '#0f0', description: 'Green'},
       {color: '#fff', description: 'White'}
     ],
-    drawStyle: 'free',
-    drawStyles: [
+    drawStyle: 'free', // Style choosen
+    drawStyles: [ // Styles available
       {key: 'free', description: 'Free form'},
       {key: 'rectangle', description: 'Rectangle'},
       {key: 'circle', description: 'Circle'}
     ],
-    strokeWidth: 2
+    strokeWidth: 2 // Stroke width (line width) choosen
   };
 
+  /**
+   * Utility for the little popup
+   * @type {Object}
+   */
   $scope.infMsg = {
-    show: false,
-    message: ''
+    show: false, // Is it displayed?
+    message: '' // The message stored
   };
 
   /**
@@ -258,12 +297,6 @@ angular.module('camomileApp.controllers.video', [
    * @type {Object}
    */
   $scope.API = undefined;
-
-  /**
-   * Math shortcut
-   * @type {Object}
-   */
-  $scope.Math = window.Math;
 
   /**
    * Slider object for using as timeline below video.
@@ -429,6 +462,12 @@ angular.module('camomileApp.controllers.video', [
     $scope.context.lineWidth = $scope.config.annotation.strokeWidth;
   });
 
+  $scope.reloadAnnotationStyles = function() {
+    $scope.context.strokeStyle = $scope.config.annotation.strokeColor;
+    $scope.context.fillStyle = $scope.config.annotation.fillColor;
+    $scope.context.lineWidth = $scope.config.annotation.strokeWidth;
+  };
+
   /**
    * Draws the point p on the canvas
    * @param {Object} p the point containing the data of the point
@@ -494,6 +533,7 @@ angular.module('camomileApp.controllers.video', [
    */
   $scope.setupCanvas = function() {
     $scope.clearCanvas();
+    $scope.reloadAnnotationStyles();
 
     if ($scope.API) {
       let time = $scope.API.currentTime;
@@ -524,6 +564,10 @@ angular.module('camomileApp.controllers.video', [
       return false;
   };
 
+  /**
+   * Saves the annotation into the annotations array
+   * @return {undefined}
+   */
   $scope.saveAnnotation = function() {
     if ($scope.annotation.points.length > 1 && $scope.annotation.name != "") {
       $scope.annotation.timestamp = $scope.API.currentTime;
@@ -548,6 +592,10 @@ angular.module('camomileApp.controllers.video', [
     $scope.context.clearRect(0, 0, $scope.canvas.width, $scope.canvas.height);
   };
 
+  /**
+   * Resets the annotation
+   * @return {undefined}
+   */
   var resetAnnotation = function() {
     $scope.annotation.points = [];
     $scope.annotation.name = "";
@@ -576,7 +624,11 @@ angular.module('camomileApp.controllers.video', [
     $scope.setupCanvas();
   };
 
-  $interval(function () {
+  /**
+   * Interval used to set the styles each second.
+   * @return {interval}
+   */
+  $scope.intervalStyle = $interval(function () {
     $scope.setStyles();
   }, 2000);
 
@@ -597,12 +649,14 @@ angular.module('camomileApp.controllers.video', [
       }
     }
     $scope.slider.lastValue = $scope.slider.value;
+
+    // Calculate the margin left needed to follow the slider position
     let ref = $scope.slider.value / $scope.Math.floor($scope.API.totalTime / 1000) * ($scope.dimensions.width - 32);
     $scope.timebar = {
-      // Margin left: XXXX -------------- XXXX
       "margin-left": ref + 'px',
-      "height": $scope.dimensions.others.height
+      "height": $scope.dimensions.others.height // Same height as its parent
     }
+
     $scope.setupCanvas();
   }, 100);
 });
