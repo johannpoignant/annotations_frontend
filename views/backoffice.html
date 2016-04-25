@@ -89,11 +89,49 @@
           <label for="userselect">Add user...</label>
           <select class="form-control" ng-options="u._id as u.username for u in usersExisting" id="userselect" ng-model="creation.userToGroup.userId"></select>
         </div>
-        <div class="form-group" ng-show="usersExisting">
+        <div class="form-group" ng-show="groupsExisting">
           <label for="groupselect">To group...</label>
           <select class="form-control" ng-options="g._id as g.name for g in groupsExisting" id="groupselect" ng-model="creation.userToGroup.groupId"></select>
         </div>
         <button type="button" class="btn btn-primary form-control" ng-click="addUserToGroup()">Add</button>
+      </form>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <h4>Give rights on a corpus</h4>
+      <form>
+        <div class="form-group">
+          <label for="corpusname">User</label>
+          <select class="form-control" ng-options="u._id as u.username for u in usersExisting" ng-model="creation.rightsToUserOnCorpus.userId"></select>
+        </div>
+        <div class="form-group">
+          <label for="corpusname">Corpus</label>
+          <select class="form-control" ng-options="c._id as c.name for c in corporaExisting" ng-model="creation.rightsToUserOnCorpus.corpusId"></select>
+        </div>
+        <div class="form-group">
+          <label for="corpusname">Rights</label>
+          <select class="form-control" ng-options="r.key as r.value for r in rightsExisting" ng-model="creation.rightsToUserOnCorpus.rights"></select>
+        </div>
+        <button type="button" class="btn btn-primary form-control" ng-click="addRightsToUserOnCorpus()">Create</button>
+      </form>
+    </div>
+    <div class="col-sm-4">
+      <h4>Give rights on a corpus</h4>
+      <form>
+        <div class="form-group">
+          <label for="corpusname">User</label>
+          <select class="form-control" ng-options="u._id as u.username for u in usersExisting" ng-model="creation.rightsToUserOnLayer.userId"></select>
+        </div>
+        <div class="form-group">
+          <label for="corpusname">Layer</label>
+          <select class="form-control" ng-options="l._id as l.name for l in layersExisting" ng-model="creation.rightsToUserOnLayer.corpusId"></select>
+        </div>
+        <div class="form-group">
+          <label for="corpusname">Rights</label>
+          <select class="form-control" ng-options="r.key as r.value for r in rightsExisting" ng-model="creation.rightsToUserOnLayer.rights"></select>
+        </div>
+        <button type="button" class="btn btn-primary form-control" ng-click="addRightsToUserOnLayer()">Create</button>
       </form>
     </div>
   </div>
@@ -205,7 +243,7 @@
     </table>
   </div>
 </div>
-<div class="row">  
+<div class="row">
   <div class="col-sm-6">
     <h4>Existing media</h4>
     <table class="table">

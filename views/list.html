@@ -2,7 +2,7 @@
      Mdp: aqwzsxedc
      Compte: root
      Mdp: roO7p4s5wOrD -->
-<div class="container">
+<div class="container" ng-show="loaded">
   <h2 style="margin: 0 auto 20px auto;">Choix des paramètres</h2>
   <form class="form-horizontal">
     <div class="form-group">
@@ -40,5 +40,6 @@
   <div ng-show="browse.medium" class="videogular-container">
     <camomile-video src="browse.mediumSrc"></camomile-video>
   </div>
-
 </div>
+
+<div class="loader" ng-hide="loaded"></div>

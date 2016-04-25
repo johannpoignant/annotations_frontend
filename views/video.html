@@ -1,6 +1,5 @@
-<div ng-controller='VideoCtrl'>
-
-  <canvas id="transparent-plan" height="650" width="1140" ng-click="addOnClick($event)"></canvas>
+<div ng-controller='VideoCtrl' ng-class="videoClass">
+  <canvas class="transparent-plan" ng-click="addOnClick($event)" height="{{dimensions.video.height}}" width="{{dimensions.video.width}}"></canvas>
 
   <videogular vg-player-ready="onPlayerReady($API)">
     <vg-media vg-src="src"></vg-media>
@@ -19,24 +18,7 @@
     </vg-controls> -->
   </videogular>
 
-  <div class="row text-center" style="margin-top: 12px;">
-    <div class="col-sm-12">
-      <rzslider
-           rz-slider-model="slider.value"
-           rz-slider-options="slider.options"></rzslider>
-    </div>
-  </div>
-
-  <div class="row" style="margin-top: 12px;">
-    <div class="col-sm-12">
-      <div ng-repeat="e in events">
-        <div class="event" style="margin-left: {{e.begin}}px; width: {{e.duration}}px;">{{e.text}}</div>
-      </div>
-      <div id="eventLine"></div>
-    </div>
-  </div>
-
-  <div class="row text-center" style="margin-top: 12px; width: 100%;">
+  <div class="row text-center video-elem">
     <button type="button" class="btn btn-default" name="button" ng-click="videoBegin()"><img src="icons/control-skip-180.png" alt="Début vidéo" /></button>
     <button type="button" class="btn btn-default" name="button" ng-click="previousSecond()"><img src="icons/control-double-180.png" alt="Seconde précédente" /></button>
     <button type="button" class="btn btn-default" name="button" ng-click="previousFrame()"><img src="icons/control-stop-180.png" alt="Image précédente" /></button>
@@ -52,11 +34,37 @@
     <button type="button" class="btn btn-default" name="button" ng-click="saveAnnotation()"><img src="icons/film--plus.png" alt="Save annotaion" /></button>
   </div>
 
-  <!-- <div class="row">
-    <div class="col-sm-12">
-      <nvd3 options="graph.options" data="graph.data"></nvd3>
+  <div class="others">
+    <div class="slider-ref">
+      <div class="timebar" ng-style="timebar"></div>
     </div>
-  </div> -->
+
+    <div class="row text-center video-elem">
+      <div class="col-sm-12">
+        <rzslider
+             rz-slider-model="slider.value"
+             rz-slider-options="slider.options"></rzslider>
+      </div>
+    </div>
+
+    <div class="row video-elem">
+      <div class="col-sm-12 slider-ref">
+        <div ng-repeat="e in events">
+          <div class="event" style="margin-left: {{e.begin}}px; width: {{e.duration}}px;">{{e.text}}</div>
+        </div>
+        <div class="eventLine"></div>
+      </div>
+    </div>
+
+
+    <div class="row video-elem">
+      <div class="col-sm-12 slider-ref">
+        <div class="graph">
+          <nvd3 options="graph.options" data="graph.data"></nvd3>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="row">
     <h3>Annotation</h3>

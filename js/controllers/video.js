@@ -6,8 +6,8 @@ angular.module('camomileApp.controllers.video', [
   "com.2fdevs.videogular",
   "com.2fdevs.videogular.plugins.controls",
   "rzModule",
-  "ngAnimate"
-  // "nvd3"
+  "ngAnimate",
+  "nvd3"
 ])
 /**
  * Directive to be used in your HTML. Simply import this module and use
@@ -36,97 +36,145 @@ angular.module('camomileApp.controllers.video', [
 .controller('VideoCtrl', function($scope, $log, $interval, $timeout) {
   var JSON = window.JSON;
 
-  // var sinAndCos = function () {
-  //   var sin = [],sin2 = [],
-  //   cos = [];
-  //
-  //   //Data is represented as an array of {x,y} pairs.
-  //   for (var i = 0; i < 100; i++) {
-  //     sin.push({x: i, y: Math.sin(i/10)});
-  //     sin2.push({x: i, y: i % 10 == 5 ? null : Math.sin(i/10) *0.25 + 0.5});
-  //     cos.push({x: i, y: .5 * Math.cos(i/10+ 2) + Math.random() / 10});
-  //   }
-  //
-  //   //Line chart data should be sent as an array of series objects.
-  //   return [
-  //     {
-  //       values: sin,      //values - represents the array of {x,y} data points
-  //       key: 'Sine Wave', //key  - the name of the series.
-  //       color: '#ff7f0e'  //color - optional: choose your own line color.
-  //     },
-  //     {
-  //       values: cos,
-  //       key: 'Cosine Wave',
-  //       color: '#2ca02c'
-  //     },
-  //     {
-  //       values: sin2,
-  //       key: 'Another sine wave',
-  //       color: '#7777ff',
-  //       area: true      //area - set to true if you want this line to turn into a filled area chart.
-  //     }
-  //   ];
-  // };
-  //
-  // $scope.graph = {
-  //   options: {
-  //     chart: {
-  //       type: 'lineChart',
-  //       height: 450,
-  //       margin : {
-  //         top: 20,
-  //         right: 20,
-  //         bottom: 40,
-  //         left: 55
-  //       },
-  //       x: function(d){ return d.x; },
-  //       y: function(d){ return d.y; },
-  //       useInteractiveGuideline: true,
-  //       dispatch: {
-  //         stateChange: function(e){ console.log("stateChange"); },
-  //         changeState: function(e){ console.log("changeState"); },
-  //         tooltipShow: function(e){ console.log("tooltipShow"); },
-  //         tooltipHide: function(e){ console.log("tooltipHide"); }
-  //       },
-  //       xAxis: {
-  //         axisLabel: 'Time (ms)'
-  //       },
-  //       yAxis: {
-  //         axisLabel: 'Voltage (v)',
-  //         tickFormat: function(d){
-  //           return d3.format('.02f')(d);
-  //         },
-  //         axisLabelDistance: -10
-  //       },
-  //       callback: function(chart){
-  //         console.log("!!! lineChart callback !!!");
-  //       }
-  //     },
-  //     title: {
-  //       enable: false,
-  //       text: 'Title for Line Chart'
-  //     },
-  //     subtitle: {
-  //       enable: false,
-  //       text: 'Subtitle for simple line chart. Lorem ipsum dolor sit amet, at eam blandit sadipscing, vim adhuc sanctus disputando ex, cu usu affert alienum urbanitas.',
-  //       css: {
-  //         'text-align': 'center',
-  //         'margin': '10px 13px 0px 7px'
-  //       }
-  //     },
-  //     caption: {
-  //       enable: false,
-  //       html: '<b>Figure 1.</b> Lorem ipsum dolor sit amet, at eam blandit sadipscing, <span style="text-decoration: underline;">vim adhuc sanctus disputando ex</span>, cu usu affert alienum urbanitas. <i>Cum in purto erat, mea ne nominavi persecuti reformidans.</i> Docendi blandit abhorreant ea has, minim tantas alterum pro eu. <span style="color: darkred;">Exerci graeci ad vix, elit tacimates ea duo</span>. Id mel eruditi fuisset. Stet vidit patrioque in pro, eum ex veri verterem abhorreant, id unum oportere intellegam nec<sup>[1, <a href="https://github.com/krispo/angular-nvd3" target="_blank">2</a>, 3]</sup>.',
-  //       css: {
-  //         'text-align': 'justify',
-  //         'margin': '10px 13px 0px 7px'
-  //       }
-  //     }
-  //   },
-  //   data: sinAndCos()
-  // };
+  /**
+   * Class used for the canvas
+   * @type {String}
+   */
+  $scope.videoClass = "video-div";
 
+  /**
+   * Dimensions of several object
+   * @type {Object}
+   */
+  $scope.dimensions = {
+    width: 0,
+    height: 0,
+    video: {
+      width: 0,
+      height: 0
+    },
+    others: {
+      width: 0,
+      height: 0
+    }
+  };
 
+  /**
+   * Sets the dimensions in the webpage
+   * @return {undefined}
+   */
+  $scope.setStyles = function() {
+    if ($scope.dimensions.height == angular.element(document.querySelector('.' + $scope.videoClass))[0].offsetHeight) {
+      return;
+    }
+
+    $scope.dimensions.height = angular.element(document.querySelector('.' + $scope.videoClass))[0].offsetHeight;
+    $scope.dimensions.width = angular.element(document.querySelector('.' + $scope.videoClass))[0].offsetWidth;
+
+    $scope.dimensions.video.height = angular.element(document.querySelector('.' + $scope.videoClass + ' videogular'))[0].offsetHeight;
+    $scope.dimensions.video.width = angular.element(document.querySelector('.' + $scope.videoClass + ' videogular'))[0].offsetWidth;
+
+    $scope.dimensions.others.height = angular.element(document.querySelector('.' + $scope.videoClass + ' .others'))[0].offsetHeight;
+    $scope.dimensions.others.width = angular.element(document.querySelector('.' + $scope.videoClass + ' .others'))[0].offsetWidth;
+  };
+
+  /**
+   * Generates curves for the example output in the graph
+   * @return {Object} The curves with titles and color
+   */
+  var sinAndCos = function () {
+    var sin = [],sin2 = [],
+    cos = [];
+
+    //Data is represented as an array of {x,y} pairs.
+    for (var i = 0; i < 100; i++) {
+      sin.push({x: i, y: Math.sin(i/10)});
+      sin2.push({x: i, y: i % 10 == 5 ? null : Math.sin(i/10) *0.25 + 0.5});
+      cos.push({x: i, y: .5 * Math.cos(i/10+ 2) + Math.random() / 10});
+    }
+
+    //Line chart data should be sent as an array of series objects.
+    return [
+      {
+        values: sin,      //values - represents the array of {x,y} data points
+        key: 'Sine Wave', //key  - the name of the series.
+        color: '#ff7f0e'  //color - optional: choose your own line color.
+      },
+      {
+        values: cos,
+        key: 'Cosine Wave',
+        color: '#2ca02c'
+      },
+      {
+        values: sin2,
+        key: 'Another sine wave',
+        color: '#7777ff',
+        area: true      //area - set to true if you want this line to turn into a filled area chart.
+      }
+    ];
+  };
+
+  /**
+   * Graph options
+   * @type {Object}
+   */
+  $scope.graph = {
+    options: {
+      chart: {
+        type: 'lineChart',
+        height: 450,
+        margin : {
+          top: 20,
+          right: 20,
+          bottom: 40,
+          left: 55
+        },
+        x: function(d){ return d.x; },
+        y: function(d){ return d.y; },
+        useInteractiveGuideline: true,
+        dispatch: {
+          stateChange: function(e){ console.log("stateChange"); },
+          changeState: function(e){ console.log("changeState"); },
+          tooltipShow: function(e){ console.log("tooltipShow"); },
+          tooltipHide: function(e){ console.log("tooltipHide"); }
+        },
+        xAxis: {
+          axisLabel: 'Time (ms)'
+        },
+        yAxis: {
+          axisLabel: 'Voltage (v)',
+          tickFormat: function(d){
+            return d3.format('.02f')(d);
+          },
+          axisLabelDistance: -10
+        },
+        callback: function(chart){
+          console.log("!!! lineChart callback !!!");
+        }
+      },
+      title: {
+        enable: false,
+        text: 'Title for Line Chart'
+      },
+      subtitle: {
+        enable: false,
+        text: 'Subtitle for simple line chart. Lorem ipsum dolor sit amet, at eam blandit sadipscing, vim adhuc sanctus disputando ex, cu usu affert alienum urbanitas.',
+        css: {
+          'text-align': 'center',
+          'margin': '10px 13px 0px 7px'
+        }
+      },
+      caption: {
+        enable: false,
+        html: '<b>Figure 1.</b> Lorem ipsum dolor sit amet, at eam blandit sadipscing, <span style="text-decoration: underline;">vim adhuc sanctus disputando ex</span>, cu usu affert alienum urbanitas. <i>Cum in purto erat, mea ne nominavi persecuti reformidans.</i> Docendi blandit abhorreant ea has, minim tantas alterum pro eu. <span style="color: darkred;">Exerci graeci ad vix, elit tacimates ea duo</span>. Id mel eruditi fuisset. Stet vidit patrioque in pro, eum ex veri verterem abhorreant, id unum oportere intellegam nec<sup>[1, <a href="https://github.com/krispo/angular-nvd3" target="_blank">2</a>, 3]</sup>.',
+        css: {
+          'text-align': 'justify',
+          'margin': '10px 13px 0px 7px'
+        }
+      }
+    },
+    data: sinAndCos()
+  };
 
   $scope.config = {};
   $scope.config.annotation = {
@@ -192,6 +240,7 @@ angular.module('camomileApp.controllers.video', [
    */
   $scope.$watch($scope.events, function() {
     $log.log('Events changed!');
+    $scope.loaded = true;
   });
 
   /**
@@ -368,7 +417,7 @@ angular.module('camomileApp.controllers.video', [
   });
 
   // Canvas
-  $scope.canvas = window.document.getElementById('transparent-plan');
+  $scope.canvas = window.document.getElementsByClassName('transparent-plan')[0];
   $scope.context = $scope.canvas.getContext('2d');
   $scope.$watch("config.annotation.strokeColor", function() {
     $scope.context.strokeStyle = $scope.config.annotation.strokeColor;
@@ -527,6 +576,10 @@ angular.module('camomileApp.controllers.video', [
     $scope.setupCanvas();
   };
 
+  $interval(function () {
+    $scope.setStyles();
+  }, 2000);
+
   /**
    * Set up the interval for the synchronisation of the slider with the player
    */
@@ -544,6 +597,12 @@ angular.module('camomileApp.controllers.video', [
       }
     }
     $scope.slider.lastValue = $scope.slider.value;
+    let ref = $scope.slider.value / $scope.Math.floor($scope.API.totalTime / 1000) * ($scope.dimensions.width - 32);
+    $scope.timebar = {
+      // Margin left: XXXX -------------- XXXX
+      "margin-left": ref + 'px',
+      "height": $scope.dimensions.others.height
+    }
     $scope.setupCanvas();
   }, 100);
 });

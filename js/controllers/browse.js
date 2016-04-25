@@ -8,6 +8,8 @@ angular.module('camomileApp.controllers.browse', [
                     function ($scope, $sce, Camomile, $log, $window, $timeout) {
     $scope.Math = window.Math;
 
+    $scope.loaded = false;
+
     // browsing stauts
     $scope.browse = {};
 
@@ -34,6 +36,7 @@ angular.module('camomileApp.controllers.browse', [
           corpora = [];
         } else {
           corpora = data;
+          $scope.loaded = true;
         }
 
         $timeout(function() {

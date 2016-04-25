@@ -19,7 +19,7 @@ angular.module("camomileApp.controllers.backoffice", [])
     }, function () {
       $log.info('Canceled edit');
     });
-  }
+  };
 
   // Object containing all the informations on the view (use these)
   $scope.creation = {
@@ -50,8 +50,18 @@ angular.module("camomileApp.controllers.backoffice", [])
     userToGroup: {
       userId: '',
       groupId: ''
+    },
+    rightsToUserOnCorpus: {
+      userId: '',
+      corpusId: '',
+      rights: ''
+    },
+    rightsToUserOnLayer: {
+      userId: '',
+      layerId: '',
+      rights: ''
     }
-  }
+  };
 
   // Array of users
   $scope.usersExisting = undefined;
@@ -63,6 +73,12 @@ angular.module("camomileApp.controllers.backoffice", [])
   $scope.mediaExisting = undefined;
   // Array of layer
   $scope.layersExisting = undefined;
+  // Array of rights
+  $scope.rightsExisting = [
+    {key: 1, value: 'Read'},
+    {key: 2, value: 'Write'},
+    {key: 3, value: 'Admin'}
+  ];
 
   // Runs at init of module
   $scope.init = function() {
@@ -71,7 +87,7 @@ angular.module("camomileApp.controllers.backoffice", [])
     $scope.getAllCorpora();
     $scope.getAllMedia();
     $scope.getAllLayers();
-  }
+  };
 
   // Read (getters)
   $scope.getAllUsers = function() {
@@ -84,7 +100,7 @@ angular.module("camomileApp.controllers.backoffice", [])
         });
       }
     });
-  }
+  };
 
   $scope.getAllGroups = function() {
     Camomile.getGroups(function(err, data) {
@@ -96,7 +112,7 @@ angular.module("camomileApp.controllers.backoffice", [])
         });
       }
     });
-  }
+  };
 
   $scope.getAllCorpora = function() {
     Camomile.getCorpora(function(err, data) {
@@ -108,7 +124,7 @@ angular.module("camomileApp.controllers.backoffice", [])
         });
       }
     });
-  }
+  };
 
   $scope.getAllMedia = function() {
     Camomile.getMedia(function(err, data) {
@@ -120,7 +136,7 @@ angular.module("camomileApp.controllers.backoffice", [])
         });
       }
     });
-  }
+  };
 
   $scope.getAllLayers = function() {
     Camomile.getLayers(function(err, data) {
@@ -132,7 +148,7 @@ angular.module("camomileApp.controllers.backoffice", [])
         });
       }
     });
-  }
+  };
 
   // Create
   $scope.createNewUser = function() {
@@ -145,7 +161,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       }
     }
     Camomile.createUser(da.name, da.password, $scope.arrayFromDescObject(da.description), da.role, callback);
-  }
+  };
 
   $scope.createNewGroup = function() {
     var da = $scope.creation.group;
@@ -157,7 +173,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       }
     }
     Camomile.createGroup(da.name, $scope.arrayFromDescObject(da.description), callback);
-  }
+  };
 
   $scope.createNewCorpus = function() {
     var da = $scope.creation.corpus;
@@ -169,7 +185,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       }
     }
     Camomile.createCorpus(da.name, $scope.arrayFromDescObject(da.description), callback);
-  }
+  };
 
   $scope.createNewMedium = function() {
     var da = $scope.creation.medium;
@@ -181,7 +197,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       }
     }
     Camomile.createMedium(da.corpus, da.name, da.url, $scope.arrayFromDescObject(da.description), callback);
-  }
+  };
 
   $scope.createNewLayer = function() {
     var da = $scope.creation.layer;
@@ -193,7 +209,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       }
     }
     Camomile.createLayer(da.name, $scope.arrayFromDescObject(da.description), callback);
-  }
+  };
 
   $scope.addUserToGroup = function() {
     var da = $scope.creation.userToGroup;
@@ -205,7 +221,31 @@ angular.module("camomileApp.controllers.backoffice", [])
       }
     }
     Camomile.addUserToGroup(da.userId, da.groupId, callback);
-  }
+  };
+
+  $scope.addRightsToUserOnCorpus = function() {
+    var da = $scope.creation.rightsToUserOnCorpus;
+    var callback = function(err, data) {
+      if (err) {
+        window.alert("Rights not added to user on corpus.");
+      } else {
+        // $scope.getAllGroups();
+      }
+    }
+    Camomile.setCorpusPermissionsForUser(da.corpusId, da.userId, da.rights, callback);
+  };
+
+  $scope.addRightsToUserOnLayer = function() {
+    var da = $scope.creation.rightsToUserOnLayer;
+    var callback = function(err, data) {
+      if (err) {
+        window.alert("Rights not added to user on layer.");
+      } else {
+        // $scope.getAllGroups();
+      }
+    }
+    Camomile.setLayerPermissionsForUser(da.layerId, da.userId, da.rights, callback);
+  };
 
   // Transforms an object {key: "...", value: "..."} into ["...", "..."]
   // Needed to be able to send the description to the server
@@ -214,7 +254,7 @@ angular.module("camomileApp.controllers.backoffice", [])
     for (v of object)
       narray.push([v.key, v.value])
     return narray;
-  }
+  };
 
   // Delete
   $scope.deleteUser = function(id) {
@@ -226,7 +266,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       }
     }
     Camomile.deleteUser(id, callback);
-  }
+  };
 
   $scope.deleteGroup = function(id) {
     var callback = function(err, data) {
@@ -237,7 +277,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       }
     }
     Camomile.deleteGroup(id, callback);
-  }
+  };
 
   $scope.deleteCorpus = function(id) {
     var callback = function(err, data) {
@@ -248,7 +288,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       }
     }
     Camomile.deleteCorpus(id, callback);
-  }
+  };
 
   $scope.deleteMedium = function(id) {
     var callback = function(err, data) {
@@ -259,7 +299,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       }
     }
     Camomile.deleteMedium(id, callback);
-  }
+  };
 
   $scope.deleteLayer = function(id) {
     var callback = function(err, data) {
@@ -270,7 +310,7 @@ angular.module("camomileApp.controllers.backoffice", [])
       }
     }
     Camomile.deleteLayer(id, callback);
-  }
+  };
 
   $scope.init();
 }])
