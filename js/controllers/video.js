@@ -131,6 +131,27 @@ angular.module('camomileApp.controllers.video', [
     ];
   };
 
+  $scope.buttons = [
+    {
+      img: 'icons/control.png',
+      alt: 'Play',
+      fun: $scope.videoPlay,
+    }
+  ];
+
+  $scope.datastr = [
+    {
+      zdqzdq: 'zdq',
+      zqd: 2
+    },
+    [
+      {
+        dzqzdqzdqqzd: 'zdq',
+        trhph: 6
+      }
+    ]
+  ];
+
   /**
    * Graph options
    * @type {Object}
@@ -194,15 +215,9 @@ angular.module('camomileApp.controllers.video', [
   };
 
   $scope.graphCallback = function(scope, element) {
-    // this code will be applied once directive has been created
-    // scope - is the directive internal scope
-    // element - directive DOM element
     var api = scope.api;
-    // var chart = scope.chart;
-    // var svg = scope.svg;
 
     $scope.graphAPI = api;
-    // ... do smth
   };
 
   // Initial empty object
@@ -630,12 +645,16 @@ angular.module('camomileApp.controllers.video', [
    */
   $scope.intervalStyle = $interval(function () {
     $scope.setStyles();
-  }, 2000);
+  }, 1000);
+
+  $scope.$on("$destroy", function() {
+    $interval.cancel($scope.intervalStyle);
+  });
 
   /**
    * Set up the interval for the synchronisation of the slider with the player
    */
-  $interval(function() {
+  $scope.sliderSync = $interval(function() {
     if ($scope.API) {
       var nval = $scope.slider.value, lastVal = $scope.slider.lastValue;
       if (nval != lastVal) {
@@ -659,4 +678,8 @@ angular.module('camomileApp.controllers.video', [
 
     $scope.setupCanvas();
   }, 100);
+
+  $scope.$on("$destroy", function() {
+    $interval.cancel($scope.sliderSync);
+  });
 });

@@ -18,20 +18,22 @@
     </vg-controls> -->
   </videogular>
 
-  <div class="row text-center video-elem">
-    <button type="button" class="btn btn-default" name="button" ng-click="videoBegin()"><img src="icons/control-skip-180.png" alt="Début vidéo" /></button>
-    <button type="button" class="btn btn-default" name="button" ng-click="previousSecond()"><img src="icons/control-double-180.png" alt="Seconde précédente" /></button>
-    <button type="button" class="btn btn-default" name="button" ng-click="previousFrame()"><img src="icons/control-stop-180.png" alt="Image précédente" /></button>
-    <button type="button" class="btn btn-default" name="button" ng-click="videoPlay()"><img src="icons/control.png" alt="Play" /></button>
-    <button type="button" class="btn btn-default" name="button" ng-click="videoPause()"><img src="icons/control-pause.png" alt="Pause" /></button>
-    <button type="button" class="btn btn-default" name="button" ng-click="videoStop()"><img src="icons/control-stop-square.png" alt="Stop" /></button>
-    <button type="button" class="btn btn-default" name="button" ng-click="nextFrame()"><img src="icons/control-stop.png" alt="Image suivante" /></button>
-    <button type="button" class="btn btn-default" name="button" ng-click="nextSecond()"><img src="icons/control-double.png" alt="Seconde suivante" /></button>
-    <button type="button" class="btn btn-default" name="button" ng-click="videoEnd()"><img src="icons/control-skip.png" alt="Fin vidéo" /></button>
-    <button type="button" class="btn btn-default" name="button" ng-click="alertTimestamp()"><img src="icons/information.png" alt="Info" /></button>
-    <button type="button" class="btn btn-default" name="button" ng-click="testFrame()"><img src="icons/hammer.png" alt="Debug" /></button>
-    <button type="button" class="btn btn-default" name="button" ng-click="clearCanvas(true)"><img src="icons/prohibition.png" alt="Clear canvas" /></button>
-    <button type="button" class="btn btn-default" name="button" ng-click="saveAnnotation()"><img src="icons/film--plus.png" alt="Save annotaion" /></button>
+  <div class="row">
+    <div class="col-sm-12 btn-group">
+      <button type="button" class="btn btn-default" ng-click="videoBegin()"><img src="icons/control-skip-180.png" alt="Début vidéo" /></button>
+      <button type="button" class="btn btn-default" ng-click="previousSecond()"><img src="icons/control-double-180.png" alt="Seconde précédente" /></button>
+      <button type="button" class="btn btn-default" ng-click="previousFrame()"><img src="icons/control-stop-180.png" alt="Image précédente" /></button>
+      <button type="button" class="btn btn-default" ng-click="videoPlay()"><img src="icons/control.png" alt="Play" /></button>
+      <button type="button" class="btn btn-default" ng-click="videoPause()"><img src="icons/control-pause.png" alt="Pause" /></button>
+      <button type="button" class="btn btn-default" ng-click="videoStop()"><img src="icons/control-stop-square.png" alt="Stop" /></button>
+      <button type="button" class="btn btn-default" ng-click="nextFrame()"><img src="icons/control-stop.png" alt="Image suivante" /></button>
+      <button type="button" class="btn btn-default" ng-click="nextSecond()"><img src="icons/control-double.png" alt="Seconde suivante" /></button>
+      <button type="button" class="btn btn-default" ng-click="videoEnd()"><img src="icons/control-skip.png" alt="Fin vidéo" /></button>
+      <button type="button" class="btn btn-default" ng-click="alertTimestamp()"><img src="icons/information.png" alt="Info" /></button>
+      <button type="button" class="btn btn-default" ng-click="testFrame()"><img src="icons/hammer.png" alt="Debug" /></button>
+      <button type="button" class="btn btn-default" ng-click="clearCanvas(true)"><img src="icons/prohibition.png" alt="Clear canvas" /></button>
+      <button type="button" class="btn btn-default" ng-click="saveAnnotation()"><img src="icons/film--plus.png" alt="Save annotaion" /></button>
+    </div>
   </div>
 
   <div class="others">
@@ -123,6 +125,9 @@
       </div>
     </div>
   </div>
+
+
+  <array-listing data="datastr"></array-listing>
 
   <div class="inf-msg" ng-show="infMsg.show">
     <b>Message:</b> {{infMsg.message}}

@@ -1,0 +1,10 @@
+<div ng-controller="ArrayListingCtrl">
+  <div ng-repeat="d in data">
+    <div ng-if="isArrayA(d)">
+      <array-listing data="d"></array-listing>
+    </div>
+    <div ng-if="!isArrayA(d)">
+      <object-listing data="d"></object-listing>
+    </div>
+  </div>
+</div>
