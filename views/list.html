@@ -38,7 +38,23 @@
   </div> -->
 
   <div ng-show="browse.medium" class="videogular-container">
-    <camomile-video src="browse.mediumSrc"></camomile-video>
+    <!--
+     Que doit-on avoir?
+       1: Possibilité de créer un player à partir d'une url et d'activer/désac les annotations
+       2: Affichage d'un graph et d'une Eventline (infos depuis ou??)
+       3: Annotation edit
+
+      camomile-player src browse.medium annotations true
+      camomile-details data data
+      camomile-annotations
+
+      camomile-player:
+      * Variables (annotations, annotation)
+      * Fonctions (API avec videoplayer, draw canvas)
+      * Interval
+    -->
+    <camomile-video src="browse.mediumSrc" annotations="true"></camomile-video>
+    <camomile-details data="true"></camomile-details>
   </div>
 </div>
 
