@@ -1,0 +1,24 @@
+<div class="obj">
+  <form class="form-horizontal">
+    <div class="form-group">
+      <label for="corpus" class="col-sm-1 control-label">Corpus</label>
+      <div class="col-sm-11">
+        <select
+            type="button"
+            class="form-control"
+            ng-options="c._id as c.name for c in corporaExisting"
+            ng-model="corpusSelected"
+            id="corpus"></select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="" class="col-sm-1 control-label">Object</label>
+      <div class="col-sm-11">
+        <select class="form-control">
+          <option value="zdz">Dummy</option>
+          <option value="qzdzqd">Dummy 2</option>
+        </select>
+      </div>
+    </div>
+  </form>
+</div>

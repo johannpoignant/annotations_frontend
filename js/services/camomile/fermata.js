@@ -79,7 +79,7 @@ fermata._wrapTheWrapper = function (impl) {
         'defineProperty': function () { return false; },
         'delete': function () { return false; },
         'fix': function () {},
-        
+
         'get': function (target, name) {
             return impl(name);
         }
@@ -90,7 +90,7 @@ fermata._wrapTheWrapper = function (impl) {
         'delete': function () { return false; },
         'fix': function () {},
         'set': function (target, name, val) {},
-        
+
         'get': function (target, name) {
             return impl(name);
         }
@@ -108,7 +108,7 @@ fermata._nodeTransport = function (request, callback) {
         url_parts = require('url').parse(url),
         headers = {},
         data = null, textResponse = true;
-    
+
     if (url_parts.auth) {
         // TODO: this is a workaround for https://github.com/joyent/node/issues/2736 and should be removed or hardcoded per its resolution
         if (require('url').parse("http//either%2for@example").auth !== "either/or") {
@@ -117,7 +117,7 @@ fermata._nodeTransport = function (request, callback) {
         headers['Authorization'] = 'Basic ' + new Buffer(url_parts.auth).toString('base64');
     }
     fermata._extend(headers, request.headers);
-    
+
     if (request.data && request.data.length && request.method === 'GET' || request.method === 'HEAD') {
         /* XHR ignores data on these requests, so we'll standardize on that behaviour to keep things consistent. Conveniently, this
            avoids https://github.com/joyent/node/issues/989 in situations like https://issues.apache.org/jira/browse/COUCHDB-1146 */
@@ -130,7 +130,7 @@ fermata._nodeTransport = function (request, callback) {
         textResponse = false;
         data = new Buffer(request.data);
     }
-    
+
     var http = (url_parts.protocol === 'https:') ? require('https') : require('http');
     var req = http.request({
         host: url_parts.hostname,
@@ -147,7 +147,7 @@ fermata._nodeTransport = function (request, callback) {
         req.setHeader('Content-Length', 0);
     }
     req.end();
-    
+
     req.on('error', function (e) {
         callback(e, null);
     });
@@ -179,9 +179,9 @@ fermata._nodeTransport = function (request, callback) {
 fermata._xhrTransport = function (request, callback) {
     var xhr = new XMLHttpRequest(),
         url = fermata._stringForURL(request);
-    
+
     xhr.withCredentials = true;
-    
+
     xhr.open(request.method, url, true);
     Object.keys(request.headers).forEach(function (k) {
         xhr.setRequestHeader(k, request.headers[k]);
@@ -312,7 +312,7 @@ fermata.registerPlugin('statusCheck', function (transport) {
 fermata._nodeMultipartEncode = function (data) {
     var segno = '' + Math.round(Math.random() * 1e16) + Math.round(Math.random() * 1e16);
     this.headers['Content-Type'] && (this.headers['Content-Type'] += "; boundary=" + segno);
-    
+
     var buffer = new Buffer(0);
     function push(l) {      // NOTE: Fermata simply isn't gonna win at humongous transfers.
         var prevBuffer = buffer, newBuffer = (l instanceof Buffer) ? l : new Buffer(''+l);
