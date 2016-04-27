@@ -1,17 +1,22 @@
 /*
 Fermata: a succinct REST client.
 Written by Nathan Vander Wilt (nate@calftrail.com).
+
 Copyright © 2011 &yet, LLC.
 Copyright © 2012–2013 Nathan Vander Wilt.
+
 Released under the terms of the MIT License:
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
+
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -70,7 +75,19 @@ fermata._makeNativeURL = function (transport, url) {
 };
 
 fermata._wrapTheWrapper = function (impl) {
-    return (Proxy || fermata._nodeProxy) ? (Proxy) ? Proxy.createFunction({
+    if (fermata._nodeProxy) return fermata._nodeProxy.createFunction({
+        // NOTE: node-proxy has a different set of required handlers than harmony:proxies proposal
+        'getOwnPropertyDescriptor': function (name) {},
+        'enumerate': function () { return []; },
+        'delete': function () { return false; },
+        'fix': function () {},
+        'set': function (target, name, val) {},
+        
+        'get': function (target, name) {
+            return impl(name);
+        }
+    }, impl);
+    else if (Proxy && Proxy.createFunction) return Proxy.createFunction({
         // fundamental trap stubs - http://wiki.ecmascript.org/doku.php?id=harmony:proxies
         'getOwnPropertyDescriptor': function (name) {},
         'getPropertyDescriptor': function (name) {},
@@ -83,18 +100,13 @@ fermata._wrapTheWrapper = function (impl) {
         'get': function (target, name) {
             return impl(name);
         }
-    }, impl) : fermata._nodeProxy.createFunction({
-        // NOTE: node-proxy has a different set of required handlers than harmony:proxies proposal
-        'getOwnPropertyDescriptor': function (name) {},
-        'enumerate': function () { return []; },
-        'delete': function () { return false; },
-        'fix': function () {},
-        'set': function (target, name, val) {},
-        
+    }, impl);
+    else if (Proxy) return new Proxy(impl, {
         'get': function (target, name) {
-            return impl(name);
-        }
-    }, impl) : fermata._extend(impl, {
+              return impl(name);
+          }
+    });
+    else return fermata._extend(impl, {
         'get': function () { return impl('get').apply(null, arguments); },
         'put': function () { return impl('put').apply(null, arguments); },
         'post': function () { return impl('post').apply(null, arguments); },
@@ -179,8 +191,6 @@ fermata._nodeTransport = function (request, callback) {
 fermata._xhrTransport = function (request, callback) {
     var xhr = new XMLHttpRequest(),
         url = fermata._stringForURL(request);
-    
-    xhr.withCredentials = true;
     
     xhr.open(request.method, url, true);
     Object.keys(request.headers).forEach(function (k) {
