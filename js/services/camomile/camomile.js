@@ -390,7 +390,7 @@
     _medium(medium)(filter).get(callback);
   };
 
-  // Get medium URL, e.g. for use in <video> src attribute
+  // Get medium URL, e.g. for use in <video> src attribute 
   my.getMediumURL = function (medium, format) {
 
     format = format || 'video';
@@ -403,28 +403,11 @@
 
     callback = callback || default_callback;
     options = options || {};
-    var filter = options.filter || {};
-
-    // route /corpus/:id_corpus/medium/count
-    if (options.returns_count) {
-
-      if (filter.id_corpus === undefined) {
-        callback('returns_count needs options.filter.id_corpus to be set', null);
-        return;
-      }
-
-      var id_corpus = filter.id_corpus;
-      delete filter.id_corpus;
-
-      _corpus(id_corpus)('medium')('count')(filter).get(callback);
-
-      return;
-    }
-
     if (options.returns_id) {
       callback = _ID(callback);
     }
 
+    var filter = options.filter || {};
     if (options.history) {
       filter.history = options.history;
     }
@@ -578,28 +561,11 @@
 
     callback = callback || default_callback;
     options = options || {};
-    var filter = options.filter || {};
-
-    // route /layer/:id_layer/annotation/count
-    if (options.returns_count) {
-
-      if (filter.id_layer === undefined) {
-        callback('returns_count needs options.filter.id_layer to be set', null);
-        return;
-      }
-
-      var id_layer = filter.id_layer;
-      delete filter.id_layer;
-      _layer(id_layer)('annotation')('count')(filter).get(callback);
-
-      return;
-    }
-
-    // returns ID instead of complete annotations
     if (options.returns_id) {
       callback = _ID(callback);
     }
 
+    var filter = options.filter || {};
     if (options.history) {
       filter.history = options.history;
     }

@@ -9,10 +9,54 @@ angular.module('camomileApp.controllers.video', [
   "ngAnimate",
   "nvd3"
 ])
+.directive('camomileBox', function () {
+  return {
+    restrict: 'AE',
+    scope: {},
+    transclude: true,
+    template: '<div ng-transclude></div>',
+    controller: function ($scope) {
+      var facto = {};
+
+      facto.annotation = {
+        name: '', // The name of the annotation or whatever
+        drawStyle: 'free', // Declarative (doesn't do anything else)
+        timestamp: 0, // The timestamp of the points (beginning time, in ms)
+        duration: 2000, // The duration (in ms)
+        points: [] // Array of points
+      };
+      facto.annotations = [];
+      facto.config = {
+        strokeColor: '#fff', // Stroke color choosen
+        fillColor: '#fff', // Fill color choosen
+        colors: [ // Colors available
+          {color: '#f00', description: 'Red'},
+          {color: '#00f', description: 'Blue'},
+          {color: '#0f0', description: 'Green'},
+          {color: '#fff', description: 'White'}
+        ],
+        drawStyle: 'free', // Style choosen
+        drawStyles: [ // Styles available
+          {key: 'free', description: 'Free form'},
+          {key: 'rectangle', description: 'Rectangle'},
+          {key: 'circle', description: 'Circle'}
+        ],
+        strokeWidth: 2 // Stroke width (line width) choosen
+      };
+      facto.video = {
+        currentTime: 0,
+        totalTime: 0
+      };
+
+      this.facto = facto;
+    }
+  }
+})
 .directive('camomileVideo', function ($interval, camomileData) {
   return {
     restrict: 'AE',
     templateUrl: 'views/cVideo.html',
+    require: '^camomileBox',
     scope: {
       src: '=',
       annotations: '@'
@@ -23,12 +67,6 @@ angular.module('camomileApp.controllers.video', [
 
       $scope.video = {};
       $scope.canvas = {};
-      $scope.annotation = {};
-      $scope.annotation.name = ""; // The name of the annotation or whatever
-      $scope.annotation.drawStyle = "free"; // Declarative (doesn't do anything else)
-      $scope.annotation.timestamp = 0; // The timestamp of the points (beginning time, in ms)
-      $scope.annotation.duration = 2000; // The duration (in ms)
-      $scope.annotation.points = []; // Array of points
 
       /**
        * Slider object for using as timeline below video.
@@ -177,7 +215,7 @@ angular.module('camomileApp.controllers.video', [
             drawRectangle(p.points);
           } else if (p.drawStyle == "circle") {
             drawCircle(p.points);
-          } else if ($scope.annotation.drawStyle == "free") {
+          } else if (p.drawStyle == "free") {
             drawFree(p.points);
           }
           $scope.canvas.context.stroke();
@@ -230,18 +268,25 @@ angular.module('camomileApp.controllers.video', [
        */
       $scope.canvas.setupCanvas = function() {
         $scope.canvas.clearCanvas(false);
-        // $scope.canvas.reloadAnnotationStyles();
+        $scope.canvas.reloadAnnotationStyles();
 
         if ($scope.video.API) {
           let time = $scope.video.API.currentTime;
-          for (a of camomileData.annotations) {
+          for (a of $scope.dataCtrl.facto.annotations) {
             if (time >= a.timestamp && time <= a.timestamp + a.duration) {
               drawPoint(a);
             }
           }
 
-          drawPoint($scope.annotation);
+          drawPoint($scope.dataCtrl.facto.annotation);
         }
+      };
+
+      $scope.canvas.reloadAnnotationStyles = function() {
+        var c = $scope.dataCtrl.facto.config;
+        $scope.canvas.context.strokeStyle = c.strokeColor;
+        $scope.canvas.context.fillStyle = c.fillColor;
+        $scope.canvas.context.lineWidth = c.strokeWidth;
       };
 
       /**
@@ -251,11 +296,12 @@ angular.module('camomileApp.controllers.video', [
        * have, false otherwise
        */
       $scope.canvas.isComplete = function() {
-        if ($scope.annotation.drawStyle == "rectangle" && $scope.annotation.points.length > 1)
+        var a = $scope.dataCtrl.facto.annotation; // Shortcut
+        if (a.drawStyle == "rectangle" && a.points.length > 1)
           return true;
-        else if ($scope.annotation.drawStyle == "circle" && $scope.annotation.points.length > 1)
+        else if (a.drawStyle == "circle" && a.points.length > 1)
           return true;
-        else if ($scope.annotation.drawStyle == "free" && $scope.annotation.points.length > 9)
+        else if (a.drawStyle == "free" && a.points.length > 9)
           return true;
         else
           return false;
@@ -266,9 +312,11 @@ angular.module('camomileApp.controllers.video', [
        * @return {undefined}
        */
       $scope.canvas.saveAnnotation = function() {
-        if ($scope.annotation.points.length > 1 && $scope.annotation.name != "") {
-          $scope.annotation.timestamp = $scope.video.API.currentTime;
-          $scope.annotations.push(JSON.parse(JSON.stringify($scope.annotation)));
+        var a = $scope.dataCtrl.facto.annotation; // Shortcut
+        if (a.points.length > 1 && a.name != "") {
+          a.timestamp = $scope.video.API.currentTime;
+          console.log('Timestamp: ' + a.timestamp + ', is it correct?');
+          $scope.dataCtrl.facto.annotations.push(JSON.parse(JSON.stringify(a)));
           $scope.canvas.clearCanvas(true);
 
           //$scope.showMessage("Saved annotation!");
@@ -286,7 +334,8 @@ angular.module('camomileApp.controllers.video', [
         if (clearPoints) {
           resetAnnotation();
         }
-        $scope.canvas.context.clearRect(0, 0, $scope.canvas.width, $scope.canvas.height);
+        if ($scope.video.dimensions)
+          $scope.canvas.context.clearRect(0, 0, $scope.video.dimensions.width, $scope.video.dimensions.height);
       };
 
       /**
@@ -294,10 +343,12 @@ angular.module('camomileApp.controllers.video', [
        * @return {undefined}
        */
       var resetAnnotation = function() {
-        $scope.annotation.points = [];
-        $scope.annotation.name = "";
-        $scope.annotation.duration = 2000;
-        $scope.annotation.timestamp = 0;
+        var a = $scope.dataCtrl.facto.annotation; // Shortcut
+        a.points = [];
+        a.name = "";
+        a.timestamp = 0;
+        a.duration = 2000;
+        console.log(a.points);
       };
 
       /**
@@ -308,15 +359,14 @@ angular.module('camomileApp.controllers.video', [
       $scope.canvas.addOnClick = function(event) {
         var x = event.offsetX;
         var y = event.offsetY;
+        var a = $scope.dataCtrl.facto.annotation; // Shortcut
 
         if (!$scope.canvas.isComplete()) {
-          $scope.annotation.points.push({
+          a.points.push({
             x: x,
             y: y
           });
         }
-
-        $scope.canvas.setupCanvas();
       };
 
       /**
@@ -336,6 +386,11 @@ angular.module('camomileApp.controllers.video', [
           }
         }
         $scope.slider.lastValue = $scope.slider.value;
+        $scope.dataCtrl.facto.video.currentTime = $scope.slider.value;
+        if (!$scope.ttSet && $scope.video.API.totalTime) {
+          $scope.dataCtrl.facto.video.totalTime = $scope.video.API.totalTime;
+          $scope.ttSet = true;
+        }
 
         // Calculate the margin left needed to follow the slider position
         // let ref = $scope.slider.value / $scope.Math.floor($scope.video.API.totalTime / 1000) * ($scope.video.dimensions.width - 32);
@@ -347,8 +402,9 @@ angular.module('camomileApp.controllers.video', [
         $scope.canvas.setupCanvas();
       }, 100);
     },
-    link: function (scope, elem, attrs) {
+    link: function (scope, elem, attrs, controllerInstance) {
       // ???
+      scope.dataCtrl = controllerInstance;
       scope.canvas.surface = elem.find('canvas')[0];
       scope.canvas.context = scope.canvas.surface.getContext('2d');
 
@@ -363,10 +419,11 @@ angular.module('camomileApp.controllers.video', [
     }
   }
 })
-.directive('camomileDetails', function ($log, camomileData) {
+.directive('camomileDetails', function ($log, $interval, camomileData) {
   return {
     restrict: 'AE',
     templateUrl: 'views/cDetails.html',
+    require: '^camomileBox',
     scope: {
       data: '@'
     },
@@ -515,52 +572,84 @@ angular.module('camomileApp.controllers.video', [
         $scope.graphAPI = api;
       };
     },
-    link: function (scope, elem, attrs) {
+    link: function (scope, elem, attrs, controllerInstance) {
       // ???
+      scope.dataCtrl = controllerInstance;
+      scope.interv = $interval(function () {
+        scope.dimensions = {
+          width: elem.width(),
+          height: elem.height()
+        };
+
+        // Calculate the margin left needed to follow the slider position
+        let vt = scope.dataCtrl.facto.video; // Like videoTime
+        let ref = vt.currentTime / window.Math.floor(vt.totalTime / 1000) * (scope.dimensions.width - 32);
+        console.log(vt);
+        scope.timebarClass = {
+          "margin-left": ref + 'px',
+          "height": scope.dimensions.height // Same height as its parent
+        }
+      }, 100);
     }
   }
 })
 .directive('camomileAnnotations', function () {
   return {
     restrict: 'AE',
-    templateUrl: 'url',
+    templateUrl: 'views/cAnnotationEdit.html',
+    require: '^camomileBox',
     scope: {
       data: '@'
     },
     controller: function ($scope) {
       // ???
+      $scope.initWatchers = function () {
+        $scope.$watch("dataCtrl.facto.config.drawStyle", function () {
+          console.log('Draw style changed to ' + $scope.dataCtrl.facto.config.drawStyle);
+          $scope.dataCtrl.facto.annotation.drawStyle = $scope.dataCtrl.facto.config.drawStyle;
+        });
+        $scope.$watch("dataCtrl.facto.config.strokeColor", function () {
+          console.log('Stroke color changed to ' + $scope.dataCtrl.facto.config.strokeColor);
+        });
+        $scope.$watch("dataCtrl.facto.config.strokeWidth", function () {
+          console.log('Stroke width changed to ' + $scope.dataCtrl.facto.config.strokeWidth);
+        });
+      }
     },
-    link: function (scope, elem, attrs) {
+    link: function (scope, elem, attrs, controllerInstance) {
       // ???
+      scope.dataCtrl = controllerInstance;
+      scope.a = controllerInstance.facto.annotation;
+      scope.initWatchers();
     }
   }
 })
 .factory('camomileData', function () {
   var facto = {};
 
-  facto.annotations = [];
-  facto.config = {
-    strokeColor: '#fff', // Stroke color choosen
-    fillColor: '#fff', // Fill color choosen
-    colors: [ // Colors available
-      {color: '#f00', description: 'Red'},
-      {color: '#00f', description: 'Blue'},
-      {color: '#0f0', description: 'Green'},
-      {color: '#fff', description: 'White'}
-    ],
-    drawStyle: 'free', // Style choosen
-    drawStyles: [ // Styles available
-      {key: 'free', description: 'Free form'},
-      {key: 'rectangle', description: 'Rectangle'},
-      {key: 'circle', description: 'Circle'}
-    ],
-    strokeWidth: 2 // Stroke width (line width) choosen
-  };
-
-  facto.timebarClass = {
-    "margin-left": 0 + 'px',
-    "height": 0 // Same height as its parent
-  };
+  // facto.annotations = [];
+  // facto.config = {
+  //   strokeColor: '#fff', // Stroke color choosen
+  //   fillColor: '#fff', // Fill color choosen
+  //   colors: [ // Colors available
+  //     {color: '#f00', description: 'Red'},
+  //     {color: '#00f', description: 'Blue'},
+  //     {color: '#0f0', description: 'Green'},
+  //     {color: '#fff', description: 'White'}
+  //   ],
+  //   drawStyle: 'free', // Style choosen
+  //   drawStyles: [ // Styles available
+  //     {key: 'free', description: 'Free form'},
+  //     {key: 'rectangle', description: 'Rectangle'},
+  //     {key: 'circle', description: 'Circle'}
+  //   ],
+  //   strokeWidth: 2 // Stroke width (line width) choosen
+  // };
+  //
+  // facto.timebarClass = {
+  //   "margin-left": 0 + 'px',
+  //   "height": 0 // Same height as its parent
+  // };
 
 
   return facto;
