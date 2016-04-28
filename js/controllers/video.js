@@ -326,7 +326,7 @@ angular.module('camomileApp.controllers.video', [
         if ($scope.video.API) {
           let time = $scope.video.API.currentTime;
           for (a of $scope.dataCtrl.facto.annotations) {
-            if (time >= a.timestamp && time <= a.timestamp + a.duration) {
+            if (a.name && time >= a.timestamp && time <= a.timestamp + a.duration) {
               drawPoint(a);
             }
           }
@@ -732,6 +732,17 @@ angular.module('camomileApp.controllers.video', [
         }
       };
 
+      $scope.deleteAnnotation = function (annotation) {
+        for (index in $scope.dataCtrl.facto.annotations) {
+          let a = $scope.dataCtrl.facto.annotations[index];
+          if (a.name == annotation.name) {
+            delete $scope.dataCtrl.facto.annotations[index];
+            $scope.dataCtrl.facto.annotations.length--;
+            break;
+          }
+        }
+      }
+
       $scope.initWatchers = function () {
         $scope.$watch("dataCtrl.facto.config.drawStyle", function () {
           console.log('Draw style changed to ' + $scope.dataCtrl.facto.config.drawStyle);
@@ -747,7 +758,7 @@ angular.module('camomileApp.controllers.video', [
     },
     link: function (scope, elem, attrs, controllerInstance) {
       scope.dataCtrl = controllerInstance;
-      // console.log(scope.dataCtrl);
+
       scope.dataCtrl.fns.reloadAnnotations = scope.getAnnotations;
       scope.initWatchers();
     }

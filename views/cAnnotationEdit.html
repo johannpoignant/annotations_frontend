@@ -50,7 +50,10 @@
         </thead>
         <tbody>
           <tr ng-repeat="a in dataCtrl.facto.annotations">
-            <td ng-repeat="p in a">{{p}}</td>
+            <td ng-repeat="p in a">
+              <a href="" ng-if="p == a.name" ng-click="deleteAnnotation(a)">{{p}}</a>
+              <span ng-if="p != a.name">{{p}}</span>
+            </td>
           </tr>
         </tbody>
       </table>
