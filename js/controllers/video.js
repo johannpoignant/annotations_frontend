@@ -88,6 +88,7 @@ angular.module('camomileApp.controllers.video', [
           for (d in $scope.annotations) {
             delete $scope.annotations[d];
           }
+          $scope.annotations.length = 0;
           // $scope.annotations = ans;
           for (a of ans) {
             $scope.annotations.push(a);
@@ -708,6 +709,7 @@ angular.module('camomileApp.controllers.video', [
           } else {
             // <ITS><SAVED></SAVED></ITS>
             console.log('Save annotation succeeded');
+            $scope.getAnnotations();
           }
         };
 
@@ -726,7 +728,6 @@ angular.module('camomileApp.controllers.video', [
 
         if (sa.length) {
           Camomile.createAnnotations(i.layer, sa, callback);
-          $scope.getAnnotations();
         }
       };
 
@@ -745,6 +746,7 @@ angular.module('camomileApp.controllers.video', [
                 }
               }
 
+              console.log(ans);
               $scope.dataCtrl.setAnnotations(ans);
               console.log($scope.dataCtrl.facto.annotations);
             }, {
@@ -767,7 +769,7 @@ angular.module('camomileApp.controllers.video', [
             if (err) {
               console.warn('Delete failed.');
             } else {
-              Camomile.getAnnotations();
+              $scope.getAnnotations();
             }
           });
         }

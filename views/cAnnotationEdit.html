@@ -42,6 +42,7 @@
     <div class="col-sm-12">
       <table class="table">
         <thead>
+          <th>Id</th>
           <th>Nom</th>
           <th>Forme</th>
           <th>Temps de début</th>
@@ -50,6 +51,7 @@
         </thead>
         <tbody>
           <tr ng-repeat="a in dataCtrl.facto.annotations">
+            <td>{{a.id}}</td>
             <td ng-repeat="p in a.fragment">
               <a href="" ng-if="p == a.fragment.name" ng-click="deleteAnnotation(a)">{{p}}</a>
               <span ng-if="p != a.fragment.name">{{p}}</span>
