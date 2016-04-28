@@ -45,6 +45,7 @@ angular.module("camomileApp.controllers.backoffice", [])
     },
     layer: {
       name: '',
+      corpus: '',
       description: []
     },
     userToGroup: {
@@ -208,7 +209,7 @@ angular.module("camomileApp.controllers.backoffice", [])
         $scope.getAllLayers();
       }
     }
-    Camomile.createLayer(da.name, $scope.arrayFromDescObject(da.description), callback);
+    Camomile.createLayer(da.corpus, da.name, $scope.arrayFromDescObject(da.description), {}, {}, callback);
   };
 
   $scope.addUserToGroup = function() {

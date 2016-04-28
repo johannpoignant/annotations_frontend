@@ -3,7 +3,7 @@
 <div ng-repeat="e in events">
   <div class="event" style="margin-left: {{e.begin}}px; width: {{e.duration}}px;">{{e.text}}</div>
 </div>
-<div class="eventLine"></div>
+<event-div></event-div>
 
 <div class="graph">
   <nvd3 options="graph.options" data="graph.data" on-ready="graphCallback"></nvd3>

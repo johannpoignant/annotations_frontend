@@ -9,15 +9,33 @@ angular.module('camomileApp.controllers.video', [
   "ngAnimate",
   "nvd3"
 ])
-.directive('camomileBox', function () {
+.directive('camomileBox', function ($interval, $timeout) {
   return {
     restrict: 'AE',
-    scope: {},
+    scope: {
+      infos: '@' // Needed: id_layer, id_medium in {layer: '', medium: ''}
+    },
     transclude: true,
-    template: '<div ng-transclude></div>',
+    template: '<div ng-transclude></div>' +
+    '<div class="inf-msg" ng-show="infMsg.show">' +
+    '<b>Message:</b> {{infMsg.message}}' +
+    '</div>',
     controller: function ($scope) {
-      var facto = {};
+      var facto = this.facto = {};
+      var fns = this.fns = {};
+      var apis = this.apis = {};
 
+      $scope.$watch("infos", function () {
+        if ($scope.infos) {
+          $scope.infosParsed = JSON.parse($scope.infos);
+        }
+        if (fns.reloadAnnotations) {
+          fns.reloadAnnotations();
+        }
+      }, true);
+      this.infos = function () {
+        return $scope.infosParsed;
+      };
       facto.annotation = {
         name: '', // The name of the annotation or whatever
         drawStyle: 'free', // Declarative (doesn't do anything else)
@@ -47,8 +65,44 @@ angular.module('camomileApp.controllers.video', [
         currentTime: 0,
         totalTime: 0
       };
+      this.saveAnnotation = function () {
+        var a = facto.annotation; // Shortcut
+        if (a.points.length > 1 && a.name != "") {
+          a.timestamp = apis.video.API.currentTime;
+          // Copy the object to insert it into the array; however, warning: slow copy
+          facto.annotations.push(JSON.parse(JSON.stringify(a)));
+          apis.canvas.clearCanvas(true);
 
-      this.facto = facto;
+          $scope.showMessage("Saved annotation!", 3000);
+        }
+      };
+      /**
+       * Utility for the little popup
+       * @type {Object}
+       */
+      $scope.infMsg = {
+        show: false, // Is it displayed?
+        message: '' // The message stored
+      };
+
+      /**
+       * Shows a message
+       * @param  {string} message  the message to show
+       * @param  {int} duration the duration to show it
+       * @return {undefined}
+       */
+      $scope.showMessage = this.showMessage = function(message, duration) {
+        duration = duration === undefined ? 5000 : duration;
+        $scope.infMsg.show = true;
+        $scope.infMsg.message = message;
+        $timeout(function() {
+          $scope.infMsg.show = false;
+        }, duration);
+      };
+
+    },
+    link: function (scope, elem, attrs) {
+      // Nothing
     }
   }
 })
@@ -62,7 +116,6 @@ angular.module('camomileApp.controllers.video', [
       annotations: '@'
     },
     controller: function ($scope) {
-      // ???
       $scope.Math = window.Math;
 
       $scope.video = {};
@@ -312,15 +365,7 @@ angular.module('camomileApp.controllers.video', [
        * @return {undefined}
        */
       $scope.canvas.saveAnnotation = function() {
-        var a = $scope.dataCtrl.facto.annotation; // Shortcut
-        if (a.points.length > 1 && a.name != "") {
-          a.timestamp = $scope.video.API.currentTime;
-          console.log('Timestamp: ' + a.timestamp + ', is it correct?');
-          $scope.dataCtrl.facto.annotations.push(JSON.parse(JSON.stringify(a)));
-          $scope.canvas.clearCanvas(true);
-
-          //$scope.showMessage("Saved annotation!");
-        }
+        $scope.dataCtrl.canvas.saveAnnotation();
       };
 
       /**
@@ -348,7 +393,6 @@ angular.module('camomileApp.controllers.video', [
         a.name = "";
         a.timestamp = 0;
         a.duration = 2000;
-        console.log(a.points);
       };
 
       /**
@@ -405,6 +449,10 @@ angular.module('camomileApp.controllers.video', [
     link: function (scope, elem, attrs, controllerInstance) {
       // ???
       scope.dataCtrl = controllerInstance;
+
+      controllerInstance.apis.video = scope.video;
+      controllerInstance.apis.canvas = scope.canvas;
+
       scope.canvas.surface = elem.find('canvas')[0];
       scope.canvas.context = scope.canvas.surface.getContext('2d');
 
@@ -428,8 +476,6 @@ angular.module('camomileApp.controllers.video', [
       data: '@'
     },
     controller: function ($scope) {
-      // ???
-
       /**
        * An array containing all the events displayed on the eventLine
        * @type {Array}
@@ -505,6 +551,25 @@ angular.module('camomileApp.controllers.video', [
       };
 
       /**
+       * Curve generator made for Camomile Demonstration
+       * @return {Array} Array containing one curve
+       */
+      var curvePerso = function () {
+        var curve = [];
+
+        for (var i = 1; i <= 50; i++) {
+          curve.push({x: i, y: Math.abs(Math.cos(i) + Math.random() * 5) + 1});
+        }
+
+        return [{
+          values: curve,
+          key: 'Curve for Camomile',
+          color: '#07f',
+          area: true
+        }];
+      }
+
+      /**
        * Graph options
        * @type {Object}
        */
@@ -563,7 +628,7 @@ angular.module('camomileApp.controllers.video', [
             }
           }
         },
-        data: sinAndCos()
+        data: curvePerso()
       };
 
       $scope.graphCallback = function(scope, element) {
@@ -573,27 +638,36 @@ angular.module('camomileApp.controllers.video', [
       };
     },
     link: function (scope, elem, attrs, controllerInstance) {
-      // ???
       scope.dataCtrl = controllerInstance;
       scope.interv = $interval(function () {
-        scope.dimensions = {
+        scope.dimensions = {};
+        scope.dimensions.div = {
           width: elem.width(),
           height: elem.height()
+        };
+        var eventLine = angular.element(elem.find('event-div'));
+        scope.dimensions.res = {
+          width: eventLine.width(),
+          height: eventLine.height()
         };
 
         // Calculate the margin left needed to follow the slider position
         let vt = scope.dataCtrl.facto.video; // Like videoTime
-        let ref = vt.currentTime / window.Math.floor(vt.totalTime / 1000) * (scope.dimensions.width - 32);
-        console.log(vt);
+        let ref = (vt.currentTime / window.Math.floor(vt.totalTime / 1000)) * (scope.dimensions.res.width);
         scope.timebarClass = {
           "margin-left": ref + 'px',
-          "height": scope.dimensions.height // Same height as its parent
+          "height": scope.dimensions.div.height // Same height as its parent
         }
       }, 100);
     }
   }
 })
-.directive('camomileAnnotations', function () {
+.directive('eventDiv', function () {
+  return {
+    template: '<div class="eventLine"></div>'
+  }
+})
+.directive('camomileAnnotations', function ($interval, Camomile) {
   return {
     restrict: 'AE',
     templateUrl: 'views/cAnnotationEdit.html',
@@ -602,7 +676,62 @@ angular.module('camomileApp.controllers.video', [
       data: '@'
     },
     controller: function ($scope) {
-      // ???
+      $scope.sendAnnotations = function () {
+        var i = $scope.dataCtrl.infos();
+        if (!i.layer && !i.medium) {
+          console.warn('Pas de layer ou medium sélectionné');
+          return;
+        }
+        var callback = function (err, data) {
+          if (err) {
+            console.log('Save annotation fail');
+          } else {
+            // <ITS><SAVED></SAVED></ITS>
+            console.log('Save annotation succeeded');
+          }
+        };
+        var sa = [];
+        for (a of $scope.dataCtrl.facto.annotations) {
+          delete a['$$hashKey'];
+          console.log(a);
+          sa.push({
+            id_medium: i.medium,
+            fragment: a,
+            data: a.name
+          });
+        }
+        Camomile.createAnnotations(i.layer, sa, callback);
+      };
+
+      $scope.getAnnotations = function () {
+        if ($scope.dataCtrl.infos) {
+          var i = $scope.dataCtrl.infos();
+
+          if (i.layer && i.medium) {
+            Camomile.getAnnotations(function (err, data) {
+              if (err) {
+                console.log('Error in retrieving of annotations data');
+              } else {
+                var ans = [];
+
+                for (obj of data) { // We push every fragment to recreate the array
+                  $scope.dataCtrl.facto.annotations.push(obj.fragment);
+                }
+              }
+            }, {
+              'filter': {
+                id_layer: i.layer,
+                id_medium: i.medium
+              }
+            });
+          } else {
+            //console.log($scope.dataCtrl.infos);
+          }
+        } else {
+          console.log('Infos non dispos');
+        }
+      };
+
       $scope.initWatchers = function () {
         $scope.$watch("dataCtrl.facto.config.drawStyle", function () {
           console.log('Draw style changed to ' + $scope.dataCtrl.facto.config.drawStyle);
@@ -617,9 +746,9 @@ angular.module('camomileApp.controllers.video', [
       }
     },
     link: function (scope, elem, attrs, controllerInstance) {
-      // ???
       scope.dataCtrl = controllerInstance;
-      scope.a = controllerInstance.facto.annotation;
+      // console.log(scope.dataCtrl);
+      scope.dataCtrl.fns.reloadAnnotations = scope.getAnnotations;
       scope.initWatchers();
     }
   }

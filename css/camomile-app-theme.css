@@ -38,7 +38,7 @@
 
 .eventLine {
   border: 1px solid black;
-  width: 1110px;
+  width: 100%;
   height: 25px;
   border: 1px solid grey;
   border-radius: 6px;
@@ -61,7 +61,7 @@
 
 .graph {
   margin-left: -54px;
-  margin-right: 12px;
+  margin-right: -12px;
 }
 
 .loader {

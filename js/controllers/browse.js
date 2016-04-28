@@ -28,6 +28,8 @@ angular.module('camomileApp.controllers.browse', [
     // selected layer
     $scope.browse.layer = undefined;
 
+    $scope.infos = {};
+
     // update list of corpora
     var getCorpora = function () {
       Camomile.getCorpora(function (err, data) {
@@ -122,6 +124,7 @@ angular.module('camomileApp.controllers.browse', [
 
     $scope.$watch('browse.medium', function () {
       if ($scope.browse.medium) {
+        $scope.infos.medium = $scope.browse.medium;
         $scope.browse.mediumSrc = [{
           src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, "mp4")),
           type: "video/mp4"
@@ -131,4 +134,10 @@ angular.module('camomileApp.controllers.browse', [
         }];
       }
     });
+
+    $scope.$watch('browse.layer', function () {
+      if ($scope.browse.layer) {
+        $scope.infos.layer = $scope.browse.layer;
+      }
+    })
   }]);

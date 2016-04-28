@@ -29,6 +29,10 @@
           <label for="aduration">Durée (en millisecondes)</label>
           <input type="number" class="form-control" name="aduration" id="aduration" step="250" ng-model="dataCtrl.facto.annotation.duration">
         </div>
+        <div class="form-group">
+          <label for="aduration">Enregistrer l'annotation</label>
+          <button class="form-control" type="button" ng-click="dataCtrl.saveAnnotation()">Enregistrer</button>
+        </div>
       </form>
     </div>
   </div>
@@ -52,4 +56,7 @@
       </table>
     </div>
   </div>
+</div>
+<div class="col-sm-12">
+  <button type="button" class="btn btn-default" ng-click="sendAnnotations()">Envoyer les annotations</button>
 </div>
