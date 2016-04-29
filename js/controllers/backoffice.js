@@ -21,48 +21,82 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
     });
   };
 
-  // Object containing all the informations on the view (use these)
-  $scope.creation = {
-    user: {
+  $scope.newUser = function () {
+    $scope.creation.user = {
       name: '',
       password: '',
       description: [],
       role: 'user'
-    },
-    group: {
+    };
+  };
+
+  $scope.newGroup = function () {
+    $scope.creation.group = {
       name: '',
       description: []
-    },
-    corpus: {
+    };
+  };
+
+  $scope.newCorpus = function () {
+    $scope.creation.corpus = {
       name: '',
       description: []
-    },
-    medium: {
+    };
+  };
+
+  $scope.newMedium = function () {
+    $scope.creation.medium = {
       name: '',
       url: '',
       corpus: '',
       description: []
-    },
-    layer: {
+    };
+  };
+
+  $scope.newLayer = function () {
+    $scope.creation.layer = {
       name: '',
       corpus: '',
       description: []
-    },
-    userToGroup: {
+    };
+  };
+
+  $scope.newUserToGroup = function () {
+    $scope.creation.userToGroup = {
       userId: '',
       groupId: ''
-    },
-    rightsToUserOnCorpus: {
+    };
+  };
+
+  $scope.newRightsToUserOnCorpus = function () {
+    $scope.creation.rightsToUserOnCorpus = {
       userId: '',
       corpusId: '',
       rights: ''
-    },
-    rightsToUserOnLayer: {
+    };
+  };
+
+  $scope.newRightsToUserOnLayer = function () {
+    $scope.creation.rightsToUserOnLayer = {
       userId: '',
       layerId: '',
       rights: ''
-    }
+    };
   };
+
+  $scope.initCreation = function () {
+    $scope.creation = {};
+    $scope.newUser();
+    $scope.newGroup();
+    $scope.newCorpus();
+    $scope.newMedium();
+    $scope.newLayer();
+    $scope.newUserToGroup();
+    $scope.newRightsToUserOnCorpus();
+    $scope.newRightsToUserOnLayer();
+  };
+
+  $scope.initCreation();
 
   // Array of users
   $scope.usersExisting = undefined;
@@ -159,6 +193,7 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
         window.alert("User creation failed.");
       } else {
         $scope.getAllUsers();
+        $scope.newUser();
       }
     }
     Camomile.createUser(da.name, da.password, $scope.arrayFromDescObject(da.description), da.role, callback);
@@ -171,6 +206,7 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
         window.alert("Group creation failed.");
       } else {
         $scope.getAllGroups();
+        $scope.newGroup();
       }
     }
     Camomile.createGroup(da.name, $scope.arrayFromDescObject(da.description), callback);
@@ -183,6 +219,7 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
         window.alert("Corpus creation failed.");
       } else {
         $scope.getAllCorpora();
+        $scope.newCorpus();
       }
     }
     Camomile.createCorpus(da.name, $scope.arrayFromDescObject(da.description), callback);
@@ -195,6 +232,7 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
         window.alert("Medium creation failed.");
       } else {
         $scope.getAllMedia();
+        $scope.newMedium();
       }
     }
     Camomile.createMedium(da.corpus, da.name, da.url, $scope.arrayFromDescObject(da.description), callback);
@@ -207,6 +245,7 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
         window.alert("Layer creation failed.");
       } else {
         $scope.getAllLayers();
+        $scope.newLayer();
       }
     }
     Camomile.createLayer(da.corpus, da.name, $scope.arrayFromDescObject(da.description), {}, {}, callback);
@@ -219,6 +258,7 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
         window.alert("User not added to group.");
       } else {
         $scope.getAllGroups();
+        $scope.newUserToGroup();
       }
     }
     Camomile.addUserToGroup(da.userId, da.groupId, callback);
@@ -231,6 +271,7 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
         window.alert("Rights not added to user on corpus.");
       } else {
         // $scope.getAllGroups();
+        $scope.newRightsToUserOnCorpus();
       }
     }
     Camomile.setCorpusPermissionsForUser(da.corpusId, da.userId, da.rights, callback);
@@ -243,18 +284,30 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
         window.alert("Rights not added to user on layer.");
       } else {
         // $scope.getAllGroups();
+        $scope.newRightsToUserOnLayer();
       }
     }
     Camomile.setLayerPermissionsForUser(da.layerId, da.userId, da.rights, callback);
   };
 
-  // Transforms an object {key: "...", value: "..."} into ["...", "..."]
+  // Transforms an object
   // Needed to be able to send the description to the server
-  $scope.arrayFromDescObject = function(object) {
-    var narray = [];
-    for (v of object)
-      narray.push([v.key, v.value])
-    return narray;
+  $scope.arrayFromDescObject = function(object, mode) {
+    mode = mode ? mode : 1; // 0: Array, 1: Object
+    let output = undefined;
+
+    if (mode === 0) { // {key: "...", value: "..."} into ["...", "..."]
+      output = [];
+      for (v of object)
+        output.push([v.key, v.value])
+    } else if (mode === 1) { // {key: "...", value: "..."} into {"...": "..."}
+      output = {};
+      for (v of object)
+        if (!output.hasOwnProperty(v.key))
+          output[v.key] = v.value;
+    }
+
+    return output;
   };
 
   // Delete

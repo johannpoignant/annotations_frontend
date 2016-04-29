@@ -98,10 +98,13 @@ angular.module('camomileApp.controllers.video', [
           id: 0,
           fragment: {
             name: '',
-            drawStyle: '',
+            drawStyle: 'free',
             points: []
           }
         };
+        if (isVideo()) {
+          facto.annotation.fragment.duration = 2000;
+        }
       };
 
       this.newAnnotation();
@@ -886,7 +889,7 @@ angular.module('camomileApp.controllers.video', [
       $scope.initWatchers = function () {
         $scope.$watch("dataCtrl.facto.config.drawStyle", function () {
           console.log('Draw style changed to ' + $scope.dataCtrl.facto.config.drawStyle);
-          $scope.dataCtrl.facto.annotation.drawStyle = $scope.dataCtrl.facto.config.drawStyle;
+          $scope.dataCtrl.facto.annotation.fragment.drawStyle = $scope.dataCtrl.facto.config.drawStyle;
         });
         $scope.$watch("dataCtrl.facto.config.strokeColor", function () {
           console.log('Stroke color changed to ' + $scope.dataCtrl.facto.config.strokeColor);

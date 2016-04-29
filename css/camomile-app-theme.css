@@ -15,6 +15,22 @@
   position: relative;
 }
 
+.backoffice-pannel {
+  background: #eee none repeat scroll 0 0;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  box-shadow: 0 0 10px;
+  margin: 1.2% 1.668%;
+  padding: 5px !important;
+  width: 30%;
+  float: left;
+}
+
+.backoffice-pannel h4 {
+  font-weight: bold;
+  text-align: center;
+}
+
 .cview .btn {
   margin-top: 10px;
 }
@@ -61,7 +77,7 @@
 
 .graph {
   margin-left: -54px;
-  margin-right: -12px;
+  margin-right: -22px;
 }
 
 .loader {
