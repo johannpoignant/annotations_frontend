@@ -1,5 +1,3 @@
-<canvas class="transparent-plan" ng-click="canvas.addOnClick($event)" height="{{video.dimensions.height}}" width="{{video.dimensions.width}}"></canvas>
-
 <videogular vg-player-ready="video.onPlayerReady($API)">
   <vg-media vg-src="src"></vg-media>
   <!-- CONTROLES, au cas ou -->
@@ -30,8 +28,8 @@
     <button type="button" class="btn btn-default" ng-click="video.videoEnd()"><img src="icons/control-skip.png" alt="Fin vidéo" /></button>
     <button type="button" class="btn btn-default" ng-click="video.alertTimestamp()"><img src="icons/information.png" alt="Info" /></button>
     <button type="button" class="btn btn-default" ng-click="video.testFrame()"><img src="icons/hammer.png" alt="Debug" /></button>
-    <button type="button" class="btn btn-default" ng-click="canvas.clearCanvas(true)"><img src="icons/prohibition.png" alt="Clear canvas" /></button>
-    <button type="button" class="btn btn-default" ng-click="canvas.saveAnnotation()"><img src="icons/film--plus.png" alt="Save annotaion" /></button>
+    <button type="button" class="btn btn-default" ng-click="dataCtrl.apis.canvas.clearCanvas(true)"><img src="icons/prohibition.png" alt="Clear canvas" /></button>
+    <button type="button" class="btn btn-default" ng-click="dataCtrl.canvas.saveAnnotation()"><img src="icons/film--plus.png" alt="Save annotaion" /></button>
   </div>
 </div>
 

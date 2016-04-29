@@ -28,6 +28,27 @@ angular.module('camomileApp.controllers.browse', [
     // selected layer
     $scope.browse.layer = undefined;
 
+    $scope.mediaTypes = [
+      'video',
+      'image'
+    ];
+
+    $scope.mediaType = 'video';
+
+    $scope.mediaExts = {
+      image: [
+        'JPG',
+        'PNG'
+      ],
+      video: [
+        'MP4',
+        'WEBM',
+        'OTG'
+      ]
+    };
+
+    $scope.mediaExt = undefined;
+
     $scope.infos = {};
 
     // update list of corpora
@@ -122,18 +143,34 @@ angular.module('camomileApp.controllers.browse', [
       }
     });
 
-    $scope.$watch('browse.medium', function () {
-      if ($scope.browse.medium) {
-        $scope.infos.medium = $scope.browse.medium;
-        $scope.browse.mediumSrc = [{
-          src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, "mp4")),
-          type: "video/mp4"
-        }, {
-          src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, "ogg")),
-          type: "video/ogg"
-        }];
-      }
+    $scope.$watch('mediaExt', function () {
+      $scope.reloadMedium();
     });
+
+    $scope.$watch('browse.medium', function () {
+      $scope.reloadMedium();
+    });
+
+    $scope.reloadMedium = function () {
+      // Try to get the url
+      if ($scope.browse.medium && $scope.mediaExt) {
+        $scope.infos.medium = $scope.browse.medium;
+        // var url = Camomile.getMediumURL($scope.browse.medium, $scope.mediaExt);
+        if ($scope.mediaType === "video") {
+          $scope.audioExt = "ogg";
+          $scope.browse.mediumSrc = [{
+            src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, $scope.mediaExt)),
+            type: "video/" + $scope.mediaExt
+          }, {
+            src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, $scope.audioExt)),
+            type: "video/" + $scope.audioExt
+          }];
+        } else {
+          $scope.browse.mediumSrc = $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, $scope.mediaExt));
+        }
+        console.log($scope.browse.mediumSrc);
+      }
+    };
 
     $scope.$watch('browse.layer', function () {
       if ($scope.browse.layer) {

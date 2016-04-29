@@ -25,9 +25,11 @@
           <label for="aname">Nom</label>
           <input type="text" class="form-control" name="aname" id="aname" ng-model="dataCtrl.facto.annotation.fragment.name">
         </div>
-        <div class="form-group">
-          <label for="aduration">Durée (en millisecondes)</label>
-          <input type="number" class="form-control" name="aduration" id="aduration" step="250" ng-model="dataCtrl.facto.annotation.fragment.duration">
+        <div ng-show="dataCtrl.apis.video">
+          <div class="form-group">
+            <label for="aduration">Durée (en millisecondes)</label>
+            <input type="number" class="form-control" name="aduration" id="aduration" step="250" ng-model="dataCtrl.facto.annotation.fragment.duration">
+          </div>
         </div>
         <div class="form-group">
           <label for="aduration">Enregistrer l'annotation</label>
@@ -45,17 +47,18 @@
           <th>Id</th>
           <th>Nom</th>
           <th>Forme</th>
-          <th>Temps de début</th>
-          <th>Durée</th>
+          <th ng-show="dataCtrl.apis.video">Temps de début</th>
+          <th ng-show="dataCtrl.apis.video">Durée</th>
           <th>Points (en JSON)</th>
         </thead>
         <tbody>
           <tr ng-repeat="a in dataCtrl.facto.annotations">
             <td>{{a.id}}</td>
-            <td ng-repeat="p in a.fragment">
-              <a href="" ng-if="p == a.fragment.name" ng-click="deleteAnnotation(a)">{{p}}</a>
-              <span ng-if="p != a.fragment.name">{{p}}</span>
-            </td>
+            <td><a href="" ng-click="deleteAnnotation(a)">{{a.fragment.name}}</a></td>
+            <td>{{a.fragment.drawStyle}}</td>
+            <td ng-show="dataCtrl.apis.video">{{a.fragment.timestamp}}</td>
+            <td ng-show="dataCtrl.apis.video">{{a.fragment.duration}}</td>
+            <td>{{a.fragment.points}}</td>
           </tr>
         </tbody>
       </table>
@@ -63,5 +66,5 @@
   </div>
 </div>
 <div class="col-sm-12">
-  <button type="button" class="btn btn-default" ng-click="sendAnnotations()">Envoyer les annotations</button>
+  <button type="button" class="btn btn-default" ng-click="api.sendAnnotations()">Envoyer les annotations</button>
 </div>

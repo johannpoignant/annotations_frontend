@@ -9,7 +9,14 @@ angular.module('camomileApp.controllers.video', [
   "ngAnimate",
   "nvd3"
 ])
-.directive('camomileBox', function ($interval, $timeout) {
+.constant('camomileToolsConfig', {
+  refreshTime: {
+    canvas: 250,
+    video: 100,
+    dimensions: 1000
+  }
+})
+.directive('camomileBox', function ($interval, $timeout, camomileToolsConfig) {
   return {
     restrict: 'AE',
     scope: {
@@ -22,30 +29,29 @@ angular.module('camomileApp.controllers.video', [
     '</div>',
     controller: function ($scope) {
       var facto = this.facto = {};
-      var fns = this.fns = {};
       var apis = this.apis = {};
 
+      /**
+       * Watcher to update the annotations when the infos param is complete
+       * @return {undefined}
+       */
       $scope.$watch("infos", function () {
         if ($scope.infos) {
           $scope.infosParsed = JSON.parse($scope.infos);
-        }
-        if (fns.reloadAnnotations) {
-          fns.reloadAnnotations();
+          if (apis.edit) {
+            apis.edit.getAnnotations();
+          }
         }
       }, true);
+
       this.infos = function () {
         return $scope.infosParsed;
       };
-      facto.annotation = {
-        id: 0,
-        fragment: {
-          name: '', // The name of the annotation or whatever
-          drawStyle: 'free', // Declarative (doesn't do anything else)
-          timestamp: 0, // The timestamp of the points (beginning time, in ms)
-          duration: 2000, // The duration (in ms)
-          points: [] // Array of points
-        }
+
+      var isVideo = this.isVideo = function () {
+        return apis.video !== undefined;
       };
+
       facto.annotations = $scope.annotations = [];
       facto.config = {
         strokeColor: '#fff', // Stroke color choosen
@@ -71,7 +77,9 @@ angular.module('camomileApp.controllers.video', [
       this.saveAnnotation = function () {
         var a = facto.annotation; // Shortcut
         if (a.id == 0 && a.fragment.points.length > 1 && a.fragment.name != "") {
-          a.fragment.timestamp = apis.video.API.currentTime;
+          if (isVideo()) {
+            a.fragment.timestamp = apis.video.API.currentTime;
+          }
 
           // Copy the object to insert it into the array; however, warning: slow copy
           facto.annotations.push(JSON.parse(JSON.stringify(a)));
@@ -81,22 +89,49 @@ angular.module('camomileApp.controllers.video', [
         }
       };
 
+      /**
+       * Resets the annotation
+       * @return {undefined}
+       */
+      this.newAnnotation = function() {
+        facto.annotation = {
+          id: 0,
+          fragment: {
+            points: [],
+            name: '',
+            drawStyle: 'free'
+          }
+        };
+
+        if (isVideo()) {
+          facto.annotation.fragment.timestamp = 0;
+          facto.annotation.fragment.duration = 2000;
+        }
+      };
+
+      this.newAnnotation();
+
       this.setAnnotations = function (ans) {
-        console.log('Setting');
-        console.log(ans);
         $scope.$apply(function () {
           for (d in $scope.annotations) {
             delete $scope.annotations[d];
           }
           $scope.annotations.length = 0;
-          // $scope.annotations = ans;
           for (a of ans) {
             $scope.annotations.push(a);
           }
         });
-        console.log($scope.annotations);
-        console.log('End');
-      }
+      };
+
+      this.mediaDimensions = function () {
+        if (apis.video) {
+          return apis.video.dimensions;
+        } else if (apis.image) {
+          return apis.image.dimensions;
+        } else {
+          console.warn('No media available.');
+        }
+      };
 
       /**
        * Utility for the little popup
@@ -128,20 +163,253 @@ angular.module('camomileApp.controllers.video', [
     }
   }
 })
-.directive('camomileVideo', function ($interval, camomileData) {
+/*
+ ██████  █████  ███    ██ ██    ██  █████  ███████
+██      ██   ██ ████   ██ ██    ██ ██   ██ ██
+██      ███████ ██ ██  ██ ██    ██ ███████ ███████
+██      ██   ██ ██  ██ ██  ██  ██  ██   ██      ██
+ ██████ ██   ██ ██   ████   ████   ██   ██ ███████
+*/
+.directive('camomileCanvas', function ($interval, camomileData, camomileToolsConfig) {
+  return {
+    restrict: 'AE',
+    template: '<canvas ' +
+    'class="transparent-plan" ' +
+    'ng-click="canvas.addOnClick($event)" ' +
+    'height="{{canvas.height}}" ' +
+    'width="{{canvas.width}}"' +
+    '></canvas>',
+    require: '^camomileBox',
+    scope: {},
+    controller: function ($scope) {
+      /**
+       * Draws the point p on the canvas
+       * @param {Object} p the point containing the data of the point
+       * @return {undefined}
+       */
+      var drawPoint = function(p) {
+        if (p.points.length > 1) {
+          $scope.canvas.context.beginPath();
+          if (p.drawStyle == "rectangle") {
+            drawRectangle(p.points);
+          } else if (p.drawStyle == "circle") {
+            drawCircle(p.points);
+          } else if (p.drawStyle == "free") {
+            drawFree(p.points);
+          }
+          $scope.canvas.context.stroke();
+          $scope.canvas.context.closePath();
+        } else if (p.points.length == 1) {
+          $scope.canvas.context.beginPath();
+          $scope.canvas.context.arc(p.points[0].x, p.points[0].y, 1, 0, 2 * Math.PI);
+          $scope.canvas.context.fill();
+          $scope.canvas.context.closePath();
+        }
+      };
+
+      /**
+       * Draws a rectangle
+       * @param  {Array} r the points
+       * @return {undefined}
+       */
+      var drawRectangle = function(r) {
+        let w = r[1].x - r[0].x, h = r[1].y - r[0].y;
+        $scope.canvas.context.rect(r[0].x, r[0].y, w, h);
+      };
+
+      /**
+       * Draws a circle
+       * @param  {Array} c the points
+       * @return {undefined}
+       */
+      var drawCircle = function(c) {
+        let m = $scope.Math; // Math js lib
+        // Radius
+        let r = m.abs(m.sqrt(m.pow(c[0].x - c[1].x, 2) + m.pow(c[0].y - c[1].y, 2)));
+        $scope.canvas.context.arc(c[0].x, c[0].y, r, 0, 2 * Math.PI);
+      };
+
+      /**
+       * Draws a free shape
+       * @param  {Array} f the points
+       * @return {undefined}
+       */
+      var drawFree = function(f) {
+        $scope.canvas.context.moveTo(f[0].x, f[0].y); // We move to the first point
+        for (p of f.slice(1, f.length)) {
+          $scope.canvas.context.lineTo(p.x, p.y); // And we draw a line to each point
+        }
+      };
+
+      $scope.canvas = {};
+
+      $scope.canvas.refresh = function () {
+        let vdims = $scope.dataCtrl.mediaDimensions();
+        if (vdims !== undefined) {
+          $scope.canvas.width = vdims.width;
+          $scope.canvas.height = vdims.height;
+        }
+      };
+
+      /**
+       * Used to setup the canvas on the video
+       * @return {undefined}
+       */
+      $scope.canvas.setupCanvas = function() {
+        $scope.canvas.clearCanvas(false);
+        $scope.canvas.reloadAnnotationStyles();
+
+        if ($scope.dataCtrl.isVideo) { // If this is a video...
+          let time = $scope.dataCtrl.facto.video.currentTime;
+          for (a of $scope.dataCtrl.facto.annotations) {
+            // We need to care about the time
+            if (a.fragment.name && time >= a.fragment.timestamp && time <= a.fragment.timestamp + a.fragment.duration) {
+              drawPoint(a.fragment);
+            }
+          }
+        } else { // If this is an image however...
+          for (a of $scope.dataCtrl.facto.annotations) {
+            drawPoint(a.fragment); // We draw everything as there is no time involved
+          }
+        }
+
+        // Don't forget the current annotation
+        drawPoint($scope.dataCtrl.facto.annotation.fragment);
+      };
+
+      $scope.canvas.reloadAnnotationStyles = function() {
+        var c = $scope.dataCtrl.facto.config;
+        $scope.canvas.context.strokeStyle = c.strokeColor;
+        $scope.canvas.context.fillStyle = c.fillColor;
+        $scope.canvas.context.lineWidth = c.strokeWidth;
+      };
+
+      /**
+       * Allow to know if the current drawing has reached the maximum of points it
+       * can have
+       * @return {boolean} true if the drawing has reached the max. of points it can
+       * have, false otherwise
+       */
+      $scope.canvas.isComplete = function() {
+        var a = $scope.dataCtrl.facto.annotation.fragment; // Shortcut
+        if (a.drawStyle == "rectangle" && a.points.length > 1)
+          return true;
+        else if (a.drawStyle == "circle" && a.points.length > 1)
+          return true;
+        else if (a.drawStyle == "free" && a.points.length > 9)
+          return true;
+        else
+          return false;
+      };
+
+      /**
+       * Clears the canvas, and if clearPoints is provided and set to true, will
+       * also empty the points array
+       * @param {boolean} clearPoints
+       * @return {undefined}
+       */
+      $scope.canvas.clearCanvas = function(clearPoints) {
+        clearPoints = clearPoints !== undefined ? clearPoints : false;
+        if (clearPoints) {
+          $scope.dataCtrl.newAnnotation();
+        }
+        let dims = $scope.dataCtrl.mediaDimensions();
+        if (dims) {
+          $scope.canvas.context.clearRect(0, 0, dims.width, dims.height);
+        }
+      };
+
+      /**
+       * Adds a point on click on the canvas
+       * @param {unknown} event js object
+       * @return {undefined}
+       */
+      $scope.canvas.addOnClick = function(event) {
+        var x = event.offsetX;
+        var y = event.offsetY;
+        var a = $scope.dataCtrl.facto.annotation.fragment; // Shortcut
+
+        if (!$scope.canvas.isComplete()) {
+          a.points.push({
+            x: x,
+            y: y
+          });
+        }
+      };
+
+      $scope.refresh = $interval(function () {
+        $scope.canvas.setupCanvas();
+      }, camomileToolsConfig.refreshTime.canvas);
+
+    },
+    link: function (scope, elem, attrs, controllerInstance) {
+      scope.dataCtrl = controllerInstance;
+
+      scope.canvas.surface = elem.find('canvas')[0];
+      scope.canvas.context = scope.canvas.surface.getContext('2d');
+
+      scope.dataCtrl.apis.canvas = scope.canvas;
+    }
+  }
+})
+/*
+██ ███    ███  █████   ██████  ███████
+██ ████  ████ ██   ██ ██       ██
+██ ██ ████ ██ ███████ ██   ███ █████
+██ ██  ██  ██ ██   ██ ██    ██ ██
+██ ██      ██ ██   ██  ██████  ███████
+*/
+.directive('camomileImage', function ($interval, camomileData, camomileToolsConfig) {
+  return {
+    restrict: 'AE',
+    template: '<img ng-src="{{src}}" ng-style="style">',
+    require: '^camomileBox',
+    scope: {
+      src: '@'
+    },
+    controller: function ($scope) {
+      // Vide
+      $scope.image = {};
+      $scope.style = {
+        width: "100%",
+        height: "100%"
+      };
+    },
+    link: function (scope, elem, attrs, controllerInstance) {
+      scope.dataCtrl = controllerInstance;
+
+      $interval(function () {
+        scope.image.dimensions = {
+          width: elem.find('img').width(),
+          height: elem.find('img').height()
+        };
+        scope.dataCtrl.apis.canvas.refresh();
+      }, camomileToolsConfig.refreshTime.dimensions);
+
+      controllerInstance.apis.image = scope.image;
+      controllerInstance.apis.video = undefined;
+    }
+  }
+})
+/*
+██    ██ ██ ██████  ███████  ██████
+██    ██ ██ ██   ██ ██      ██    ██
+██    ██ ██ ██   ██ █████   ██    ██
+ ██  ██  ██ ██   ██ ██      ██    ██
+  ████   ██ ██████  ███████  ██████
+*/
+.directive('camomileVideo', function ($interval, camomileData, camomileToolsConfig) {
   return {
     restrict: 'AE',
     templateUrl: 'views/cVideo.html',
     require: '^camomileBox',
     scope: {
-      src: '=',
-      annotations: '@'
+      src: '='
     },
     controller: function ($scope) {
       $scope.Math = window.Math;
 
       $scope.video = {};
-      $scope.canvas = {};
 
       /**
        * Slider object for using as timeline below video.
@@ -279,163 +547,6 @@ angular.module('camomileApp.controllers.video', [
       };
 
       /**
-       * Draws the point p on the canvas
-       * @param {Object} p the point containing the data of the point
-       * @return {undefined}
-       */
-      var drawPoint = function(p) {
-        if (p.points.length > 1) {
-          $scope.canvas.context.beginPath();
-          if (p.drawStyle == "rectangle") {
-            drawRectangle(p.points);
-          } else if (p.drawStyle == "circle") {
-            drawCircle(p.points);
-          } else if (p.drawStyle == "free") {
-            drawFree(p.points);
-          }
-          $scope.canvas.context.stroke();
-          $scope.canvas.context.closePath();
-        } else if (p.points.length == 1) {
-          $scope.canvas.context.beginPath();
-          $scope.canvas.context.arc(p.points[0].x, p.points[0].y, 1, 0, 2 * Math.PI);
-          $scope.canvas.context.fill();
-          $scope.canvas.context.closePath();
-        }
-      }
-
-      /**
-       * Draws a rectangle
-       * @param  {Array} r the points
-       * @return {undefined}
-       */
-      var drawRectangle = function(r) {
-        let w = r[1].x - r[0].x, h = r[1].y - r[0].y;
-        $scope.canvas.context.rect(r[0].x, r[0].y, w, h);
-      };
-
-      /**
-       * Draws a circle
-       * @param  {Array} c the points
-       * @return {undefined}
-       */
-      var drawCircle = function(c) {
-        let m = $scope.Math; // Math js lib
-        // Radius
-        let r = m.abs(m.sqrt(m.pow(c[0].x - c[1].x, 2) + m.pow(c[0].y - c[1].y, 2)));
-        $scope.canvas.context.arc(c[0].x, c[0].y, r, 0, 2 * Math.PI);
-      };
-
-      /**
-       * Draws a free shape
-       * @param  {Array} f the points
-       * @return {undefined}
-       */
-      var drawFree = function(f) {
-        $scope.canvas.context.moveTo(f[0].x, f[0].y); // We move to the first point
-        for (p of f.slice(1, f.length)) {
-          $scope.canvas.context.lineTo(p.x, p.y); // And we draw a line to each point
-        }
-      };
-
-      /**
-       * Used to setup the canvas on the video
-       * @return {undefined}
-       */
-      $scope.canvas.setupCanvas = function() {
-        $scope.canvas.clearCanvas(false);
-        $scope.canvas.reloadAnnotationStyles();
-
-        if ($scope.video.API) {
-          let time = $scope.video.API.currentTime;
-          for (a of $scope.dataCtrl.facto.annotations) {
-            if (a.fragment.name && time >= a.fragment.timestamp && time <= a.fragment.timestamp + a.fragment.duration) {
-              drawPoint(a.fragment);
-            }
-          }
-
-          drawPoint($scope.dataCtrl.facto.annotation.fragment);
-        }
-      };
-
-      $scope.canvas.reloadAnnotationStyles = function() {
-        var c = $scope.dataCtrl.facto.config;
-        $scope.canvas.context.strokeStyle = c.strokeColor;
-        $scope.canvas.context.fillStyle = c.fillColor;
-        $scope.canvas.context.lineWidth = c.strokeWidth;
-      };
-
-      /**
-       * Allow to know if the current drawing has reached the maximum of points it
-       * can have
-       * @return {boolean} true if the drawing has reached the max. of points it can
-       * have, false otherwise
-       */
-      $scope.canvas.isComplete = function() {
-        var a = $scope.dataCtrl.facto.annotation.fragment; // Shortcut
-        if (a.drawStyle == "rectangle" && a.points.length > 1)
-          return true;
-        else if (a.drawStyle == "circle" && a.points.length > 1)
-          return true;
-        else if (a.drawStyle == "free" && a.points.length > 9)
-          return true;
-        else
-          return false;
-      };
-
-      /**
-       * Saves the annotation into the annotations array
-       * @return {undefined}
-       */
-      $scope.canvas.saveAnnotation = function() {
-        $scope.dataCtrl.canvas.saveAnnotation();
-      };
-
-      /**
-       * Clears the canvas, and if clearPoints is provided and set to true, will
-       * also empty the points array
-       * @param {boolean} clearPoints
-       * @return {undefined}
-       */
-      $scope.canvas.clearCanvas = function(clearPoints) {
-        clearPoints = clearPoints !== undefined ? clearPoints : false;
-        if (clearPoints) {
-          resetAnnotation();
-        }
-        if ($scope.video.dimensions)
-          $scope.canvas.context.clearRect(0, 0, $scope.video.dimensions.width, $scope.video.dimensions.height);
-      };
-
-      /**
-       * Resets the annotation
-       * @return {undefined}
-       */
-      var resetAnnotation = function() {
-        var a = $scope.dataCtrl.facto.annotation.fragment; // Shortcut
-        a.points = [];
-        a.name = "";
-        a.timestamp = 0;
-        a.duration = 2000;
-      };
-
-      /**
-       * Adds a point on click on the canvas
-       * @param {unknown} event js object
-       * @return {undefined}
-       */
-      $scope.canvas.addOnClick = function(event) {
-        var x = event.offsetX;
-        var y = event.offsetY;
-        var a = $scope.dataCtrl.facto.annotation.fragment; // Shortcut
-
-        if (!$scope.canvas.isComplete()) {
-          a.points.push({
-            x: x,
-            y: y
-          });
-        }
-      };
-
-      /**
        * Set up the interval for the synchronisation of the slider with the player
        */
       $scope.sliderSync = $interval(function() {
@@ -457,38 +568,32 @@ angular.module('camomileApp.controllers.video', [
           $scope.dataCtrl.facto.video.totalTime = $scope.video.API.totalTime;
           $scope.ttSet = true;
         }
-
-        // Calculate the margin left needed to follow the slider position
-        // let ref = $scope.slider.value / $scope.Math.floor($scope.video.API.totalTime / 1000) * ($scope.video.dimensions.width - 32);
-        // camomileData.timebarClass = {
-        //   "margin-left": ref + 'px',
-        //   "height": $scope.video.dimensions.height // Same height as its parent
-        // }
-
-        $scope.canvas.setupCanvas();
-      }, 100);
+      }, camomileToolsConfig.refreshTime.video);
     },
     link: function (scope, elem, attrs, controllerInstance) {
       scope.dataCtrl = controllerInstance;
-
-      controllerInstance.apis.video = scope.video;
-      controllerInstance.apis.canvas = scope.canvas;
-
-      scope.canvas.surface = elem.find('canvas')[0];
-      scope.canvas.context = scope.canvas.surface.getContext('2d');
 
       $interval(function () {
         scope.video.dimensions = {
           width: elem.find('video').width(),
           height: elem.find('video').height()
         };
-      }, 1000);
+        scope.dataCtrl.apis.canvas.refresh();
+      }, camomileToolsConfig.refreshTime.dimensions);
 
-      scope.canvas.setupCanvas(); // Initial setup of the canvas with the annotation from the server
+      controllerInstance.apis.video = scope.video;
+      controllerInstance.apis.image = undefined;
     }
   }
 })
-.directive('camomileDetails', function ($log, $interval, camomileData) {
+/*
+██████  ███████ ████████  █████  ██ ██      ███████
+██   ██ ██         ██    ██   ██ ██ ██      ██
+██   ██ █████      ██    ███████ ██ ██      ███████
+██   ██ ██         ██    ██   ██ ██ ██           ██
+██████  ███████    ██    ██   ██ ██ ███████ ███████
+*/
+.directive('camomileDetails', function ($log, $interval, camomileData, camomileToolsConfig) {
   return {
     restrict: 'AE',
     templateUrl: 'views/cDetails.html',
@@ -679,7 +784,7 @@ angular.module('camomileApp.controllers.video', [
           "margin-left": ref + 'px',
           "height": scope.dimensions.div.height // Same height as its parent
         }
-      }, 100);
+      }, camomileToolsConfig.refreshTime.video);
     }
   }
 })
@@ -688,6 +793,14 @@ angular.module('camomileApp.controllers.video', [
     template: '<div class="eventLine"></div>'
   }
 })
+/*
+███████ ██████  ██ ████████
+██      ██   ██ ██    ██
+█████   ██   ██ ██    ██
+██      ██   ██ ██    ██
+███████ ██████  ██    ██
+*/
+
 .directive('camomileAnnotations', function ($interval, Camomile) {
   return {
     restrict: 'AE',
@@ -697,9 +810,11 @@ angular.module('camomileApp.controllers.video', [
       data: '@'
     },
     controller: function ($scope) {
-      $scope.sendAnnotations = function () {
+      $scope.api = {};
+
+      $scope.api.sendAnnotations = function () {
         var i = $scope.dataCtrl.infos();
-        if (!i.layer && !i.medium) {
+        if (!i.layer || !i.medium) {
           console.warn('Pas de layer ou medium sélectionné');
           return;
         }
@@ -727,11 +842,12 @@ angular.module('camomileApp.controllers.video', [
         }
 
         if (sa.length) {
+          console.log(i);
           Camomile.createAnnotations(i.layer, sa, callback);
         }
       };
 
-      $scope.getAnnotations = function () {
+      $scope.api.getAnnotations = function () {
         if ($scope.dataCtrl.infos) {
           var i = $scope.dataCtrl.infos();
 
@@ -763,7 +879,7 @@ angular.module('camomileApp.controllers.video', [
         }
       };
 
-      $scope.deleteAnnotation = function (annotation) {
+      $scope.api.deleteAnnotation = function (annotation) {
         if (annotation.id) {
           Camomile.deleteAnnotation(annotation.id, function (err, data) {
             if (err) {
@@ -773,15 +889,6 @@ angular.module('camomileApp.controllers.video', [
             }
           });
         }
-
-        // for (index in $scope.dataCtrl.facto.annotations) {
-        //   let a = $scope.dataCtrl.facto.annotations[index];
-        //   if (a.name == annotation.name) {
-        //     delete $scope.dataCtrl.facto.annotations[index];
-        //     $scope.dataCtrl.facto.annotations.length--;
-        //     break;
-        //   }
-        // }
       };
 
       $scope.initWatchers = function () {
@@ -799,40 +906,14 @@ angular.module('camomileApp.controllers.video', [
     },
     link: function (scope, elem, attrs, controllerInstance) {
       scope.dataCtrl = controllerInstance;
-
-      scope.dataCtrl.fns.reloadAnnotations = scope.getAnnotations;
+      controllerInstance.apis.edit = scope.api;
+      // scope.dataCtrl.fns.reloadAnnotations = scope.getAnnotations;
       scope.initWatchers();
     }
   }
 })
 .factory('camomileData', function () {
   var facto = {};
-
-  // facto.annotations = [];
-  // facto.config = {
-  //   strokeColor: '#fff', // Stroke color choosen
-  //   fillColor: '#fff', // Fill color choosen
-  //   colors: [ // Colors available
-  //     {color: '#f00', description: 'Red'},
-  //     {color: '#00f', description: 'Blue'},
-  //     {color: '#0f0', description: 'Green'},
-  //     {color: '#fff', description: 'White'}
-  //   ],
-  //   drawStyle: 'free', // Style choosen
-  //   drawStyles: [ // Styles available
-  //     {key: 'free', description: 'Free form'},
-  //     {key: 'rectangle', description: 'Rectangle'},
-  //     {key: 'circle', description: 'Circle'}
-  //   ],
-  //   strokeWidth: 2 // Stroke width (line width) choosen
-  // };
-  //
-  // facto.timebarClass = {
-  //   "margin-left": 0 + 'px',
-  //   "height": 0 // Same height as its parent
-  // };
-
-
   return facto;
 })
 
