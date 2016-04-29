@@ -162,7 +162,7 @@ angular.module('camomileApp.controllers.browse', [
             src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, $scope.mediaExt)),
             type: "video/" + $scope.mediaExt
           }, {
-            src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, $scope.audioExt)),
+            src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, $scope.mediaExt)),
             type: "video/" + $scope.audioExt
           }];
         } else {

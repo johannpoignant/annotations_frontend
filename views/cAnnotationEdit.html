@@ -53,8 +53,8 @@
         </thead>
         <tbody>
           <tr ng-repeat="a in dataCtrl.facto.annotations">
-            <td>{{a.id}}</td>
-            <td><a href="" ng-click="deleteAnnotation(a)">{{a.fragment.name}}</a></td>
+            <td><a href="" ng-click="api.deleteAnnotation(a)">{{a.id}}</a></td>
+            <td>{{a.fragment.name}}</td>
             <td>{{a.fragment.drawStyle}}</td>
             <td ng-show="dataCtrl.apis.video">{{a.fragment.timestamp}}</td>
             <td ng-show="dataCtrl.apis.video">{{a.fragment.duration}}</td>
