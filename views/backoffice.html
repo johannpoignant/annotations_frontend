@@ -146,25 +146,17 @@
     <h4>Existing users</h4>
     <table class="table">
       <thead>
-        <th>
-          ID
-        </th>
-        <th>
-          Name
-        </th>
-        <th>
-          Role
-        </th>
-        <th>
-          Description
-        </th>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Description</th>
       </thead>
       <tbody>
         <tr ng-repeat="p in usersExisting">
-          <td ng-repeat="v in p">
-            <a href="" ng-if="v == p._id" ng-click="deleteUser(v)">{{v}}</a>
-            <span ng-if="v != p._id">{{v}}</span>
-          </td>
+          <td><a href="" ng-click="deleteUser(p._id)">{{p._id}}</a></td>
+          <td>{{p.username}}</td>
+          <td>{{p.role}}</td>
+          <td><json-tree object="p.description"></json-tree></td>
         </tr>
       </tbody>
     </table>
@@ -173,25 +165,17 @@
     <h4>Existing groups</h4>
     <table class="table">
       <thead>
-        <th>
-          ID
-        </th>
-        <th>
-          Name
-        </th>
-        <th>
-          Users
-        </th>
-        <th>
-          Description
-        </th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Users</th>
+        <th>Description</th>
       </thead>
       <tbody>
         <tr ng-repeat="p in groupsExisting">
-          <td ng-repeat="v in p">
-            <a href="" ng-if="v == p._id" ng-click="deleteGroup(v)">{{v}}</a>
-            <span ng-if="v != p._id">{{v}}</span>
-          </td>
+          <td><a href="" ng-click="deleteGroup(p._id)">{{p._id}}</a></td>
+          <td>{{p.name}}</td>
+          <td><json-tree object="p.users"></json-tree></td>
+          <td><json-tree object="p.description"></json-tree></td>
         </tr>
       </tbody>
     </table>
@@ -202,22 +186,15 @@
     <h4>Existing corpora</h4>
     <table class="table">
       <thead>
-        <th>
-          ID
-        </th>
-        <th>
-          Name
-        </th>
-        <th>
-          Description
-        </th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
       </thead>
       <tbody>
         <tr ng-repeat="p in corporaExisting">
-          <td ng-repeat="v in p">
-            <a href="" ng-if="v == p._id" ng-click="deleteCorpus(v)">{{v}}</a>
-            <span ng-if="v != p._id">{{v}}</span>
-          </td>
+          <td><a href="" ng-click="deleteCorpus(p._id)">{{p._id}}</a></td>
+          <td>{{p.name}}</td>
+          <td><json-tree object="p.description"></json-tree></td>
         </tr>
       </tbody>
     </table>
@@ -226,22 +203,17 @@
     <h4>Existing layers</h4>
     <table class="table">
       <thead>
-        <th>
-          ID
-        </th>
-        <th>
-          Name
-        </th>
-        <th>
-          Description
-        </th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Corpora</th>
+        <th>Description</th>
       </thead>
       <tbody>
         <tr ng-repeat="p in layersExisting">
-          <td ng-repeat="v in p">
-            <a href="" ng-if="v == p._id" ng-click="deleteLayer(v)">{{v}}</a>
-            <span ng-if="v != p._id">{{v}}</span>
-          </td>
+          <td><a href="" ng-click="deleteLayer(p._id)">{{p._id}}</a></td>
+          <td>{{p.name}}</td>
+          <td>{{p.id_corpus}}</td>
+          <td><json-tree object="p.description"></json-tree></td>
         </tr>
       </tbody>
     </table>
@@ -252,21 +224,11 @@
     <h4>Existing media</h4>
     <table class="table">
       <thead>
-        <th>
-          ID
-        </th>
-        <th>
-          Name
-        </th>
-        <th>
-          Url
-        </th>
-        <th>
-          Corpus
-        </th>
-        <th>
-          Description
-        </th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Url</th>
+        <th>Corpus</th>
+        <th>Description</th>
       </thead>
       <tbody>
         <tr ng-repeat="p in mediaExisting">

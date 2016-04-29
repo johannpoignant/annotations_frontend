@@ -1,4 +1,4 @@
-angular.module("camomileApp.controllers.backoffice", [])
+angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
 .controller('BackofficeCtrl', ['$scope', '$log', 'Camomile', '$uibModal', function($scope, $log, Camomile, $uibModal) {
   // Creates modal allowing to edit the description of the object selected
   $scope.setDescription = function(descObject) {
