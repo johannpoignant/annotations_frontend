@@ -75,8 +75,12 @@ angular.module('camomileApp.controllers.video', [
           {key: 'rectangle', description: 'Rectangle'},
           {key: 'circle', description: 'Circle'}
         ],
-        strokeWidth: 2 // Stroke width (line width) choosen
+        strokeWidth: 2, // Stroke width (line width) choosen
+        fontFamily: 'Arial',
+        fontSize: 36
+        // font: fontSize + 'px ' + fontFamily // The font used to draw text
       };
+      facto.config.font = facto.config.fontSize + 'px ' + facto.config.fontFamily; // The font used to draw text
       facto.video = {
         currentTime: 0,
         totalTime: 0
@@ -216,7 +220,7 @@ angular.module('camomileApp.controllers.video', [
        * @param {Object} p the point containing the data of the point
        * @return {undefined}
        */
-      var drawPoint = function(p) {
+      var drawFragment = function(p) {
         if (p.points.length > 1) {
           $scope.canvas.context.beginPath();
           if (p.drawStyle == "rectangle") {
@@ -234,6 +238,13 @@ angular.module('camomileApp.controllers.video', [
           $scope.canvas.context.fill();
           $scope.canvas.context.closePath();
         }
+      };
+
+      var drawAnnotation = function (annotation) {
+        $scope.canvas.context.fillText(annotation, 10, $scope.dataCtrl.facto.config.fontSize);
+        $scope.canvas.reloadAnnotationStyles(1);
+        $scope.canvas.context.strokeText(annotation, 10, $scope.dataCtrl.facto.config.fontSize);
+        $scope.canvas.reloadAnnotationStyles();
       };
 
       /**
@@ -293,24 +304,33 @@ angular.module('camomileApp.controllers.video', [
           for (a of $scope.dataCtrl.facto.annotations) {
             // We need to care about the time
             if (time >= a.fragment.timestamp && time <= a.fragment.timestamp + a.fragment.duration) {
-              drawPoint(a.fragment);
+              drawFragment(a.fragment);
+              drawAnnotation(a.fragment.name);
             }
           }
         } else { // If this is an image however...
           for (a of $scope.dataCtrl.facto.annotations) {
-            drawPoint(a.fragment); // We draw everything as there is no time involved
+            drawFragment(a.fragment); // We draw everything as there is no time involved
           }
         }
 
         // Don't forget the current annotation
-        drawPoint($scope.dataCtrl.facto.annotation.fragment);
+        drawFragment($scope.dataCtrl.facto.annotation.fragment);
       };
 
-      $scope.canvas.reloadAnnotationStyles = function() {
-        var c = $scope.dataCtrl.facto.config;
-        $scope.canvas.context.strokeStyle = c.strokeColor;
-        $scope.canvas.context.fillStyle = c.fillColor;
-        $scope.canvas.context.lineWidth = c.strokeWidth;
+      $scope.canvas.reloadAnnotationStyles = function(mode) {
+        mode = mode ? mode : 0;
+        if (mode === 0) {
+          var c = $scope.dataCtrl.facto.config;
+          $scope.canvas.context.strokeStyle = c.strokeColor;
+          $scope.canvas.context.fillStyle = c.fillColor;
+          $scope.canvas.context.lineWidth = c.strokeWidth;
+          $scope.canvas.context.font = c.font;
+        } else if (mode === 1) {
+          $scope.canvas.context.strokeStyle = '#000';
+          $scope.canvas.context.fillStyle = '#fff';
+          $scope.canvas.context.lineWidth = 1;
+        }
       };
 
       /**
@@ -395,6 +415,8 @@ angular.module('camomileApp.controllers.video', [
             } else {
               scope.canvas.addPoint({x: e.offsetX, y: e.offsetY});
             }
+          } else if (e.button == 1) {
+            scope.canvas.clearCanvas(true);
           } else if (e.button == 2) {
             scope.canvas.mode = 2;
             scope.lastOrigin = {x: e.offsetX, y: e.offsetY};
@@ -877,7 +899,7 @@ angular.module('camomileApp.controllers.video', [
         let ref = (vt.currentTime / vt.totalTime) * ($scope.dimensions.res.width);
         $scope.timebarClass = {
           "margin-left": ref + 'px',
-          "height": $scope.dimensions.div.height // Same height as its parent
+          "height": $scope.dimensions.div.height - 40 // Same height as its parent - 40
         };
       };
 

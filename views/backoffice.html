@@ -132,7 +132,7 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="backoffice-pannel">
-        <h4>Give rights on a corpus</h4>
+        <h4>Grant rights on a corpus</h4>
         <form class="form-horizontal">
           <div class="form-group">
             <label class="control-label col-sm-5">User</label>
@@ -152,11 +152,11 @@
               <select class="form-control" ng-options="r.key as r.value for r in rightsExisting" ng-model="creation.rightsToUserOnCorpus.rights"></select>
             </div>
           </div>
-          <button type="button" class="btn btn-primary form-control" ng-click="addRightsToUserOnCorpus()">Create</button>
+          <button type="button" class="btn btn-primary form-control" ng-click="addRightsToUserOnCorpus()">Grant</button>
         </form>
       </div>
       <div class="backoffice-pannel">
-        <h4>Give rights on a corpus</h4>
+        <h4>Grant rights on a corpus</h4>
         <form class="form-horizontal">
           <div class="form-group">
             <label class="control-label col-sm-5">User</label>
@@ -176,7 +176,7 @@
               <select class="form-control" ng-options="r.key as r.value for r in rightsExisting" ng-model="creation.rightsToUserOnLayer.rights"></select>
             </div>
           </div>
-          <button type="button" class="btn btn-primary form-control" ng-click="addRightsToUserOnLayer()">Create</button>
+          <button type="button" class="btn btn-primary form-control" ng-click="addRightsToUserOnLayer()">Grant</button>
         </form>
       </div>
     </div>
@@ -188,16 +188,16 @@
     <h4>Existing users</h4>
     <table class="table">
       <thead>
-        <th>Id</th>
+        <th>ID</th>
         <th>Name</th>
         <th>Role</th>
         <th>Description</th>
       </thead>
       <tbody>
         <tr ng-repeat="p in usersExisting">
-          <td><a href="" ng-click="deleteUser(p._id)">{{p._id}}</a></td>
-          <td>{{p.username}}</td>
-          <td>{{p.role}}</td>
+          <td><a href="" ng-click="deleteUser(p._id)">{{ p._id }}</a></td>
+          <td>{{ p.username }}</td>
+          <td>{{ p.role }}</td>
           <td><json-tree object="p.description"></json-tree></td>
         </tr>
       </tbody>
@@ -214,8 +214,8 @@
       </thead>
       <tbody>
         <tr ng-repeat="p in groupsExisting">
-          <td><a href="" ng-click="deleteGroup(p._id)">{{p._id}}</a></td>
-          <td>{{p.name}}</td>
+          <td><a href="" ng-click="deleteGroup(p._id)">{{ p._id }}</a></td>
+          <td>{{ p.name }}</td>
           <td><json-tree object="p.users"></json-tree></td>
           <td><json-tree object="p.description"></json-tree></td>
         </tr>
@@ -234,8 +234,8 @@
       </thead>
       <tbody>
         <tr ng-repeat="p in corporaExisting">
-          <td><a href="" ng-click="deleteCorpus(p._id)">{{p._id}}</a></td>
-          <td>{{p.name}}</td>
+          <td><a href="" ng-click="deleteCorpus(p._id)">{{ p._id }}</a></td>
+          <td>{{ p.name }}</td>
           <td><json-tree object="p.description"></json-tree></td>
         </tr>
       </tbody>
@@ -247,14 +247,14 @@
       <thead>
         <th>ID</th>
         <th>Name</th>
-        <th>Corpora</th>
+        <th>Corpus</th>
         <th>Description</th>
       </thead>
       <tbody>
         <tr ng-repeat="p in layersExisting">
-          <td><a href="" ng-click="deleteLayer(p._id)">{{p._id}}</a></td>
-          <td>{{p.name}}</td>
-          <td>{{p.id_corpus}}</td>
+          <td><a href="" ng-click="deleteLayer(p._id)">{{ p._id }}</a></td>
+          <td>{{ p.name }}</td>
+          <td>{{ convertCorpus(p.id_corpus).name }}</td>
           <td><json-tree object="p.description"></json-tree></td>
         </tr>
       </tbody>
@@ -274,10 +274,10 @@
       </thead>
       <tbody>
         <tr ng-repeat="p in mediaExisting">
-          <td><a href="" ng-click="deleteMedium(p._id)">{{p._id}}</a></td>
-          <td>{{p.name}}</td>
-          <td>{{p.url}}</td>
-          <td>{{p.corpus_id}}</td>
+          <td><a href="" ng-click="deleteMedium(p._id)">{{ p._id }}</a></td>
+          <td>{{ p.name }}</td>
+          <td>{{ p.url }}</td>
+          <td>{{ convertCorpus(p.id_corpus).name }}</td>
           <td><json-tree object="p.description"></json-tree></td>
         </tr>
       </tbody>

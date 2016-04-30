@@ -185,6 +185,15 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
     });
   };
 
+  // Convert id into objects
+  $scope.convertCorpus = function (id) {
+    for (c of $scope.corporaExisting) {
+      if (c._id === id)
+        return c
+    }
+    return id;
+  };
+
   // Create
   $scope.createNewUser = function() {
     var da = $scope.creation.user;

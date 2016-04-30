@@ -27,24 +27,10 @@
     <video-control action="video.nextSecond()"><img src="icons/control-double.png" alt="Seconde suivante" /></video-control>
     <video-control action="video.videoEnd()"><img src="icons/control-skip.png" alt="Fin vidéo" /></video-control>
     <video-control action="video.alertTimestamp()"><img src="icons/information.png" alt="Info" /></video-control>
-
-    <!-- <button type="button" class="btn btn-default" ng-click="video.videoBegin()"></button> -->
-    <!-- <button type="button" class="btn btn-default" ng-click="video.previousSecond()"><img src="icons/control-double-180.png" alt="Seconde précédente" /></button>
-    <button type="button" class="btn btn-default" ng-click="video.previousFrame()"><img src="icons/control-stop-180.png" alt="Image précédente" /></button>
-    <button type="button" class="btn btn-default" ng-click="video.videoPlay()"><img src="icons/control.png" alt="Play" /></button>
-    <button type="button" class="btn btn-default" ng-click="video.videoPause()"><img src="icons/control-pause.png" alt="Pause" /></button>
-    <button type="button" class="btn btn-default" ng-click="video.videoStop()"><img src="icons/control-stop-square.png" alt="Stop" /></button>
-    <button type="button" class="btn btn-default" ng-click="video.nextFrame()"><img src="icons/control-stop.png" alt="Image suivante" /></button>
-    <button type="button" class="btn btn-default" ng-click="video.nextSecond()"><img src="icons/control-double.png" alt="Seconde suivante" /></button>
-    <button type="button" class="btn btn-default" ng-click="video.videoEnd()"><img src="icons/control-skip.png" alt="Fin vidéo" /></button>
-    <button type="button" class="btn btn-default" ng-click="video.alertTimestamp()"><img src="icons/information.png" alt="Info" /></button>
-    <button type="button" class="btn btn-default" ng-click="video.testFrame()"><img src="icons/hammer.png" alt="Debug" /></button>
-    <button type="button" class="btn btn-default" ng-click="dataCtrl.apis.canvas.clearCanvas(true)"><img src="icons/prohibition.png" alt="Clear canvas" /></button>
-    <button type="button" class="btn btn-default" ng-click="dataCtrl.canvas.saveAnnotation()"><img src="icons/film--plus.png" alt="Save annotaion" /></button> -->
   </div>
 </div>
 
 <rzslider
     rz-slider-model="slider.value"
     rz-slider-options="slider.options"
-    ng-click="video.updateSlider()"></rzslider>
+    ng-click="video.updateTime()"></rzslider>

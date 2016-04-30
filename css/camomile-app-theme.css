@@ -41,6 +41,7 @@
   border: 1px solid black;
   width: 0%;
   height: 525px;
+  z-index: 4;
   position: absolute;
 }
 
