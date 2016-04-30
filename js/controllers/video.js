@@ -513,7 +513,6 @@ angular.module('camomileApp.controllers.video', [
        * @return {[type]}     [description]
        */
       $scope.video.onPlayerReady = function (API) {
-        console.log('<API><LOADED></LOADED></API>');
         $scope.video.API = API;
         $scope.video.updateSlider();
       };
@@ -643,15 +642,15 @@ angular.module('camomileApp.controllers.video', [
         $scope.slider.lastValue = $scope.slider.value;
         $scope.dataCtrl.facto.video.currentTime = $scope.slider.value;
         if (!$scope.ttSet && $scope.video.API.totalTime) {
-          $scope.dataCtrl.facto.video.totalTime = $scope.video.API.totalTime;
+          $scope.dataCtrl.facto.video.totalTime = $scope.Math.floor($scope.video.API.totalTime / 1000);
           $scope.ttSet = true;
         }
-        console.log($scope.dataCtrl.facto.video);
       };
 
       $scope.video.updateTime = function () {
         $scope.video.updateSlider();
         $scope.dataCtrl.apis.details.updateTimebar();
+        $scope.dataCtrl.apis.details.refreshEventline();
       };
     },
     link: function (scope, elem, attrs, controllerInstance) {
@@ -875,11 +874,23 @@ angular.module('camomileApp.controllers.video', [
       $scope.api.updateTimebar = function () {
         // Calculate the margin left needed to follow the slider position
         let vt = $scope.dataCtrl.facto.video; // vt for videoTime
-        let ref = (vt.currentTime / window.Math.floor(vt.totalTime / 1000)) * ($scope.dimensions.res.width);
+        let ref = (vt.currentTime / vt.totalTime) * ($scope.dimensions.res.width);
         $scope.timebarClass = {
           "margin-left": ref + 'px',
           "height": $scope.dimensions.div.height // Same height as its parent
         };
+      };
+
+      $scope.api.refreshEventline = function () {
+        let vt = $scope.dataCtrl.facto.video; // vt for videoTime
+        for (e of $scope.events) {
+          let time = (e.begin / vt.totalTime) * ($scope.dimensions.res.width);
+          let end = (e.duration / vt.totalTime) * ($scope.dimensions.res.width);
+          e.style = {
+            'margin-left': time + 'px',
+            'width': end
+          };
+        }
       };
     },
     link: function (scope, elem, attrs, controllerInstance) {
@@ -897,17 +908,7 @@ angular.module('camomileApp.controllers.video', [
           height: eventLine.height()
         };
 
-        let vt = scope.dataCtrl.facto.video; // vt for videoTime
-        console.log(vt);
-        for (e of scope.events) {
-          let time = (e.begin / window.Math.floor(vt.totalTime / 1000)) * (scope.dimensions.res.width);
-          let end = (e.duration / window.Math.floor(vt.totalTime / 1000)) * (scope.dimensions.res.width);
-          e.style = {
-            'margin-left': time + 'px',
-            'width': end
-          };
-        }
-
+        scope.api.updateTimebar();
         scope.graphAPI.refresh();
       };
 
