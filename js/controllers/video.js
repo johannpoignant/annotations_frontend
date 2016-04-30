@@ -16,6 +16,13 @@ angular.module('camomileApp.controllers.video', [
     dimensions: 1000
   }
 })
+/*
+██████   ██████  ██   ██
+██   ██ ██    ██  ██ ██
+██████  ██    ██   ███
+██   ██ ██    ██  ██ ██
+██████   ██████  ██   ██
+*/
 .directive('camomileBox', function ($interval, $timeout, camomileToolsConfig) {
   return {
     restrict: 'AE',
@@ -173,7 +180,8 @@ angular.module('camomileApp.controllers.video', [
     restrict: 'AE',
     template: '<canvas ' +
     'class="transparent-plan" ' +
-    'ng-click="canvas.addOnClick($event)" ' +
+    // 'ng-click="canvas.addOnClick($event)" ' +
+    'oncontextmenu="return false;" ' +
     'height="{{canvas.height}}" ' +
     'width="{{canvas.width}}"' +
     '></canvas>',
@@ -221,7 +229,7 @@ angular.module('camomileApp.controllers.video', [
        * @return {undefined}
        */
       var drawCircle = function(c) {
-        let m = $scope.Math; // Math js lib
+        let m = window.Math; // Math js lib
         // Radius
         let r = m.abs(m.sqrt(m.pow(c[0].x - c[1].x, 2) + m.pow(c[0].y - c[1].y, 2)));
         $scope.canvas.context.arc(c[0].x, c[0].y, r, 0, 2 * Math.PI);
@@ -335,6 +343,16 @@ angular.module('camomileApp.controllers.video', [
         }
       };
 
+      $scope.canvas.addPoint = function (point) {
+        let a = $scope.dataCtrl.facto.annotation.fragment;
+        if (!$scope.canvas.isComplete()) {
+          a.points.push({
+            x: point.x,
+            y: point.y
+          });
+        }
+      };
+
       $scope.refresh = $interval(function () {
         $scope.canvas.setupCanvas();
       }, camomileToolsConfig.refreshTime.canvas);
@@ -345,6 +363,52 @@ angular.module('camomileApp.controllers.video', [
 
       scope.canvas.surface = elem.find('canvas')[0];
       scope.canvas.context = scope.canvas.surface.getContext('2d');
+
+      scope.canvas.mode = 0;
+
+      /*
+        MODE:
+          0: nothing to do
+          1: editing last point
+          2: moving all the annotation
+       */
+      elem
+        .bind('mousedown', function (e) {
+          console.log(e);
+          let a = scope.dataCtrl.facto.annotation.fragment;
+
+          if (e.button == 0) {
+            scope.canvas.mode = 1;
+            if (a.points.length == 0) {
+              scope.canvas.addPoint({x: e.offsetX, y: e.offsetY});
+              scope.canvas.addPoint({x: e.offsetX, y: e.offsetY});
+            } else {
+              scope.canvas.addPoint({x: e.offsetX, y: e.offsetY});
+            }
+          } else if (e.button == 2) {
+            scope.canvas.mode = 2;
+            scope.lastOrigin = {x: e.offsetX, y: e.offsetY};
+          }
+        })
+        .bind('mouseup', function (e) {
+          console.log(e);
+          scope.canvas.mode = 0;
+        })
+        .bind('mousemove', function (e) {
+          let pts = scope.dataCtrl.facto.annotation.fragment.points;
+
+          if (scope.canvas.mode == 1) {
+            pts[pts.length - 1] = {x: e.offsetX, y: e.offsetY};
+          } else if (scope.canvas.mode == 2) {
+            let origin = {x: e.offsetX, y: e.offsetY};
+            for (p of pts) {
+              p.x = p.x + (origin.x - scope.lastOrigin.x);
+              p.y = p.y + (origin.y - scope.lastOrigin.y);
+            }
+            scope.lastOrigin = {x: e.offsetX, y: e.offsetY};
+          }
+          scope.canvas.setupCanvas();
+        });
 
       scope.dataCtrl.apis.canvas = scope.canvas;
     }

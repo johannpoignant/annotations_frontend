@@ -47,7 +47,7 @@ angular.module('camomileApp.controllers.browse', [
       ]
     };
 
-    $scope.mediaExt = undefined;
+    $scope.mediaExt = 'MP4';
 
     $scope.infos = {};
 
