@@ -31,10 +31,6 @@
   text-align: center;
 }
 
-.cview .btn {
-  margin-top: 10px;
-}
-
 .transparent-plan {
   cursor: pointer;
   position: absolute;
@@ -116,4 +112,30 @@
 
 .inf-msg.ng-hide {
   opacity: 0;
+}
+
+video-control button.btn.btn-default {
+  //padding: 0;
+}
+
+.btn-group > video-control > .btn {
+  position: relative;
+  float: left;
+}
+.btn-group > video-control > .btn + .btn {
+  margin-left: -1px;
+}
+.btn-group > video-control:not(:first-child):not(:last-child) > .btn {
+  border-radius: 0;
+}
+.btn-group > video-control:first-child > .btn {
+  margin-left: 0;
+}
+.btn-group > video-control:first-child:not(:last-child) > .btn {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.btn-group > video-control:last-child:not(:first-child) > .btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }

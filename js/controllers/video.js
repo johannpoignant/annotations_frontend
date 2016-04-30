@@ -634,18 +634,35 @@ angular.module('camomileApp.controllers.video', [
     },
     link: function (scope, elem, attrs, controllerInstance) {
       scope.dataCtrl = controllerInstance;
+      scope.elem = elem;
 
       $interval(function () {
         scope.video.dimensions = {
           width: elem.find('video').width(),
           height: elem.find('video').height()
         };
+
+        let nb = elem.find('video-control button').length;
+
+        scope.elem
+          .find('video-control button')
+          .css('width', 1 / nb * scope.video.dimensions.width + 'px');
         scope.dataCtrl.apis.canvas.refresh();
       }, camomileToolsConfig.refreshTime.dimensions);
 
       controllerInstance.apis.video = scope.video;
       controllerInstance.apis.image = undefined;
     }
+  }
+})
+.directive('videoControl', function () {
+  return {
+    restrict: 'AE',
+    transclude: true,
+    scope: {
+      action: '&'
+    },
+    template: '<button class="btn btn-default" type="button" ng-click="action()" ng-transclude></btn>'
   }
 })
 /*

@@ -17,8 +17,19 @@
 
 <div class="row">
   <div class="col-sm-12 btn-group">
-    <button type="button" class="btn btn-default" ng-click="video.videoBegin()"><img src="icons/control-skip-180.png" alt="Début vidéo" /></button>
-    <button type="button" class="btn btn-default" ng-click="video.previousSecond()"><img src="icons/control-double-180.png" alt="Seconde précédente" /></button>
+    <video-control action="video.videoBegin()"><img src="icons/control-skip-180.png" alt="Début vidéo" /></video-control>
+    <video-control action="video.previousSecond()"><img src="icons/control-double-180.png" alt="Seconde précédente" /></video-control>
+    <video-control action="video.previousFrame()"><img src="icons/control-stop-180.png" alt="Image précédente" /></video-control>
+    <video-control action="video.videoPlay()"><img src="icons/control.png" alt="Play" /></video-control>
+    <video-control action="video.videoPause()"><img src="icons/control-pause.png" alt="Pause" /></video-control>
+    <video-control action="video.videoStop()"><img src="icons/control-stop-square.png" alt="Stop" /></video-control>
+    <video-control action="video.nextFrame()"><img src="icons/control-stop.png" alt="Image suivante" /></video-control>
+    <video-control action="video.nextSecond()"><img src="icons/control-double.png" alt="Seconde suivante" /></video-control>
+    <video-control action="video.videoEnd()"><img src="icons/control-skip.png" alt="Fin vidéo" /></video-control>
+    <video-control action="video.alertTimestamp()"><img src="icons/information.png" alt="Info" /></video-control>
+
+    <!-- <button type="button" class="btn btn-default" ng-click="video.videoBegin()"></button> -->
+    <!-- <button type="button" class="btn btn-default" ng-click="video.previousSecond()"><img src="icons/control-double-180.png" alt="Seconde précédente" /></button>
     <button type="button" class="btn btn-default" ng-click="video.previousFrame()"><img src="icons/control-stop-180.png" alt="Image précédente" /></button>
     <button type="button" class="btn btn-default" ng-click="video.videoPlay()"><img src="icons/control.png" alt="Play" /></button>
     <button type="button" class="btn btn-default" ng-click="video.videoPause()"><img src="icons/control-pause.png" alt="Pause" /></button>
@@ -29,7 +40,7 @@
     <button type="button" class="btn btn-default" ng-click="video.alertTimestamp()"><img src="icons/information.png" alt="Info" /></button>
     <button type="button" class="btn btn-default" ng-click="video.testFrame()"><img src="icons/hammer.png" alt="Debug" /></button>
     <button type="button" class="btn btn-default" ng-click="dataCtrl.apis.canvas.clearCanvas(true)"><img src="icons/prohibition.png" alt="Clear canvas" /></button>
-    <button type="button" class="btn btn-default" ng-click="dataCtrl.canvas.saveAnnotation()"><img src="icons/film--plus.png" alt="Save annotaion" /></button>
+    <button type="button" class="btn btn-default" ng-click="dataCtrl.canvas.saveAnnotation()"><img src="icons/film--plus.png" alt="Save annotaion" /></button> -->
   </div>
 </div>
 
