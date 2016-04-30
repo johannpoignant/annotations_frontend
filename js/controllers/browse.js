@@ -59,12 +59,13 @@ angular.module('camomileApp.controllers.browse', [
           corpora = [];
         } else {
           corpora = data;
-          $scope.loaded = true;
         }
 
-        $timeout(function() {
+        $scope.$apply(function () {
           $scope.browse.corpora = corpora;
-        }, 0);
+          $scope.loaded = true;
+          console.log('Loaded finished');
+        });
       });
     };
 
@@ -168,7 +169,6 @@ angular.module('camomileApp.controllers.browse', [
         } else {
           $scope.browse.mediumSrc = $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, $scope.mediaExt));
         }
-        console.log($scope.browse.mediumSrc);
       }
     };
 

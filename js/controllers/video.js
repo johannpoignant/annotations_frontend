@@ -36,7 +36,7 @@ angular.module('camomileApp.controllers.video', [
     '</div>',
     controller: function ($scope) {
       var facto = this.facto = {};
-      var apis = this.apis = {};
+      var apis = this.apis = $scope.apis = {};
 
       /**
        * Watcher to update the annotations when the infos param is complete
@@ -100,12 +100,12 @@ angular.module('camomileApp.controllers.video', [
        * Resets the annotation
        * @return {undefined}
        */
-      this.newAnnotation = function() {
+      this.newAnnotation = $scope.newAnnotation = function() {
         facto.annotation = {
           id: 0,
           fragment: {
             name: '',
-            drawStyle: 'free',
+            drawStyle: facto.config.drawStyle,
             points: []
           }
         };
@@ -165,6 +165,30 @@ angular.module('camomileApp.controllers.video', [
     },
     link: function (scope, elem, attrs) {
       // Nothing
+      $interval(function () {
+        scope.dimensions = {
+          width: elem.width(),
+          height: elem.height()
+        };
+        if (scope.lastDimensions
+            && (    scope.dimensions.width != scope.lastDimensions.width
+                ||  scope.dimensions.height != scope.lastDimensions.height)) {
+              // Trigger fns
+              if (scope.apis.graph)
+                scope.apis.graph.refresh();
+              if (scope.apis.image)
+                scope.apis.image.refresh();
+              if (scope.apis.video)
+                scope.apis.video.refresh();
+              if (scope.apis.details)
+                scope.apis.details.refresh();
+              // if (scope.apis.)
+              //   scope.apis..refresh();
+
+              scope.newAnnotation();
+        }
+        scope.lastDimensions = scope.dimensions;
+      }, 500);
     }
   }
 })
@@ -180,7 +204,6 @@ angular.module('camomileApp.controllers.video', [
     restrict: 'AE',
     template: '<canvas ' +
     'class="transparent-plan" ' +
-    // 'ng-click="canvas.addOnClick($event)" ' +
     'oncontextmenu="return false;" ' +
     'height="{{canvas.height}}" ' +
     'width="{{canvas.width}}"' +
@@ -325,24 +348,6 @@ angular.module('camomileApp.controllers.video', [
         }
       };
 
-      /**
-       * Adds a point on click on the canvas
-       * @param {unknown} event js object
-       * @return {undefined}
-       */
-      $scope.canvas.addOnClick = function(event) {
-        var x = event.offsetX;
-        var y = event.offsetY;
-        var a = $scope.dataCtrl.facto.annotation.fragment; // Shortcut
-
-        if (!$scope.canvas.isComplete()) {
-          a.points.push({
-            x: x,
-            y: y
-          });
-        }
-      };
-
       $scope.canvas.addPoint = function (point) {
         let a = $scope.dataCtrl.facto.annotation.fragment;
         if (!$scope.canvas.isComplete()) {
@@ -354,9 +359,14 @@ angular.module('camomileApp.controllers.video', [
       };
 
       $scope.refresh = $interval(function () {
-        $scope.canvas.setupCanvas();
+        if ($scope.dataCtrl.isVideo()) {
+          if ($scope.dataCtrl.apis.video.getStatus() == 'play') {
+            $scope.canvas.setupCanvas();
+          }
+        } else {
+          $scope.canvas.setupCanvas();
+        }
       }, camomileToolsConfig.refreshTime.canvas);
-
     },
     link: function (scope, elem, attrs, controllerInstance) {
       scope.dataCtrl = controllerInstance;
@@ -431,7 +441,7 @@ angular.module('camomileApp.controllers.video', [
     },
     controller: function ($scope) {
       // Vide
-      $scope.image = {};
+      $scope.api.image = {};
       $scope.style = {
         width: "100%",
         height: "100%"
@@ -440,15 +450,15 @@ angular.module('camomileApp.controllers.video', [
     link: function (scope, elem, attrs, controllerInstance) {
       scope.dataCtrl = controllerInstance;
 
-      $interval(function () {
-        scope.image.dimensions = {
+      scope.api.refresh = function () {
+        scope.api.image.dimensions = {
           width: elem.find('img').width(),
           height: elem.find('img').height()
         };
         scope.dataCtrl.apis.canvas.refresh();
-      }, camomileToolsConfig.refreshTime.dimensions);
+      };
 
-      controllerInstance.apis.image = scope.image;
+      controllerInstance.apis.image = scope.api;
       controllerInstance.apis.video = undefined;
     }
   }
@@ -493,28 +503,34 @@ angular.module('camomileApp.controllers.video', [
         }
       };
 
+      $scope.video.getStatus = function () {
+        return $scope.video.API.currentState;
+      };
+
       /**
        * Store the API of the player when it is ready
        * @param  {[type]} API [description]
        * @return {[type]}     [description]
        */
-      $scope.video.onPlayerReady = function(API) {
+      $scope.video.onPlayerReady = function (API) {
+        console.log('<API><LOADED></LOADED></API>');
         $scope.video.API = API;
+        $scope.video.updateSlider();
       };
 
       /**
        * Alerts the timestamp
        * @return {undefined}
        */
-      $scope.video.alertTimestamp = function() {
-        window.alert($scope.video.API.currentTime);
+      $scope.video.alertTimestamp = function () {
+        $scope.dataCtrl.showMessage('Timestamp: ' + window.Math.floor($scope.video.API.currentTime) + 'ms', 2500);
       };
 
       /**
        * Plays the video
        * @return {undefined}
        */
-      $scope.video.videoPlay = function() {
+      $scope.video.videoPlay = function () {
         $scope.video.API.play();
       };
 
@@ -522,7 +538,7 @@ angular.module('camomileApp.controllers.video', [
        * Pauses the video
        * @return {undefined}
        */
-      $scope.video.videoPause = function() {
+      $scope.video.videoPause = function () {
         $scope.video.API.pause();
       };
 
@@ -530,7 +546,7 @@ angular.module('camomileApp.controllers.video', [
        * Stops the video
        * @return {undefined}
        */
-      $scope.video.videoStop = function() {
+      $scope.video.videoStop = function () {
         $scope.video.API.pause();
         $scope.video.API.seekTime(100, true);
       };
@@ -539,7 +555,7 @@ angular.module('camomileApp.controllers.video', [
        * Stops the video and sets the timeline at 0
        * @return {undefined}
        */
-      $scope.video.videoBegin = function() {
+      $scope.video.videoBegin = function () {
         $scope.video.API.pause();
         $scope.video.API.seekTime(0, true);
       };
@@ -548,7 +564,7 @@ angular.module('camomileApp.controllers.video', [
        * Stops the video and sets the timeline at the end
        * @return {undefined}
        */
-      $scope.video.videoEnd = function() {
+      $scope.video.videoEnd = function () {
         $scope.video.API.pause();
         $scope.video.API.seekTime(100, true);
       };
@@ -557,7 +573,7 @@ angular.module('camomileApp.controllers.video', [
        * Next frame on the video playing
        * @return {undefined}
        */
-      $scope.video.nextFrame = function() {
+      $scope.video.nextFrame = function () {
         var ta = $scope.video.API.currentTime;
         $scope.video.API.seekTime(ta / 1000 + 1 / 25, false);
       };
@@ -566,7 +582,7 @@ angular.module('camomileApp.controllers.video', [
        * Previous frame on the video playing
        * @return {undefined}
        */
-      $scope.video.previousFrame = function() {
+      $scope.video.previousFrame = function () {
         var ta = $scope.video.API.currentTime;
         $scope.video.API.seekTime(ta / 1000 - 1 / 25, false);
       };
@@ -575,7 +591,7 @@ angular.module('camomileApp.controllers.video', [
        * Next second on the video playing
        * @return {undefined}
        */
-      $scope.video.nextSecond = function() {
+      $scope.video.nextSecond = function () {
         var ta = $scope.video.API.currentTime;
         $scope.video.API.seekTime(ta / 1000 + 1, false);
       };
@@ -584,7 +600,7 @@ angular.module('camomileApp.controllers.video', [
        * Previous second on the video playing
        * @return {undefined}
        */
-      $scope.video.previousSecond = function() {
+      $scope.video.previousSecond = function () {
         var ta = $scope.video.API.currentTime;
         $scope.video.API.seekTime(ta / 1000 - 1, false);
       };
@@ -593,7 +609,7 @@ angular.module('camomileApp.controllers.video', [
        * Test method, use this for debug
        * @return {undefined}
        */
-      $scope.video.testFrame = function() { // Use this as test button
+      $scope.video.testFrame = function () { // Use this as test button
         //$log.log($scope.API);
         //var tt = $scope.API.totalTime, ta = $scope.API.currentTime;
         // 1 sec = 100 / tt
@@ -611,7 +627,7 @@ angular.module('camomileApp.controllers.video', [
       /**
        * Set up the interval for the synchronisation of the slider with the player
        */
-      $scope.sliderSync = $interval(function() {
+      $scope.video.updateSlider = function () {
         if ($scope.video.API) {
           var nval = $scope.slider.value, lastVal = $scope.slider.lastValue;
           if (nval != lastVal) {
@@ -630,13 +646,19 @@ angular.module('camomileApp.controllers.video', [
           $scope.dataCtrl.facto.video.totalTime = $scope.video.API.totalTime;
           $scope.ttSet = true;
         }
-      }, camomileToolsConfig.refreshTime.video);
+        console.log($scope.dataCtrl.facto.video);
+      };
+
+      $scope.video.updateTime = function () {
+        $scope.video.updateSlider();
+        $scope.dataCtrl.apis.details.updateTimebar();
+      };
     },
     link: function (scope, elem, attrs, controllerInstance) {
       scope.dataCtrl = controllerInstance;
       scope.elem = elem;
 
-      $interval(function () {
+      scope.video.refresh = function () {
         scope.video.dimensions = {
           width: elem.find('video').width(),
           height: elem.find('video').height()
@@ -648,7 +670,13 @@ angular.module('camomileApp.controllers.video', [
           .find('video-control button')
           .css('width', 1 / nb * scope.video.dimensions.width + 'px');
         scope.dataCtrl.apis.canvas.refresh();
-      }, camomileToolsConfig.refreshTime.dimensions);
+
+        $interval(function () {
+          if (scope.video.getStatus() == "play") {
+            scope.video.updateTime();
+          }
+        }, 100);
+      };
 
       controllerInstance.apis.video = scope.video;
       controllerInstance.apis.image = undefined;
@@ -672,7 +700,7 @@ angular.module('camomileApp.controllers.video', [
 ██   ██ ██         ██    ██   ██ ██ ██           ██
 ██████  ███████    ██    ██   ██ ██ ███████ ███████
 */
-.directive('camomileDetails', function ($log, $interval, camomileData, camomileToolsConfig) {
+.directive('camomileDetails', function ($log, $interval, $timeout, camomileData, camomileToolsConfig) {
   return {
     restrict: 'AE',
     templateUrl: 'views/cDetails.html',
@@ -681,11 +709,13 @@ angular.module('camomileApp.controllers.video', [
       data: '@'
     },
     controller: function ($scope) {
+      $scope.api = {};
+
       /**
        * An array containing all the events displayed on the eventLine
        * @type {Array}
        */
-      $scope.events = [{begin: 20, duration: 20, text: "Test"}, {begin: 48, duration: 125, text: "Test 2"}];
+      $scope.events = [{begin: 10, duration: 10, text: "Test"}, {begin: 48, duration: 125, text: "Test 2"}];
 
       /**
        * The local event var. Contain temporary informations
@@ -841,10 +871,21 @@ angular.module('camomileApp.controllers.video', [
 
         $scope.graphAPI = api;
       };
+
+      $scope.api.updateTimebar = function () {
+        // Calculate the margin left needed to follow the slider position
+        let vt = $scope.dataCtrl.facto.video; // vt for videoTime
+        let ref = (vt.currentTime / window.Math.floor(vt.totalTime / 1000)) * ($scope.dimensions.res.width);
+        $scope.timebarClass = {
+          "margin-left": ref + 'px',
+          "height": $scope.dimensions.div.height // Same height as its parent
+        };
+      };
     },
     link: function (scope, elem, attrs, controllerInstance) {
       scope.dataCtrl = controllerInstance;
-      scope.interv = $interval(function () {
+
+      scope.api.refresh = function () {
         scope.dimensions = {};
         scope.dimensions.div = {
           width: elem.width(),
@@ -856,14 +897,21 @@ angular.module('camomileApp.controllers.video', [
           height: eventLine.height()
         };
 
-        // Calculate the margin left needed to follow the slider position
-        let vt = scope.dataCtrl.facto.video; // Like videoTime
-        let ref = (vt.currentTime / window.Math.floor(vt.totalTime / 1000)) * (scope.dimensions.res.width);
-        scope.timebarClass = {
-          "margin-left": ref + 'px',
-          "height": scope.dimensions.div.height // Same height as its parent
+        let vt = scope.dataCtrl.facto.video; // vt for videoTime
+        console.log(vt);
+        for (e of scope.events) {
+          let time = (e.begin / window.Math.floor(vt.totalTime / 1000)) * (scope.dimensions.res.width);
+          let end = (e.duration / window.Math.floor(vt.totalTime / 1000)) * (scope.dimensions.res.width);
+          e.style = {
+            'margin-left': time + 'px',
+            'width': end
+          };
         }
-      }, camomileToolsConfig.refreshTime.video);
+
+        scope.graphAPI.refresh();
+      };
+
+      controllerInstance.apis.details = scope.api;
     }
   }
 })
@@ -964,6 +1012,12 @@ angular.module('camomileApp.controllers.video', [
               $scope.api.getAnnotations();
             }
           });
+        } else {
+          let t = $scope.dataCtrl.facto.annotations;
+          let p = t.indexOf(annotation);
+          if (p !== -1) {
+            t.splice(p, 1);
+          }
         }
       };
 
@@ -983,7 +1037,7 @@ angular.module('camomileApp.controllers.video', [
     link: function (scope, elem, attrs, controllerInstance) {
       scope.dataCtrl = controllerInstance;
       controllerInstance.apis.edit = scope.api;
-      // scope.dataCtrl.fns.reloadAnnotations = scope.getAnnotations;
+
       scope.initWatchers();
     }
   }

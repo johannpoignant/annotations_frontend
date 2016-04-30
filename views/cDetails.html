@@ -2,7 +2,7 @@
   <div class="timebar" ng-style="timebarClass"></div>
 
   <div ng-repeat="e in events">
-    <div class="event" style="margin-left: {{e.begin}}px; width: {{e.duration}}px;">{{e.text}}</div>
+    <div class="event" ng-style="e.style">{{e.text}}</div>
   </div>
   <event-div></event-div>
 
