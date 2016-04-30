@@ -801,7 +801,7 @@ angular.module('camomileApp.controllers.video', [
           color: '#07f',
           area: true
         }];
-      }
+      };
 
       /**
        * Graph options
