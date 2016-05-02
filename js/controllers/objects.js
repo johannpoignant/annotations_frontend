@@ -10,6 +10,20 @@ angular.module('camomileApp.controllers.objects', [])
   $scope.objectSelected = undefined;
   //$scope.endroitSelected = undefined;
 
+  $scope.fillDB = function () { // TODO: change media references to match _id medium of mongodb
+    var datas = {
+      "objet": [
+        {"Salle": "1", "Etage": "A", "Endroit": 6, "Id_texte": "Triomphe de Bacchus", "media": [1284, 1285, 1286], "sous_partie": "", "Id_POI_adulte": "1", "id_musee": "", "type": "", "Id_POI_enfant": "51"},
+        {"Salle": "3", "Etage": "A", "Endroit": 8, "Id_texte": "Fondation de lyon", "media": [1326], "sous_partie": "", "Id_POI_adulte": "2", "id_musee": "", "type": "papier", "Id_POI_enfant": "52"}
+      ],
+      "endroit": {
+        6: 'A_1',
+        8: 'A_3'
+      }
+    };
+    Camomile.setCorpusMetadata($scope.corpusSelected, datas);
+  }
+
   $scope.getAllCorpora = function() {
     Camomile.getCorpora(function(err, data) {
       if (err) {
@@ -64,6 +78,10 @@ angular.module('camomileApp.controllers.objects', [])
       }
     };
     Camomile.getCorpusMetadata($scope.corpusSelected, "endroit", callback);
+  };
+
+  $scope.getMedium = function (medium_id) {
+    return Camomile.getMediumURL($scope.corpusSelected, medium_id);
   };
 
   $scope.addObject = function () {
