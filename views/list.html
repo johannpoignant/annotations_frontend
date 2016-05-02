@@ -19,8 +19,11 @@
           <div class="form-group">
             <label for="selectMedium" class="col-sm-3 control-label">Medium</label>
             <div class="col-sm-9">
+              <select ng-options="medium._id as medium.name for medium in browse.media | filterByExt:mediaExt"
+              ng-model="browse.medium" ng-show="filterNames"
+              class="form-control" id="selectMedium"></select>
               <select ng-options="medium._id as medium.name for medium in browse.media"
-              ng-model="browse.medium"
+              ng-model="browse.medium" ng-hide="filterNames"
               class="form-control" id="selectMedium"></select>
             </div>
           </div>
@@ -53,12 +56,10 @@
             <label for="selectMedium" class="col-sm-3 control-label">Format</label>
           </div>
           <div class="form-group">
-            <div class="col-sm-12">
-              <!-- <select ng-options="ext as ext for ext in mediaExts"
-              ng-model="mediaExt"
-              class="form-control" id="selectMedium"></select> -->
+            <div class="col-sm-4">
+              <input type="checkbox" class="form-control" id="filterNames" ng-model="filterNames" checked>
             </div>
-            <!-- <label for="selectMedium" class="col-sm-3 control-label">Format</label> -->
+            <label for="filterNames" class="col-sm-8 control-label">Filtrer par extension</label>
           </div>
         </form>
       </div>
@@ -91,8 +92,8 @@
       <camomile-canvas></camomile-canvas>
       <camomile-image ng-if="mediaType === 'image'" src={{browse.mediumSrc}}></camomile-image>
       <camomile-video ng-if="mediaType === 'video'" src="browse.mediumSrc"></camomile-video>
-      <camomile-details data="true"></camomile-details>
-      <camomile-annotations></camomile-annotations>
+      <!-- <camomile-details data="true"></camomile-details> -->
+      <!-- <camomile-annotations></camomile-annotations> -->
     </camomile-box>
   </div>
 </div>

@@ -171,8 +171,8 @@ angular.module('camomileApp.controllers.video', [
       // Nothing
       $interval(function () {
         scope.dimensions = {
-          width: elem.width(),
-          height: elem.height()
+          width: elem.find('div').width(),
+          height: elem.find('div').height()
         };
         if (scope.lastDimensions
             && (    scope.dimensions.width != scope.lastDimensions.width
@@ -463,6 +463,7 @@ angular.module('camomileApp.controllers.video', [
     },
     controller: function ($scope) {
       // Vide
+      $scope.api = {};
       $scope.api.image = {};
       $scope.style = {
         width: "100%",
@@ -473,7 +474,7 @@ angular.module('camomileApp.controllers.video', [
       scope.dataCtrl = controllerInstance;
 
       scope.api.refresh = function () {
-        scope.api.image.dimensions = {
+        scope.api.dimensions = {
           width: elem.find('img').width(),
           height: elem.find('img').height()
         };
@@ -671,8 +672,10 @@ angular.module('camomileApp.controllers.video', [
 
       $scope.video.updateTime = function () {
         $scope.video.updateSlider();
-        $scope.dataCtrl.apis.details.updateTimebar();
-        $scope.dataCtrl.apis.details.refreshEventline();
+        if ($scope.dataCtrl.apis.details) {
+          $scope.dataCtrl.apis.details.updateTimebar();
+          $scope.dataCtrl.apis.details.refreshEventline();
+        }
       };
     },
     link: function (scope, elem, attrs, controllerInstance) {
@@ -972,8 +975,7 @@ angular.module('camomileApp.controllers.video', [
           if (err) {
             console.warn('Save annotation fail');
           } else {
-            // <ITS><SAVED></SAVED></ITS>
-            console.log('Save annotation succeeded');
+            console.info('Save annotation succeeded');
             $scope.api.getAnnotations();
           }
         };

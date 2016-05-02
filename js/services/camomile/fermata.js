@@ -1,25 +1,30 @@
 /*
-Fermata: a succinct REST client.
-Written by Nathan Vander Wilt (nate@calftrail.com).
-Copyright © 2011 &yet, LLC.
-Copyright © 2012–2013 Nathan Vander Wilt.
-Released under the terms of the MIT License:
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
+ Fermata: a succinct REST client.
+ Written by Nathan Vander Wilt (nate@calftrail.com).
+
+ Copyright © 2011 &yet, LLC.
+ Copyright © 2012–2013 Nathan Vander Wilt.
+
+ Released under the terms of the MIT License:
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ */
 
 var Proxy = function () { if ('Proxy' in this) return this.Proxy; }();
 
@@ -70,7 +75,19 @@ fermata._makeNativeURL = function (transport, url) {
 };
 
 fermata._wrapTheWrapper = function (impl) {
-    return (Proxy || fermata._nodeProxy) ? (Proxy) ? Proxy.createFunction({
+    if (fermata._nodeProxy) return fermata._nodeProxy.createFunction({
+        // NOTE: node-proxy has a different set of required handlers than harmony:proxies proposal
+        'getOwnPropertyDescriptor': function (name) {},
+        'enumerate': function () { return []; },
+        'delete': function () { return false; },
+        'fix': function () {},
+        'set': function (target, name, val) {},
+
+        'get': function (target, name) {
+            return impl(name);
+        }
+    }, impl);
+    else if (Proxy && Proxy.createFunction) return Proxy.createFunction({
         // fundamental trap stubs - http://wiki.ecmascript.org/doku.php?id=harmony:proxies
         'getOwnPropertyDescriptor': function (name) {},
         'getPropertyDescriptor': function (name) {},
@@ -83,24 +100,19 @@ fermata._wrapTheWrapper = function (impl) {
         'get': function (target, name) {
             return impl(name);
         }
-    }, impl) : fermata._nodeProxy.createFunction({
-        // NOTE: node-proxy has a different set of required handlers than harmony:proxies proposal
-        'getOwnPropertyDescriptor': function (name) {},
-        'enumerate': function () { return []; },
-        'delete': function () { return false; },
-        'fix': function () {},
-        'set': function (target, name, val) {},
-
+    }, impl);
+    else if (Proxy) return new Proxy(impl, {
         'get': function (target, name) {
             return impl(name);
         }
-    }, impl) : fermata._extend(impl, {
-        'get': function () { return impl('get').apply(null, arguments); },
-        'put': function () { return impl('put').apply(null, arguments); },
-        'post': function () { return impl('post').apply(null, arguments); },
-        'delete': function () { return impl('delete').apply(null, arguments); },
-        'del': function () { return impl('del').apply(null, arguments); }
     });
+    else return fermata._extend(impl, {
+            'get': function () { return impl('get').apply(null, arguments); },
+            'put': function () { return impl('put').apply(null, arguments); },
+            'post': function () { return impl('post').apply(null, arguments); },
+            'delete': function () { return impl('delete').apply(null, arguments); },
+            'del': function () { return impl('del').apply(null, arguments); }
+        });
 };
 
 fermata._nodeTransport = function (request, callback) {
@@ -120,7 +132,7 @@ fermata._nodeTransport = function (request, callback) {
 
     if (request.data && request.data.length && request.method === 'GET' || request.method === 'HEAD') {
         /* XHR ignores data on these requests, so we'll standardize on that behaviour to keep things consistent. Conveniently, this
-           avoids https://github.com/joyent/node/issues/989 in situations like https://issues.apache.org/jira/browse/COUCHDB-1146 */
+         avoids https://github.com/joyent/node/issues/989 in situations like https://issues.apache.org/jira/browse/COUCHDB-1146 */
         if (console && console.warn) console.warn("Ignoring data passed to GET or HEAD request.");
     } else if (typeof(request.data) === 'string') {
         data = new Buffer(request.data, 'utf8');
@@ -181,6 +193,7 @@ fermata._xhrTransport = function (request, callback) {
         url = fermata._stringForURL(request);
 
     xhr.withCredentials = true;
+    console.log(request);
 
     xhr.open(request.method, url, true);
     Object.keys(request.headers).forEach(function (k) {
@@ -285,7 +298,7 @@ fermata.registerPlugin('_base', function () {
      request = {base, method, path, query, headers, data}
      callback = function(error, response)
      response = {status, headers, data}
-    */
+     */
     return function (request, callback) {
         return fermata._transport(request, callback);
     };
@@ -391,7 +404,7 @@ fermata.registerPlugin('autoConvert', function (transport, defaultType) {
                 resType = response && response.headers['Content-Type'],
                 decoder = (TYPES[accType] || TYPES[resType] || [])[1];
             var data = response && response.data,
-                // NOTE: I can only find one precedent (Symfony web framework) for this header extension
+            // NOTE: I can only find one precedent (Symfony web framework) for this header extension
                 meta = response && fermata._extend({'X-Status-Code':response.status}, response.headers);
             if (response && response.status === 204) {     // handle No-Content responses, HT https://github.com/natevw/fermata/pull/35
                 data = null;

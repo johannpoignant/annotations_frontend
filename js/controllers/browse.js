@@ -177,4 +177,21 @@ angular.module('camomileApp.controllers.browse', [
         $scope.infos.layer = $scope.browse.layer;
       }
     })
-  }]);
+  }])
+.filter('filterByExt', function() {
+  return function(input, ext) {
+    if (!ext) { // If extension is null or undefined, we return the input
+      return input;
+    }
+
+    ext = ext.toLowerCase(); // Else, we transform MP4 in mp4 (example)
+    var patt = new RegExp('.+\.' + ext); // We build the regexp
+    var out = []; // Array that will contain the output
+    for (var i = 0; i < input.length; i++) { // For each element in the input
+        if (patt.test(input[i].name)) { // We test it against the pattern
+          out.push(input[i]); // If it matches, we add it to the output array
+        }
+    }
+    return out; // And we return this array
+  };
+});

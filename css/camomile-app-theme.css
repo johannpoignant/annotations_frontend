@@ -115,6 +115,10 @@
   opacity: 0;
 }
 
+.backoffice-pannel button {
+  margin-top: 5px;
+}
+
 video-control button.btn.btn-default {
   //padding: 0;
 }

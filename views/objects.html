@@ -6,19 +6,35 @@
         <select
             type="button"
             class="form-control"
-            ng-options="c._id as c.name for c in corporaExisting"
+            ng-options="c._id as c.name for c in corpora"
             ng-model="corpusSelected"
             id="corpus"></select>
       </div>
     </div>
     <div class="form-group">
+      <label for="layer" class="col-sm-1 control-label">Layer</label>
+      <div class="col-sm-11">
+        <select
+            type="button"
+            class="form-control"
+            ng-options="l._id as l.name for l in layers"
+            ng-model="layerSelected"
+            id="layer"></select>
+      </div>
+    </div>
+    <div class="form-group">
       <label for="" class="col-sm-1 control-label">Object</label>
       <div class="col-sm-11">
-        <select class="form-control">
-          <option value="zdz">Dummy</option>
-          <option value="qzdzqd">Dummy 2</option>
-        </select>
+        <select class="form-control" ng-options="o.Id_texte for o in objects" ng-model="objectSelected"></select>
       </div>
     </div>
   </form>
+
+  <div class="row" ng-show="objectSelected">
+    <div class="col-sm-12">
+      <h3>Informations sur l'objet</h3>
+      <json-tree object="objectSelected"></json-tree>
+    </div>
+  </div>
+
 </div>
