@@ -1,20 +1,20 @@
 angular.module('camomileApp.controllers.objects', [])
-.controller('ObjectsCtrl', function ($scope, $interval, Camomile) {
+.controller('ObjectsCtrl', function ($scope, $interval, $sce, $timeout, Camomile) {
   $scope.corpora = [];
   $scope.layers = [];
   $scope.objects = [];
   $scope.endroits = [];
 
-  //$scope.corpusSelected = undefined;
-  //$scope.layerSelected = undefined;
+  $scope.corpusSelected = undefined;
+  $scope.layerSelected = undefined;
   $scope.objectSelected = undefined;
-  //$scope.endroitSelected = undefined;
+  $scope.endroitSelected = undefined;
 
   $scope.fillDB = function () { // TODO: change media references to match _id medium of mongodb
     var datas = {
       "objet": [
-        {"Salle": "1", "Etage": "A", "Endroit": 6, "Id_texte": "Triomphe de Bacchus", "media": [1284, 1285, 1286], "sous_partie": "", "Id_POI_adulte": "1", "id_musee": "", "type": "", "Id_POI_enfant": "51"},
-        {"Salle": "3", "Etage": "A", "Endroit": 8, "Id_texte": "Fondation de lyon", "media": [1326], "sous_partie": "", "Id_POI_adulte": "2", "id_musee": "", "type": "papier", "Id_POI_enfant": "52"}
+        {"Salle": "1", "Etage": "A", "Endroit": 6, "Id_texte": "Triomphe de Bacchus", "media": ["5718cc2ced295f0100f04886", "572355b9e626270100d92bcf"], "sous_partie": "", "Id_POI_adulte": "1", "id_musee": "", "type": "", "Id_POI_enfant": "51"},
+        {"Salle": "3", "Etage": "A", "Endroit": 8, "Id_texte": "Fondation de lyon", "media": ["572884f98bb1af010029d1b4", "5728ab428bb1af010029d1b6"], "sous_partie": "", "Id_POI_adulte": "2", "id_musee": "", "type": "papier", "Id_POI_enfant": "52"}
       ],
       "endroit": {
         6: 'A_1',
@@ -22,7 +22,7 @@ angular.module('camomileApp.controllers.objects', [])
       }
     };
     Camomile.setCorpusMetadata($scope.corpusSelected, datas);
-  }
+  };
 
   $scope.getAllCorpora = function() {
     Camomile.getCorpora(function(err, data) {
@@ -97,6 +97,51 @@ angular.module('camomileApp.controllers.objects', [])
     Camomile.setCorpusMetadata($scope.corpusSelected, obj, callback);
   };
 
+  $scope.validateMedia = function () {
+    $scope.mediumSrc = [];
+    var desc = {};
+
+    for (let m of $scope.objectSelected.media) {
+      var callback = function (err, data) {
+        if (err) {
+          console.warn('Error in getMedium');
+        } else {
+          desc = data;
+
+          $scope.mediumSrc.push({
+            infos: {
+              layer: '', // Eventually the layer id
+              medium: m
+            },
+            description: desc.description
+          });
+          // Do the switch: type to extension, type to real type (image or video)
+          if (desc.description.type) {
+            var ext = $scope.mediumSrc[$scope.mediumSrc.length - 1].description.extension = desc.description.type.toLowerCase();
+            if (   ext == "mp4"
+                || ext == "webm" ) {
+              $scope.mediumSrc[$scope.mediumSrc.length - 1].description.type = 'video';
+              $scope.mediumSrc[$scope.mediumSrc.length - 1].srcs = [{
+                src: $sce.trustAsResourceUrl(Camomile.getMediumURL(m, ext)),
+                type: "video/" + ext
+              }, {
+                src: $sce.trustAsResourceUrl(Camomile.getMediumURL(m, 'ogg')),
+                type: "video/ogg"
+              }];
+            } else if (  ext == "png"
+                      || ext == "jpg" ) {
+              $scope.mediumSrc[$scope.mediumSrc.length - 1].description.type = 'image';
+              $scope.mediumSrc[$scope.mediumSrc.length - 1].srcs = $sce.trustAsResourceUrl(Camomile.getMediumURL(m, ext));
+            }
+          }
+        }
+        console.log($scope.mediumSrc);
+      };
+
+      Camomile.getMedium(m, callback);
+    }
+  };
+
   $scope.init = function () {
     $scope.getAllCorpora();
   };
@@ -109,4 +154,22 @@ angular.module('camomileApp.controllers.objects', [])
       $scope.getAllObjects();
     }
   });
-});
+
+  // $scope.test = function () {
+  //   $timeout(function () {
+  //     $scope.nodeInfos.refresh();
+  //   });
+  // };
+
+  $scope.$watch('objectSelected', function () {
+    if ($scope.objectSelected) {
+      $scope.validateMedia();
+      //$scope.test();
+    }
+  });
+})
+.filter('currentdate',['$filter',  function($filter) {
+  return function() {
+    return $filter('date')(new Date(), 'hh:mm:ss MMMM');
+  };
+}]);

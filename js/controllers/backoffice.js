@@ -1,5 +1,5 @@
-angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
-.controller('BackofficeCtrl', ['$scope', '$log', 'Camomile', '$uibModal', function($scope, $log, Camomile, $uibModal) {
+angular.module("camomileApp.controllers.backoffice", [])
+.controller('BackofficeCtrl', ['$scope', '$log', 'Camomile', '$uibModal', '$timeout', function($scope, $log, Camomile, $uibModal, $timeout) {
   // Creates modal allowing to edit the description of the object selected
   $scope.setDescription = function(descObject) {
     var modalInstance = $uibModal.open({
@@ -130,7 +130,7 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
       if (err) {
         $scope.usersExisting = [];
       } else {
-        $scope.$apply(function() {
+        $timeout(function () {
           $scope.usersExisting = data;
         });
       }
@@ -142,7 +142,7 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
       if (err) {
         $scope.groupsExisting = [];
       } else {
-        $scope.$apply(function() {
+        $timeout(function () {
           $scope.groupsExisting = data;
         });
       }
@@ -154,7 +154,7 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
       if (err) {
         $scope.corporaExisting = [];
       } else {
-        $scope.$apply(function() {
+        $timeout(function () {
           $scope.corporaExisting = data;
         });
       }
@@ -166,7 +166,7 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
       if (err) {
         $scope.mediaExisting = [];
       } else {
-        $scope.$apply(function() {
+        $timeout(function () {
           $scope.mediaExisting = data;
         });
       }
@@ -178,7 +178,7 @@ angular.module("camomileApp.controllers.backoffice", ['angular-json-tree'])
       if (err) {
         $scope.layersExisting = [];
       } else {
-        $scope.$apply(function() {
+        $timeout(function () {
           $scope.layersExisting = data;
         });
       }

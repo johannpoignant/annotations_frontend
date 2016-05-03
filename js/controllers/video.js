@@ -168,15 +168,14 @@ angular.module('camomileApp.controllers.video', [
 
     },
     link: function (scope, elem, attrs) {
-      // Nothing
-      $interval(function () {
+      scope.interval = $interval(function () {
         scope.dimensions = {
           width: elem.find('div').width(),
           height: elem.find('div').height()
         };
-        if (scope.lastDimensions
-            && (    scope.dimensions.width != scope.lastDimensions.width
-                ||  scope.dimensions.height != scope.lastDimensions.height)) {
+        if (  !scope.lastDimensions
+            || scope.dimensions.width != scope.lastDimensions.width
+            || scope.dimensions.height != scope.lastDimensions.height) {
               // Trigger fns
               if (scope.apis.graph)
                 scope.apis.graph.refresh();
@@ -193,6 +192,11 @@ angular.module('camomileApp.controllers.video', [
         }
         scope.lastDimensions = scope.dimensions;
       }, 500);
+
+      scope.$on('$destroy', function() {
+        console.log("Destroying");
+        $interval.cancel(scope.interval);
+      });
     }
   }
 })
@@ -378,7 +382,7 @@ angular.module('camomileApp.controllers.video', [
         }
       };
 
-      $scope.refresh = $interval(function () {
+      $scope.interval = $interval(function () {
         if ($scope.dataCtrl.isVideo()) {
           if ($scope.dataCtrl.apis.video.getStatus() == 'play') {
             $scope.canvas.setupCanvas();
@@ -387,6 +391,11 @@ angular.module('camomileApp.controllers.video', [
           $scope.canvas.setupCanvas();
         }
       }, camomileToolsConfig.refreshTime.canvas);
+
+      scope.$on('$destroy', function() {
+        console.log("Destroying");
+        $interval.$interval.cancel(scope.interval);
+      });
     },
     link: function (scope, elem, attrs, controllerInstance) {
       scope.dataCtrl = controllerInstance;
@@ -478,7 +487,8 @@ angular.module('camomileApp.controllers.video', [
           width: elem.find('img').width(),
           height: elem.find('img').height()
         };
-        scope.dataCtrl.apis.canvas.refresh();
+        if (scope.dataCtrl.apis.canvas)
+          scope.dataCtrl.apis.canvas.refresh();
       };
 
       controllerInstance.apis.image = scope.api;
@@ -692,14 +702,21 @@ angular.module('camomileApp.controllers.video', [
 
         scope.elem
           .find('video-control button')
-          .css('width', 1 / nb * scope.video.dimensions.width + 'px');
-        scope.dataCtrl.apis.canvas.refresh();
+          .css('width', window.Math.floor(1 / nb * scope.video.dimensions.width) + 'px');
 
-        $interval(function () {
+        if (scope.dataCtrl.apis.canvas)
+          scope.dataCtrl.apis.canvas.refresh();
+
+        scope.interval = $interval(function () {
           if (scope.video.getStatus() == "play") {
             scope.video.updateTime();
           }
         }, 100);
+
+        scope.$on('$destroy', function() {
+          console.log("Destroying");
+          $interval.cancel(scope.interval);
+        });
       };
 
       controllerInstance.apis.video = scope.video;

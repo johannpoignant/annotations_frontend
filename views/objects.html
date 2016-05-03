@@ -30,10 +30,29 @@
     </div>
   </form>
 
-  <div class="row" ng-show="objectSelected">
+  <div class="row objets-info" ng-show="objectSelected">
     <div class="col-sm-12">
       <h3>Informations sur l'objet</h3>
-      <json-tree object="objectSelected"></json-tree>
+      <!-- <json-tree json="objectSelected" edit-level="low" node="nodeInfos" collapsed-level="1"></json-tree> -->
+      <json-formatter json="objectSelected" open="1"></json-formatter>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <button type="button" ng-click="fillDB()">Fill database</button>
+    </div>
+  </div>
+
+  <div class="row objets-objet" ng-repeat="m in mediumSrc" ng-if="objectSelected">
+    <div class="col-sm-6">
+      <camomile-box infos="{{m.infos}}">
+        <camomile-video ng-if="m.description.type == 'video'" src="m.srcs"></camomile-video>
+        <camomile-image ng-if="m.description.type == 'image'" src="{{m.srcs}}"></camomile-video>
+      </camomile-box>
+    </div>
+    <div class="col-sm-6">
+      <json-formatter json="m.description" open="1"></json-formatter>
     </div>
   </div>
 
