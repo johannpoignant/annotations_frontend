@@ -117,7 +117,7 @@ angular.module('camomileApp.directives.box', [
         } else if (apis.image) {
           return apis.image.dimensions;
         } else {
-          console.warn('No media available.');
+          //console.warn('No media available.');  // FIX THIS!!!!
         }
       };
 

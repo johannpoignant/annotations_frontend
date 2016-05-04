@@ -27,27 +27,6 @@ angular.module('camomileApp.controllers.browse', [
     // selected layer
     $scope.browse.layer = undefined;
 
-    $scope.mediaTypes = [
-      'video',
-      'image'
-    ];
-
-    $scope.mediaType = 'video';
-
-    $scope.mediaExts = {
-      image: [
-        'JPG',
-        'PNG'
-      ],
-      video: [
-        'MP4',
-        'WEBM',
-        'OTG'
-      ]
-    };
-
-    $scope.mediaExt = 'MP4';
-
     $scope.infos = {};
 
     // update list of corpora
@@ -143,31 +122,45 @@ angular.module('camomileApp.controllers.browse', [
       }
     });
 
-    $scope.$watch('mediaExt', function () {
-      $scope.reloadMedium();
-    });
-
     $scope.$watch('browse.medium', function () {
       $scope.reloadMedium();
     });
 
     $scope.reloadMedium = function () {
       // Try to get the url
-      if ($scope.browse.medium && $scope.mediaExt) {
+      if ($scope.browse.medium) {
         $scope.infos.medium = $scope.browse.medium;
-        // var url = Camomile.getMediumURL($scope.browse.medium, $scope.mediaExt);
-        if ($scope.mediaType === "video") {
-          $scope.audioExt = "ogg";
-          $scope.browse.mediumSrc = [{
-            src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, $scope.mediaExt)),
-            type: "video/" + $scope.mediaExt
-          }, {
-            src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, $scope.mediaExt)),
-            type: "video/" + $scope.audioExt
-          }];
-        } else {
-          $scope.browse.mediumSrc = $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, $scope.mediaExt));
-        }
+        var callback = function (err, data) {
+          if (err) {
+            console.warn('Error in getMedium');
+          } else {
+            desc = data;
+            console.log(desc);
+
+            // Do the switch: type to extension, type to real type (image or video)
+            if (desc.description.type) {
+              var ext = desc.description.type.toLowerCase();
+              if (   ext == "mp4"
+                  || ext == "webm" ) {
+                $scope.browse.mediumType = 'video';
+                $scope.browse.mediumSrc = [{
+                  src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, ext)),
+                  type: "video/" + ext
+                }, {
+                  src: $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, 'ogg')),
+                  type: "video/ogg"
+                }];
+              } else if (  ext == "png"
+                        || ext == "jpg" ) {
+                $scope.browse.mediumType = 'image';
+                $scope.browse.mediumSrc = $sce.trustAsResourceUrl(Camomile.getMediumURL($scope.browse.medium, ext));
+              }
+              console.log($scope.browse.mediumSrc);
+            }
+          }
+        };
+
+        Camomile.getMedium($scope.browse.medium, callback);
       }
     };
 
@@ -178,8 +171,8 @@ angular.module('camomileApp.controllers.browse', [
     })
   }])
 .filter('filterByExt', function() {
-  return function(input, ext) {
-    if (!ext) { // If extension is null or undefined, we return the input
+  return function(input, ext, filtering) {
+    if (!ext || !filtering) { // If extension is null or undefined, we return the input
       return input;
     }
 

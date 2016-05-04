@@ -19,12 +19,8 @@
           <div class="form-group">
             <label for="selectMedium" class="col-sm-3 control-label">Medium</label>
             <div class="col-sm-9">
-              <select ng-options="medium._id as medium.name for medium in browse.media | filterByExt:mediaExt"
-              ng-model="browse.medium" ng-show="filterNames"
-              class="form-control" id="selectMedium"></select>
-              <select ng-options="medium._id as medium.name for medium in browse.media"
-              ng-model="browse.medium" ng-hide="filterNames"
-              class="form-control" id="selectMedium"></select>
+              <select ng-options="medium._id as medium.name for medium in browse.media | filterByExt:mediaType:filterNames"
+              ng-model="browse.medium" class="form-control" id="selectMedium"></select>
             </div>
           </div>
           <div class="form-group">
@@ -41,20 +37,27 @@
         <form class="form-horizontal">
           <div class="form-group">
             <div class="col-sm-9">
-              <select ng-options="type as type for type in mediaTypes"
-              ng-model="mediaType"
-              class="form-control" id="selectCorpus"></select>
+              <select ng-model="mediaType" class="form-control" id="selectCorpus">
+                <optgroup label="Vidéo">
+                  <option value="mp4">MP4</option>
+                  <option value="webm">WebM</option>
+                </optgroup>
+                <optgroup label="Image">
+                  <option value="jpg">JPG</option>
+                  <option value="png">PNG</option>
+                </optgroup>
+              </select>
             </div>
-            <label for="selectCorpus" class="col-sm-3 control-label">Type de media</label>
+            <label for="selectCorpus" class="col-sm-3 control-label">Extension</label>
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <div class="col-sm-9">
               <select ng-options="ext as ext for ext in mediaExts[mediaType]"
               ng-model="mediaExt"
               class="form-control" id="selectMedium"></select>
             </div>
             <label for="selectMedium" class="col-sm-3 control-label">Format</label>
-          </div>
+          </div> -->
           <div class="form-group">
             <div class="col-sm-4">
               <input type="checkbox" class="form-control" id="filterNames" ng-model="filterNames" checked>
@@ -90,8 +93,8 @@
     -->
     <camomile-box infos="{{infos}}">
       <camomile-canvas></camomile-canvas>
-      <camomile-image ng-if="mediaType === 'image'" src={{browse.mediumSrc}}></camomile-image>
-      <camomile-video ng-if="mediaType === 'video'" src="browse.mediumSrc"></camomile-video>
+      <camomile-image ng-if="browse.mediaType === 'image'" src={{browse.mediumSrc}}></camomile-image>
+      <camomile-video ng-if="browse.mediaType === 'video'" src="browse.mediumSrc"></camomile-video>
       <!-- <camomile-details data="true"></camomile-details> -->
       <!-- <camomile-annotations></camomile-annotations> -->
     </camomile-box>

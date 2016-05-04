@@ -12,16 +12,18 @@ angular.module('camomileApp.controllers.objects', [])
 
   $scope.fillDB = function () { // TODO: change media references to match _id medium of mongodb
     var datas = {
-      "objet": [
-        {"Salle": "1", "Etage": "A", "Endroit": 6, "Id_texte": "Triomphe de Bacchus", "media": ["5718cc2ced295f0100f04886", "572355b9e626270100d92bcf"], "sous_partie": "", "Id_POI_adulte": "1", "id_musee": "", "type": "", "Id_POI_enfant": "51"},
-        {"Salle": "3", "Etage": "A", "Endroit": 8, "Id_texte": "Fondation de lyon", "media": ["572884f98bb1af010029d1b4", "5728ab428bb1af010029d1b6"], "sous_partie": "", "Id_POI_adulte": "2", "id_musee": "", "type": "papier", "Id_POI_enfant": "52"}
-      ],
+      "objet": {
+        
+      },
       "endroit": {
         6: 'A_1',
         8: 'A_3'
       }
     };
     Camomile.setCorpusMetadata($scope.corpusSelected, datas);
+    var media = {
+
+    };
   };
 
   $scope.getAllCorpora = function() {
@@ -84,6 +86,23 @@ angular.module('camomileApp.controllers.objects', [])
     return Camomile.getMediumURL($scope.corpusSelected, medium_id);
   };
 
+  $scope.getMediumByName = function (corpus, medium) {
+    var callback = function (err, data) {
+      if (err) {
+
+      } else {
+        console.log('Medium found!');
+        console.log(data);
+      }
+    };
+    Camomile.getMedia(callback, {
+      'filter': {
+        'id_corpus': corpus,
+        'name': medium
+      }
+    });
+  };
+
   $scope.addObject = function () {
     var a = '{"objet":[{"Salle":"4","Etage":"A","Endroit":5,"Id_texte":"","media":[1361,1362],"sous_partie":"dxc3xa9tail","Id_POI_adulte":"/","id_musee":"","type":"2 sur 2","Id_POI_enfant":"/"},{"Salle":"1","Etage":"A","Endroit":6,"Id_texte":"Triomphe de Bacchus","media":[1284,1285,1286],"sous_partie":"","Id_POI_adulte":"1","id_musee":"","type":"","Id_POI_enfant":"51"}]}';
     var obj = JSON.parse(a);
@@ -119,7 +138,7 @@ angular.module('camomileApp.controllers.objects', [])
           if (desc.description.type) {
             var ext = $scope.mediumSrc[$scope.mediumSrc.length - 1].description.extension = desc.description.type.toLowerCase();
             if (   ext == "mp4"
-                || ext == "webm" ) {
+            || ext == "webm" ) {
               $scope.mediumSrc[$scope.mediumSrc.length - 1].description.type = 'video';
               $scope.mediumSrc[$scope.mediumSrc.length - 1].srcs = [{
                 src: $sce.trustAsResourceUrl(Camomile.getMediumURL(m, ext)),
@@ -129,7 +148,7 @@ angular.module('camomileApp.controllers.objects', [])
                 type: "video/ogg"
               }];
             } else if (  ext == "png"
-                      || ext == "jpg" ) {
+            || ext == "jpg" ) {
               $scope.mediumSrc[$scope.mediumSrc.length - 1].description.type = 'image';
               $scope.mediumSrc[$scope.mediumSrc.length - 1].srcs = $sce.trustAsResourceUrl(Camomile.getMediumURL(m, ext));
             }
