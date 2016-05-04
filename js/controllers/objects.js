@@ -155,16 +155,9 @@ angular.module('camomileApp.controllers.objects', [])
     }
   });
 
-  // $scope.test = function () {
-  //   $timeout(function () {
-  //     $scope.nodeInfos.refresh();
-  //   });
-  // };
-
   $scope.$watch('objectSelected', function () {
     if ($scope.objectSelected) {
       $scope.validateMedia();
-      //$scope.test();
     }
   });
 })

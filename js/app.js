@@ -4,12 +4,11 @@ var camomileApp = angular.module('camomileApp', ['camomile.controllers',
     'camomileApp.controllers.browse',
     'camomileApp.controllers.backoffice',
     'camomileApp.controllers.objects',
-    'camomileApp.directives',
+    'camomileApp.config.directives',
     'ngRoute',
     'ui.bootstrap',
     'ngAnimate',
-    'json-tree',
-    'jsonFormatter'
+    'json-tree'
 ])
 .config(['$routeProvider', function($routeProvider) {
     $routeProvider

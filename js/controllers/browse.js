@@ -1,8 +1,7 @@
 angular.module('camomileApp.controllers.browse', [
     "ngSanitize",
     "com.2fdevs.videogular",
-    "com.2fdevs.videogular.plugins.controls",
-    "camomileApp.controllers.video"
+    "com.2fdevs.videogular.plugins.controls"
   ])
   .controller('BrowseCtrl', ['$scope', '$sce', 'Camomile', '$log', '$window', '$timeout',
                     function ($scope, $sce, Camomile, $log, $window, $timeout) {

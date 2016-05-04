@@ -47,6 +47,7 @@
   <div class="row objets-objet" ng-repeat="m in mediumSrc" ng-if="objectSelected">
     <div class="col-sm-6">
       <camomile-box infos="{{m.infos}}">
+        <!-- <camomile-canvas></camomile-canvas> -->
         <camomile-video ng-if="m.description.type == 'video'" src="m.srcs"></camomile-video>
         <camomile-image ng-if="m.description.type == 'image'" src="{{m.srcs}}"></camomile-video>
       </camomile-box>
