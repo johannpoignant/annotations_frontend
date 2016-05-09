@@ -42,10 +42,18 @@ angular.module('camomileApp.directives.details', [
 
       /**
        * Adds the event in the scope to the list of events displayed on the eventLine
+       * event.begin >= 0
+       * event.duration > 0
+       * event.text > 0 && event.text < 16 (1-15)
        * @return {undefined}
        */
       $scope.addEvent = function() {
-        if ($scope.event.begin && $scope.event.duration && $scope.event.text) {
+        if ($scope.event.begin
+          && $scope.event.duration
+          && $scope.event.text
+          && $scope.event.begin >= 0
+          && $scope.event.duration > 0
+          && $scope.event.text.length < 16) {
           $scope.events.push(JSON.parse(JSON.stringify($scope.event)));
         }
       };

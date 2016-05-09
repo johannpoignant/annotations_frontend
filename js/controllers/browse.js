@@ -180,7 +180,7 @@ angular.module('camomileApp.controllers.browse', [
     var patt = new RegExp('.+\.' + ext); // We build the regexp
     var out = []; // Array that will contain the output
     for (var i = 0; i < input.length; i++) { // For each element in the input
-        if (patt.test(input[i].name)) { // We test it against the pattern
+        if (patt.test(input[i].name.toLowerCase())) { // We test it against the pattern
           out.push(input[i]); // If it matches, we add it to the output array
         }
     }

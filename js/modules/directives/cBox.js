@@ -174,6 +174,7 @@ angular.module('camomileApp.directives.box', [
         }
         scope.lastDimensions = scope.dimensions;
       }, 500);
+      console.log('created');
 
       scope.$on('$destroy', function() {
         console.log("Destroying");

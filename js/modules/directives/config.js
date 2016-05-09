@@ -8,6 +8,7 @@ angular.module('camomileApp.config.directives', [
   "camomileApp.directives.edit",
   "camomileApp.directives.image",
   "camomileApp.directives.video",
+  "camomileApp.directives.media",
   "jsonFormatter"
 ])
 .constant('camomileToolsConfig', {

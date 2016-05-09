@@ -13,7 +13,7 @@ angular.module('camomileApp.controllers.objects', [])
   $scope.fillDB = function () { // TODO: change media references to match _id medium of mongodb
     var datas = {
       "objet": {
-        
+
       },
       "endroit": {
         6: 'A_1',
@@ -155,6 +155,7 @@ angular.module('camomileApp.controllers.objects', [])
           }
         }
         console.log($scope.mediumSrc);
+        console.log('Media validated');
       };
 
       Camomile.getMedium(m, callback);
