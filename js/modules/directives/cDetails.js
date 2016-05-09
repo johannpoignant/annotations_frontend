@@ -7,16 +7,19 @@ angular.module('camomileApp.directives.details', [
     templateUrl: camomileToolsConfig.viewsFolder + 'cDetails.html',
     require: '^camomileBox',
     scope: {
-      data: '@'
+      data: '@',
+      graph: '@?'
     },
     controller: function ($scope) {
+      $scope.graph = $scope.graph === undefined ? true : $scope.graph;
+
       $scope.api = {};
 
       /**
        * An array containing all the events displayed on the eventLine
        * @type {Array}
        */
-      $scope.events = [{begin: 10, duration: 10, text: "Test"}, {begin: 48, duration: 125, text: "Test 2"}];
+      $scope.events = [{begin: 5, duration: 4, text: "Test"}, {begin: 12, duration: 6, text: "Test 2"}];
 
       /**
        * The local event var. Contain temporary informations
@@ -47,7 +50,7 @@ angular.module('camomileApp.directives.details', [
        * event.text > 0 && event.text < 16 (1-15)
        * @return {undefined}
        */
-      $scope.addEvent = function() {
+      $scope.api.addEvent = function() {
         if ($scope.event.begin
           && $scope.event.duration
           && $scope.event.text
@@ -212,7 +215,7 @@ angular.module('camomileApp.directives.details', [
           width: elem.width(),
           height: elem.height()
         };
-        var eventLine = angular.element(elem.find('event-div'));
+        var eventLine = elem.find('event-div').find('div');
         scope.dimensions.res = {
           width: eventLine.width(),
           height: eventLine.height()

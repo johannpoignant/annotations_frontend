@@ -6,7 +6,7 @@
   </div>
   <event-div></event-div>
 
-  <div class="graph">
+  <div class="graph" ng-show="graph">
     <nvd3 options="graph.options" data="graph.data" on-ready="graphCallback"></nvd3>
   </div>
 </div>

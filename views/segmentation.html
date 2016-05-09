@@ -1,15 +1,22 @@
 <h2>Segmentation des media</h2>
 <div class="row">
   <div class="col-sm-12">
-    <select ng-options="c._id as c.name for c in cappdata.corpora" ng-model="corpus" ng-change="updateMedium()"></select>
-    <select ng-options="m._id as m.name for m in cappdata.media" ng-model="medium" ng-change="updateView()"></select>
+    <select class="form-control" ng-options="c._id as c.name for c in cappdata.corpora" ng-model="corpus" ng-change="updateMedium()"></select>
+    <select class="form-control" ng-options="m._id as m.name for m in cappdata.media" ng-model="medium" ng-change="updateView()"></select>
   </div>
 </div>
 
-<div class="row">
+<div class="row" ng-if="cappdata.mediumInfos">
   <div class="col-sm-12">
-    <camomile-box ng-if="cappdata.mediumInfos">
+    <camomile-box>
       <camomile-media type="cappdata.mediumInfos.description.type" src="cappdata.mediumInfos.urlSecure"></camomile-media>
+      <camomile-details graph="false"></camomile-details>
     </camomile-box>
+    <div class="row">
+      <div class="col-sm-12">
+        <button type="button" class="btn btn-success">Début segment</button>
+        <button type="button" class="btn btn-warning">Fin segment</button>
+      </div>
+    </div>
   </div>
 </div>
