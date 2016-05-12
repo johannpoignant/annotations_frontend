@@ -1,4 +1,5 @@
 <div class="obj">
+    <h2 style="margin: 0 auto 20px auto;">Objets</h2>
     <form class="form-horizontal">
         <div class="form-group">
             <label for="corpus" class="col-sm-1 control-label">Corpus</label>
@@ -37,18 +38,10 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-sm-12">
-            <button type="button" ng-click="fillDB()">Fill database</button>
-        </div>
-    </div>
-
     <div class="row objets-objet" ng-repeat="m in mediumSrc" ng-if="objectSelected">
         <div class="col-sm-6">
             <camomile-box infos="{{m.infos}}">
-                <!-- <api-canvas></api-canvas> -->
-                <!--<camomile-video ng-if="m.description.type == 'video'" src="m.srcs"></camomile-video>-->
-                <!--<camomile-image ng-if="m.description.type == 'image'" src="{{m.srcs}}"></camomile-video>-->
+                <camomile-canvas></camomile-canvas>
                 <camomile-media type="m.description.type" src="m.srcs"></camomile-media>
             </camomile-box>
         </div>
