@@ -1,0 +1,290 @@
+<div class="row">
+    <div class="col-sm-10 col-sm-offset-1">
+        <h3>Backoffice (admin)</h3>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="backoffice-pannel">
+                <h4>Add user</h4>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="au_uname" class="control-label col-sm-5">User name</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" type="text" id="au_uname" ng-model="creation.user.name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="au_psw" class="control-label col-sm-5">User password</label>
+                        <div class="col-sm-7">
+                            <input type="password" class="form-control" type="password" id="au_psw" ng-model="creation.user.password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="au_ur" class="control-label col-sm-5">User role</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" id="au_ur" ng-model="creation.user.role">
+                                <option value="user" selected>User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.user)">Customize description</button>
+                    <button type="button" class="btn btn-primary form-control" ng-click="createNewUser()">Create</button>
+                </form>
+            </div>
+            <div class="backoffice-pannel">
+                <h4>Add group</h4>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="ag_gname" class="control-label col-sm-5">Group name</label>
+                        <div class="col-sm-7">
+                            <input class="form-control" type="text" id="ag_gname" ng-model="creation.group.name">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.group)">Customize description</button>
+                    <button type="button" class="btn btn-primary form-control" ng-click="createNewGroup()">Create</button>
+                </form>
+            </div>
+            <div class="backoffice-pannel">
+                <h4>Add corpus</h4>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="ac_cname" class="control-label col-sm-5">Corpus name</label>
+                        <div class="col-sm-7">
+                            <input class="form-control" type="text" id="ac_cname" ng-model="creation.corpus.name">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.corpus)">Customize description</button>
+                    <button type="button" class="btn btn-primary form-control" ng-click="createNewCorpus()">Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="backoffice-pannel">
+                <h4>Add layer</h4>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="al_lname" class="control-label col-sm-5">Layer name</label>
+                        <div class="col-sm-7">
+                            <input class="form-control" type="text" id="al_lname" ng-model="creation.layer.name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="al_cname" class="control-label col-sm-5">Corpus</label>
+                        <div class="col-sm-7">
+                            <select id="al_cname" class="form-control" ng-options="c._id as c.name for c in corporaExisting" ng-model="creation.layer.corpus"></select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.layer)">Customize description</button>
+                    <button type="button" class="btn btn-primary form-control" ng-click="createNewLayer()">Create</button>
+                </form>
+            </div>
+            <div class="backoffice-pannel">
+                <h4>Add medium</h4>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="am_mname" class="control-label col-sm-5">Medium name</label>
+                        <div class="col-sm-7">
+                            <input class="form-control" type="text" id="am_mname" ng-model="creation.medium.name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="am_murl" class="control-label col-sm-5">Medium url</label>
+                        <div class="col-sm-7">
+                            <input class="form-control" type="text" id="am_murl" ng-model="creation.medium.url">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="am_cname" class="control-label col-sm-5">Corpus to add to</label>
+                        <div class="col-sm-7">
+                            <select id="am_cname" class="form-control" ng-options="c._id as c.name for c in corporaExisting" ng-model="creation.medium.corpus"></select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.medium)">Customize description</button>
+                    <button type="button" class="btn btn-primary form-control" ng-click="createNewMedium()">Create</button>
+                </form>
+            </div>
+            <div class="backoffice-pannel">
+                <h4>Add user into a group</h4>
+                <form class="form-horizontal">
+                    <div class="form-group" ng-show="usersExisting">
+                        <label class="control-label col-sm-5">Add user...</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" ng-options="u._id as u.username for u in usersExisting" id="userselect" ng-model="creation.userToGroup.userId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="groupsExisting">
+                        <label class="control-label col-sm-5">To group...</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" ng-options="g._id as g.name for g in groupsExisting" id="groupselect" ng-model="creation.userToGroup.groupId"></select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary form-control" ng-click="addUserToGroup()">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="backoffice-pannel">
+                <h4>Grant rights on a corpus</h4>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">User</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" ng-options="u._id as u.username for u in usersExisting" ng-model="creation.rightsToUserOnCorpus.userId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Corpus</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" ng-options="c._id as c.name for c in corporaExisting" ng-model="creation.rightsToUserOnCorpus.corpusId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Rights</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" ng-options="r.key as r.value for r in rightsExisting" ng-model="creation.rightsToUserOnCorpus.rights"></select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary form-control" ng-click="addRightsToUserOnCorpus()">Grant</button>
+                </form>
+            </div>
+            <div class="backoffice-pannel">
+                <h4>Grant rights on a corpus</h4>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">User</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" ng-options="u._id as u.username for u in usersExisting" ng-model="creation.rightsToUserOnLayer.userId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Layer</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" ng-options="l._id as l.name for l in layersExisting" ng-model="creation.rightsToUserOnLayer.corpusId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Rights</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" ng-options="r.key as r.value for r in rightsExisting" ng-model="creation.rightsToUserOnLayer.rights"></select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary form-control" ng-click="addRightsToUserOnLayer()">Grant</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-sm-12">
+        <h4>Existing users</h4>
+        <table class="table">
+            <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Description</th>
+            </thead>
+            <tbody>
+            <tr ng-repeat="p in usersExisting">
+                <td><a href="" ng-click="deleteUser(p._id)">{{ p._id }}</a></td>
+                <td>{{ p.username }}</td>
+                <td>{{ p.role }}</td>
+                <td><json-tree object="p.description"></json-tree></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <h4>Existing groups</h4>
+        <table class="table">
+            <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Users</th>
+            <th>Description</th>
+            </thead>
+            <tbody>
+            <tr ng-repeat="p in groupsExisting">
+                <td><a href="" ng-click="deleteGroup(p._id)">{{ p._id }}</a></td>
+                <td>{{ p.name }}</td>
+                <td><json-tree object="p.users"></json-tree></td>
+                <td><json-tree object="p.description"></json-tree></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <h4>Existing corpora</h4>
+        <table class="table">
+            <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            </thead>
+            <tbody>
+            <tr ng-repeat="p in corporaExisting">
+                <td><a href="" ng-click="deleteCorpus(p._id)">{{ p._id }}</a></td>
+                <td>{{ p.name }}</td>
+                <td><json-tree object="p.description"></json-tree></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <h4>Existing layers</h4>
+        <table class="table">
+            <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Corpus</th>
+            <th>Description</th>
+            </thead>
+            <tbody>
+            <tr ng-repeat="p in layersExisting">
+                <td><a href="" ng-click="deleteLayer(p._id)">{{ p._id }}</a></td>
+                <td>{{ p.name }}</td>
+                <td>{{ convertCorpus(p.id_corpus).name }}</td>
+                <td><json-tree object="p.description"></json-tree></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <h4>Existing media</h4>
+        <table class="table">
+            <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Url</th>
+            <th>Corpus</th>
+            <th>Description</th>
+            </thead>
+            <tbody>
+            <tr ng-repeat="p in mediaExisting">
+                <td><a href="" ng-click="deleteMedium(p._id)">{{ p._id }}</a></td>
+                <td>{{ p.name }}</td>
+                <td>{{ p.url }}</td>
+                <td>{{ convertCorpus(p.id_corpus).name }}</td>
+                <td><json-tree object="p.description"></json-tree></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,70 @@
+<h3>Annotation</h3>
+<div class="col-sm-12">
+    <div class="row">
+        <div class="col-sm-6">
+            <h4>Options</h4>
+            <form class="form">
+                <div class="form-group">
+                    <label>Forme</label>
+                    <select class="form-control" ng-options="o.key as o.description for o in dataCtrl.facto.config.drawStyles" ng-model="dataCtrl.facto.config.drawStyle"></select>
+                </div>
+                <div class="form-group">
+                    <label>Couleur du trait</label>
+                    <select class="form-control" ng-options="o.color as o.description for o in dataCtrl.facto.config.colors" ng-model="dataCtrl.facto.config.strokeColor"></select>
+                </div>
+                <div class="form-group">
+                    <label>Largeur du trait</label>
+                    <input class="form-control" type="number" ng-model="dataCtrl.facto.config.strokeWidth">
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-6" ng-show="dataCtrl.facto.annotation.fragment.points.length > 1">
+            <h4>Annotation actuelle</h4>
+            <form class="form">
+                <div class="form-group">
+                    <label for="aname">Nom</label>
+                    <input type="text" class="form-control" name="aname" id="aname" ng-model="dataCtrl.facto.annotation.fragment.name">
+                </div>
+                <div ng-show="dataCtrl.apis.video">
+                    <div class="form-group">
+                        <label for="aduration">Durée (en millisecondes)</label>
+                        <input type="number" class="form-control" name="aduration" id="aduration" step="250" ng-model="dataCtrl.facto.annotation.fragment.duration">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="aduration">Enregistrer l'annotation</label>
+                    <button class="form-control" type="button" ng-click="dataCtrl.saveAnnotation()">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <hr>
+    <h4>Annotations existantes</h4>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table">
+                <thead>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Forme</th>
+                <th ng-show="dataCtrl.apis.video">Temps de début</th>
+                <th ng-show="dataCtrl.apis.video">Durée</th>
+                <th>Points (en JSON)</th>
+                </thead>
+                <tbody>
+                <tr ng-repeat="a in dataCtrl.facto.annotations">
+                    <td><a href="" ng-click="api.deleteAnnotation(a)">{{a.id}}</a></td>
+                    <td>{{a.fragment.name}}</td>
+                    <td>{{a.fragment.drawStyle}}</td>
+                    <td ng-show="dataCtrl.apis.video">{{a.fragment.timestamp}}</td>
+                    <td ng-show="dataCtrl.apis.video">{{a.fragment.duration}}</td>
+                    <td>{{a.fragment.points}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="col-sm-12">
+    <button type="button" class="btn btn-default" ng-click="api.sendAnnotations()" style="width: 100%;">Envoyer les annotations</button>
+</div>

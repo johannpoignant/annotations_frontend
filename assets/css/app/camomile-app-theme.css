@@ -1,0 +1,162 @@
+.list-view {
+    width: 100%;
+    border: 1px solid black;
+}
+
+.annotation {
+    position: absolute;
+    border: 3px solid green;
+    width: 100px;
+    height: 100px;
+    z-index: 230;
+}
+
+.videogular-container {
+    position: relative;
+}
+
+.objets-info {
+    border: 2px solid #aaa;
+    border-radius: 10px;
+    background-color: #eee;
+    box-shadow: 0 0 6px #aaa;
+}
+
+.objets-objet {
+    border: 2px solid #bbb;
+    border-radius: 5px;
+    margin-top: 2em;
+    padding: 1em;
+    background-color: #eee;
+    box-shadow: 0 0 6px #aaa;
+}
+
+.backoffice-pannel {
+    background: #eee none repeat scroll 0 0;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    box-shadow: 0 0 10px;
+    margin: 1.2% 1.668%;
+    padding: 5px !important;
+    width: 30%;
+    float: left;
+}
+
+.backoffice-pannel h4 {
+    font-weight: bold;
+    text-align: center;
+}
+
+.transparent-plan {
+    cursor: pointer;
+    position: absolute;
+    z-index: 3;
+}
+
+.timebar {
+    border: 1px solid black;
+    width: 0%;
+    height: 525px;
+    z-index: 4;
+    position: absolute;
+}
+
+.slider-ref {
+    margin-left: 15px;
+}
+
+.eventLine {
+    border: 1px solid black;
+    width: 100%;
+    height: 25px;
+    border: 1px solid grey;
+    border-radius: 6px;
+}
+
+.video-elem {
+    margin-top: 12px;
+}
+
+.event {
+    position: absolute;
+    height: 23px;
+    background-color: #07f;
+    margin-top: 1px;
+    text-align: center;
+    padding-top: 2px;
+    overflow: auto;
+    color: white;
+}
+
+.graph {
+    margin-left: -54px;
+    margin-right: -22px;
+}
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.inf-msg {
+    -webkit-transition:all linear 0.5s;
+    transition:all linear 0.5s;
+
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 800px;
+    height: 120px;
+    border: 1px solid black;
+    padding: 20px 10px 10px 10px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px #444;
+    font-size: 250%;
+    text-align: center;
+    z-index: 4;
+    background: white;
+}
+
+.inf-msg.ng-hide {
+    opacity: 0;
+}
+
+.backoffice-pannel button {
+    margin-top: 5px;
+}
+
+video-control button.btn.btn-default {
+//padding: 0;
+}
+
+.btn-group > video-control > .btn {
+    position: relative;
+    float: left;
+}
+.btn-group > video-control > .btn + .btn {
+    margin-left: -1px;
+}
+.btn-group > video-control:not(:first-child):not(:last-child) > .btn {
+    border-radius: 0;
+}
+.btn-group > video-control:first-child > .btn {
+    margin-left: 0;
+}
+.btn-group > video-control:first-child:not(:last-child) > .btn {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.btn-group > video-control:last-child:not(:first-child) > .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}

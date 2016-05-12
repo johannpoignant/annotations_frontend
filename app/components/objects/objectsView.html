@@ -1,0 +1,60 @@
+<div class="obj">
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="corpus" class="col-sm-1 control-label">Corpus</label>
+            <div class="col-sm-11">
+                <select
+                        type="button"
+                        class="form-control"
+                        ng-options="c._id as c.name for c in corpora"
+                        ng-model="corpusSelected"
+                        id="corpus"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="layer" class="col-sm-1 control-label">Layer</label>
+            <div class="col-sm-11">
+                <select
+                        type="button"
+                        class="form-control"
+                        ng-options="l._id as l.name for l in layers"
+                        ng-model="layerSelected"
+                        id="layer"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-sm-1 control-label">Object</label>
+            <div class="col-sm-11">
+                <select class="form-control" ng-options="o.Id_texte for o in objects" ng-model="objectSelected"></select>
+            </div>
+        </div>
+    </form>
+
+    <div class="row objets-info" ng-show="objectSelected">
+        <div class="col-sm-12">
+            <h3>Informations sur l'objet</h3>
+            <!-- <json-tree json="objectSelected" edit-level="low" node="nodeInfos" collapsed-level="1"></json-tree> -->
+            <json-formatter json="objectSelected" open="1"></json-formatter>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <button type="button" ng-click="fillDB()">Fill database</button>
+        </div>
+    </div>
+
+    <div class="row objets-objet" ng-repeat="m in mediumSrc" ng-if="objectSelected">
+        <div class="col-sm-6">
+            <camomile-box infos="{{m.infos}}">
+                <!-- <api-canvas></api-canvas> -->
+                <camomile-video ng-if="m.description.type == 'video'" src="m.srcs"></camomile-video>
+                <camomile-image ng-if="m.description.type == 'image'" src="{{m.srcs}}"></camomile-video>
+            </camomile-box>
+        </div>
+        <div class="col-sm-6">
+            <json-formatter json="m.description" open="1"></json-formatter>
+        </div>
+    </div>
+
+</div>

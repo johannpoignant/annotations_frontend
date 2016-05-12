@@ -1,0 +1,12 @@
+<div ng-show="dataCtrl.apis.video">
+    <div class="timebar" ng-style="timebarClass"></div>
+
+    <div ng-repeat="e in events">
+        <div class="event" ng-style="e.style">{{e.text}}</div>
+    </div>
+    <event-div></event-div>
+
+    <div class="graph" ng-show="graph">
+        <nvd3 options="graph.options" data="graph.data" on-ready="graphCallback"></nvd3>
+    </div>
+</div>
