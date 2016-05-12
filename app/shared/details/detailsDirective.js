@@ -203,6 +203,9 @@ angular.module('camomileApp.directives.details', [
                             'margin-left': time + 'px',
                             'width': end
                         };
+                        if (!vt.totalTime) {
+                            e.style.display = "none";
+                        }
                     }
                 };
             },
@@ -222,6 +225,7 @@ angular.module('camomileApp.directives.details', [
                     };
 
                     scope.api.updateTimebar();
+                    scope.api.refreshEventline();
                     scope.graphAPI.refresh();
                 };
 

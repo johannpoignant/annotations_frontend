@@ -12,7 +12,7 @@ angular.module('camomileApp.directives.box', [
             template: '<div ng-transclude></div>' +
             '<div class="inf-msg" ng-show="infMsg.show">' +
             '<b>Message:</b> {{infMsg.message}}' +
-            '</div>',
+            '</div><div class="inf-msg-bg" ng-show="infMsg.show"></div>',
             controller: function ($scope) {
                 var facto = this.facto = {};
                 var apis = this.apis = $scope.apis = {};

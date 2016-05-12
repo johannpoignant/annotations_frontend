@@ -66,7 +66,6 @@
 }
 
 .eventLine {
-    border: 1px solid black;
     width: 100%;
     height: 25px;
     border: 1px solid grey;
@@ -84,7 +83,7 @@
     margin-top: 1px;
     text-align: center;
     padding-top: 2px;
-    overflow: auto;
+    overflow: hidden;
     color: white;
 }
 
@@ -123,11 +122,29 @@
     box-shadow: 0 0 10px #444;
     font-size: 250%;
     text-align: center;
-    z-index: 4;
+    z-index: 11;
     background: white;
 }
 
 .inf-msg.ng-hide {
+    opacity: 0;
+}
+
+.inf-msg-bg {
+    -webkit-transition:all linear 0.5s;
+    transition:all linear 0.5s;
+
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0.75;
+    background: #555;
+}
+
+.inf-msg-bg.ng-hide {
     opacity: 0;
 }
 

@@ -44,12 +44,14 @@
         <div class="col-sm-12">
             <table class="table">
                 <thead>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Forme</th>
-                <th ng-show="dataCtrl.apis.video">Temps de début</th>
-                <th ng-show="dataCtrl.apis.video">Durée</th>
-                <th>Points (en JSON)</th>
+                <tr>
+                    <th>Id</th>
+                    <th>Nom</th>
+                    <th>Forme</th>
+                    <th ng-show="dataCtrl.apis.video">Temps de début</th>
+                    <th ng-show="dataCtrl.apis.video">Durée</th>
+                    <th>Points (en JSON)</th>
+                </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="a in dataCtrl.facto.annotations">
