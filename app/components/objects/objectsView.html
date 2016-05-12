@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="" class="col-sm-1 control-label">Object</label>
+            <label class="col-sm-1 control-label">Object</label>
             <div class="col-sm-11">
                 <select class="form-control" ng-options="o.Id_texte for o in objects" ng-model="objectSelected"></select>
             </div>
@@ -33,7 +33,6 @@
     <div class="row objets-info" ng-show="objectSelected">
         <div class="col-sm-12">
             <h3>Informations sur l'objet</h3>
-            <!-- <json-tree json="objectSelected" edit-level="low" node="nodeInfos" collapsed-level="1"></json-tree> -->
             <json-formatter json="objectSelected" open="1"></json-formatter>
         </div>
     </div>
@@ -48,8 +47,9 @@
         <div class="col-sm-6">
             <camomile-box infos="{{m.infos}}">
                 <!-- <api-canvas></api-canvas> -->
-                <camomile-video ng-if="m.description.type == 'video'" src="m.srcs"></camomile-video>
-                <camomile-image ng-if="m.description.type == 'image'" src="{{m.srcs}}"></camomile-video>
+                <!--<camomile-video ng-if="m.description.type == 'video'" src="m.srcs"></camomile-video>-->
+                <!--<camomile-image ng-if="m.description.type == 'image'" src="{{m.srcs}}"></camomile-video>-->
+                <camomile-media type="m.description.type" src="m.srcs"></camomile-media>
             </camomile-box>
         </div>
         <div class="col-sm-6">

@@ -1,5 +1,5 @@
 angular.module('camomileApp.controllers.segmentation', [])
-    .controller('SegmentationCtrl', ['$scope', 'cappdata', 'Camomile', function ($scope, cappdata, Camomile) {
+    .controller('SegmentationCtrl', ['$scope', 'cappdata', function ($scope, cappdata) {
         var updateData = function () {
             $scope.$apply(function () {
                 $scope.cappdata = cappdata;
@@ -8,10 +8,27 @@ angular.module('camomileApp.controllers.segmentation', [])
 
         cappdata.registerObserver(updateData);
 
-        $scope.event = {
-            begin: 0,
-            duration: 0,
-            text: ''
+        $scope.recordingEvent = false;
+        $scope.api = this;
+
+        $scope.beginEvent = function () {
+            console.log(this.api);
+            if (!$scope.recordingEvent) {
+                console.log("Begging the event");
+                $scope.recordingEvent = true;
+                this.api.details.addEvent(window.Math.floor(this.api.video.API.currentTime / 1000), 0, "test");
+                $scope.eventInterval = $interval(function () {
+                    this.api.details.getLastEvent().duration = this.api.details.getLastEvent().begin - window.Math.floor(this.api.video.API.currentTime / 1000);
+                }, 1000);
+            }
+        };
+
+        $scope.endEvent = function () {
+            if ($scope.recordingEvent) {
+                console.log("Ending the event");
+                $scope.recordingEvent = false;
+                $interval.cancel($scope.eventInterval);
+            }
         };
 
         cappdata.update('corpora');

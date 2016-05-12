@@ -50,15 +50,19 @@ angular.module('camomileApp.directives.details', [
                  * event.text > 0 && event.text < 16 (1-15)
                  * @return {undefined}
                  */
-                $scope.api.addEvent = function() {
-                    if ($scope.event.begin
-                        && $scope.event.duration
-                        && $scope.event.text
-                        && $scope.event.begin >= 0
-                        && $scope.event.duration > 0
-                        && $scope.event.text.length < 16) {
-                        $scope.events.push(JSON.parse(JSON.stringify($scope.event)));
+                $scope.api.addEvent = function(begin, duration, text) {
+                    if (begin
+                        && duration
+                        && text
+                        && begin >= 0
+                        && duration > 0
+                        && text.length < 16) {
+                        $scope.events.push({begin: begin, duration: duration, text: text});
                     }
+                };
+
+                $scope.api.getLastEvent = function () {
+                    return $scope.events[$scope.events.length - 1];
                 };
 
                 /**
@@ -190,7 +194,7 @@ angular.module('camomileApp.directives.details', [
                     let ref = (vt.currentTime / vt.totalTime) * ($scope.dimensions.res.width);
                     $scope.timebarClass = {
                         "margin-left": ref + 'px',
-                        "height": $scope.dimensions.div.height - 40 // Same height as its parent - 40
+                        "height": $scope.dimensions.div.height // Same height as its parent - 40
                     };
                 };
 
@@ -213,10 +217,11 @@ angular.module('camomileApp.directives.details', [
                 scope.dataCtrl = controllerInstance;
 
                 scope.api.refresh = function () {
+                    let div = elem.find('div');
                     scope.dimensions = {};
                     scope.dimensions.div = {
-                        width: elem.width(),
-                        height: elem.height()
+                        width: div.width(),
+                        height: div.height()
                     };
                     var eventLine = elem.find('event-div').find('div');
                     scope.dimensions.res = {

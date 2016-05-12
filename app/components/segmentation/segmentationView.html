@@ -8,14 +8,14 @@
 
 <div class="row" ng-if="cappdata.mediumInfos">
     <div class="col-sm-12">
-        <camomile-box>
+        <camomile-box api="api">
             <camomile-media type="cappdata.mediumInfos.description.type" src="cappdata.mediumInfos.urlSecure"></camomile-media>
             <camomile-details graph="false"></camomile-details>
         </camomile-box>
         <div class="row">
-            <div class="col-sm-12">
-                <button type="button" class="btn btn-success">Début segment</button>
-                <button type="button" class="btn btn-warning">Fin segment</button>
+            <div class="col-sm-12 text-center" style="margin-top: 12px">
+                <button type="button" class="btn btn-success" ng-click="beginEvent()">Début segment</button>
+                <button type="button" class="btn btn-warning" ng-click="endEvent()">Fin segment</button>
             </div>
         </div>
     </div>

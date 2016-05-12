@@ -146,7 +146,7 @@ angular.module('camomileApp.directives.box', [
                 };
 
                 if ($scope.extApi) {
-                    $scope.extApi = $scope.apis;
+                    $scope.extApi.api = $scope.apis;
                 }
             },
             link: function (scope, elem, attrs) {
