@@ -19,8 +19,6 @@ angular.module('camomileApp.controllers.segmentation', [])
                 $scope.details.api.details.addEvent($scope.details.api.video.API.currentTime, 0, "test");
                 console.log($scope.details.api.details.getLastEvent());
                 $scope.eventInterval = $interval(function () {
-                    console.log('Update...');
-                    console.log($scope.details.api.details.getLastEvent());
                     $scope.details.api.details.getLastEvent().duration = $scope.details.api.video.API.currentTime - $scope.details.api.details.getLastEvent().begin;
                     $scope.details.api.details.refreshEventline();
                 }, 1000);

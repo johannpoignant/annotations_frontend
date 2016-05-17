@@ -1,6 +1,58 @@
 angular.module('camomileApp.controllers.objects', [])
-    .controller('ObjectsCtrl', function ($scope, $interval, $sce, $timeout, Camomile) {
-        $scope.corpora = [];
+    .controller('ObjectsCtrl', function ($scope, $interval, $sce, $timeout, Camomile, cappdata) {
+        var updateData = function () {
+            $timeout(function () {
+                $scope.cappdata = cappdata;
+                console.log($scope.cappdata.metadata);
+            }, 0);
+        };
+
+        cappdata.registerObserver(updateData);
+
+        cappdata.update('corpora');
+
+        $scope.updateObjects = function () {
+            cappdata.update('layers', $scope.corpus);
+            cappdata.update('metadata', $scope.corpus, ['objet', 'endroit']);
+        };
+
+        $scope.updateObject = function () {
+            cappdata.resetMedium();
+            for (m of $scope.object.media) {
+                cappdata.update('medium', m);
+            }
+        };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*$scope.corpora = [];
         $scope.layers = [];
         $scope.objects = [];
         $scope.endroits = [];
@@ -163,7 +215,7 @@ angular.module('camomileApp.controllers.objects', [])
             if ($scope.objectSelected) {
                 $scope.validateMedia();
             }
-        });
+        });*/
     })
     .filter('currentdate',['$filter',  function($filter) {
         return function() {

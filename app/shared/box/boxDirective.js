@@ -60,10 +60,14 @@ angular.module('camomileApp.directives.box', [
                     // font: fontSize + 'px ' + fontFamily // The font used to draw text
                 };
                 facto.config.font = facto.config.fontSize + 'px ' + facto.config.fontFamily; // The font used to draw text
-                facto.video = {
+                facto.video = { // video time available here (in seconds)
                     currentTime: 0,
                     totalTime: 0
                 };
+
+                /**
+                 * Saves the annotation
+                 */
                 this.saveAnnotation = function () {
                     var a = facto.annotation; // Shortcut
                     if (a.id == 0 && a.fragment.points.length > 1 && a.fragment.name != "") {
@@ -101,10 +105,12 @@ angular.module('camomileApp.directives.box', [
 
                 this.setAnnotations = function (ans) {
                     $scope.$apply(function () {
-                        for (d in $scope.annotations) {
+                        // HAHAHA
+                        /*for (d in $scope.annotations) {
                             delete $scope.annotations[d];
                         }
-                        $scope.annotations.length = 0;
+                        $scope.annotations.length = 0;*/
+                        $scope.annotations = [];
                         for (a of ans) {
                             $scope.annotations.push(a);
                         }
@@ -116,8 +122,6 @@ angular.module('camomileApp.directives.box', [
                         return apis.video.dimensions;
                     } else if (apis.image) {
                         return apis.image.dimensions;
-                    } else {
-                        //console.warn('No media available.');  // FIX THIS!!!!
                     }
                 };
 
@@ -145,21 +149,20 @@ angular.module('camomileApp.directives.box', [
                     }, duration);
                 };
 
-                console.log($scope.extApi);
-                if ($scope.extApi) {
+                if ($scope.extApi) { // Bind api if provided
                     $scope.extApi.api = $scope.apis;
                 }
             },
             link: function (scope, elem, attrs) {
-                scope.interval = $interval(function () {
+                scope.interval = $interval(function () { // Check for dimensions changes
                     scope.dimensions = {
                         width: elem.find('div').width(),
                         height: elem.find('div').height()
                     };
                     if (  !scope.lastDimensions
                         || scope.dimensions.width != scope.lastDimensions.width
-                        || scope.dimensions.height != scope.lastDimensions.height) {
-                        // Trigger fns
+                        || scope.dimensions.height != scope.lastDimensions.height) { // If dimensions are not the same
+                        // Trigger refresh of all components
                         if (scope.apis.graph)
                             scope.apis.graph.refresh();
                         if (scope.apis.image)
@@ -175,10 +178,8 @@ angular.module('camomileApp.directives.box', [
                     }
                     scope.lastDimensions = scope.dimensions;
                 }, 500);
-                console.log('created');
 
                 scope.$on('$destroy', function() {
-                    console.log("Destroying");
                     $interval.cancel(scope.interval);
                 });
             }

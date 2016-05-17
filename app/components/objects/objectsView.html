@@ -7,8 +7,9 @@
                 <select
                         type="button"
                         class="form-control"
-                        ng-options="c._id as c.name for c in corpora"
-                        ng-model="corpusSelected"
+                        ng-options="c._id as c.name for c in cappdata.corpora"
+                        ng-model="corpus"
+                        ng-change="updateObjects()"
                         id="corpus"></select>
             </div>
         </div>
@@ -18,15 +19,20 @@
                 <select
                         type="button"
                         class="form-control"
-                        ng-options="l._id as l.name for l in layers"
-                        ng-model="layerSelected"
+                        ng-options="l._id as l.name for l in cappdata.layers"
+                        ng-model="layer"
+                        ng-change="updateObject()"
                         id="layer"></select>
             </div>
         </div>
         <div class="form-group">
             <label class="col-sm-1 control-label">Object</label>
             <div class="col-sm-11">
-                <select class="form-control" ng-options="o.Id_texte for o in objects" ng-model="objectSelected"></select>
+                <select
+                        class="form-control"
+                        ng-options="o.Id_texte for o in cappdata.metadata.objet"
+                        ng-change="updateObject()"
+                        ng-model="object"></select>
             </div>
         </div>
     </form>
@@ -38,16 +44,15 @@
         </div>
     </div>
 
-    <div class="row objets-objet" ng-repeat="m in mediumSrc" ng-if="objectSelected">
+    <div class="row objets-objet" ng-repeat="m in cappdata.mediaSelected" ng-if="cappdata.mediaSelected[0]">
         <div class="col-sm-6">
             <camomile-box infos="{{m.infos}}">
                 <camomile-canvas></camomile-canvas>
-                <camomile-media type="m.description.type" src="m.srcs"></camomile-media>
+                <camomile-media type="m.description.type" src="m.urlSecure"></camomile-media>
             </camomile-box>
         </div>
         <div class="col-sm-6">
             <json-formatter json="m.description" open="1"></json-formatter>
         </div>
     </div>
-
 </div>

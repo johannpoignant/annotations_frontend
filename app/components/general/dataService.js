@@ -7,7 +7,7 @@ angular.module('camomileApp.services.data', [])
         facto.layers = [];
         facto.media = [];
         facto.annotations = [];
-        facto.metadata = [];
+        facto.metadata = {};
 
         // Variables contenant les informations demandées & sélectionnées
         facto.corpusSelected = undefined;
@@ -74,16 +74,18 @@ angular.module('camomileApp.services.data', [])
                 };
                 Camomile.getAnnotations(medium_id, layer_id, cb);
             },
-            metadata: function () {
-                var cb = function (err, data) {
-                    if (err) {
-                        console.warn('Error in the retrieval of metadata');
-                    } else {
-                        facto.metadata = data;
-                    }
-                    facto.notifyObservers();
-                };
-                Camomile.getMetadata(cb);
+            metadata: function (corpus_id, metadata) {
+                for (let m of metadata) {
+                    var cb = function (err, data) {
+                        if (err) {
+                            console.warn('Error in the retrieval of metadata');
+                        } else {
+                            facto.metadata[m] = data;
+                        }
+                        facto.notifyObservers();
+                    };
+                    Camomile.getCorpusMetadata(corpus_id, m, cb);
+                }
             },
             medium: function (medium_id) {
                 var cb = function (err, data) {

@@ -8,7 +8,6 @@ angular.module('camomileApp.directives.image', [])
                 src: '@'
             },
             controller: function ($scope) {
-                // Vide
                 $scope.api = {};
                 $scope.api.image = {};
                 $scope.style = {
