@@ -1,5 +1,7 @@
 angular.module('camomileApp.controllers.segmentation', [])
     .controller('SegmentationCtrl', ['$scope', '$timeout', '$interval', 'cappdata', function ($scope, $timeout, $interval, cappdata) {
+        cappdata.clean();
+        
         var updateData = function () {
             $timeout(function () {
                 $scope.cappdata = cappdata;

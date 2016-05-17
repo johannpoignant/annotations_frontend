@@ -2,21 +2,25 @@ angular.module('camomileApp.services.data', [])
     .factory('cappdata', function ($timeout, $sce, Camomile) {
         var facto = {};
 
-        // Variables contenant les informations disponibles
-        facto.corpora = [];
-        facto.layers = [];
-        facto.media = [];
-        facto.annotations = [];
-        facto.metadata = {};
+        facto.clean = function () {
+            // Variables contenant les informations disponibles
+            facto.corpora = [];
+            facto.layers = [];
+            facto.media = [];
+            facto.annotations = [];
+            facto.metadata = {};
 
-        // Variables contenant les informations demandées & sélectionnées
-        facto.corpusSelected = undefined;
-        facto.layerSelected = undefined;
-        facto.mediaSelected = [];
-        facto.annotationsSelected = [];
-        facto.metadataSelected = [];
+            // Variables contenant les informations demandées & sélectionnées
+            facto.corpusSelected = undefined;
+            facto.layerSelected = undefined;
+            facto.mediaSelected = [];
+            facto.annotationsSelected = [];
+            facto.metadataSelected = [];
 
-        facto.observers = []; // Observers
+            facto.observers = []; // Observers
+        };
+
+        facto.clean();
 
         // Updates fonctions
         facto._update = {

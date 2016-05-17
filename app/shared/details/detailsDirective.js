@@ -54,7 +54,6 @@ angular.module('camomileApp.directives.details', [
                  * @return {undefined}
                  */
                 $scope.api.addEvent = function(begin, duration, text) {
-                    console.log(text.length);
                     if (begin >= 0
                         && duration >= 0
                         && text.length < 16) {
@@ -192,7 +191,7 @@ angular.module('camomileApp.directives.details', [
 
                 $scope.api.updateTimebar = function () {
                     // Calculate the margin left needed to follow the slider position
-                    let vt = $scope.dataCtrl.facto.video; // vt for videoTime
+                    let vt = $scope.dataCtrl.apis.video.API; // vt for videoTime
                     let ref = (vt.currentTime / vt.totalTime) * ($scope.dimensions.res.width);
                     $scope.timebarClass = {
                         "margin-left": ref + 'px',
@@ -231,8 +230,11 @@ angular.module('camomileApp.directives.details', [
                         height: eventLine.height()
                     };
 
-                    scope.api.updateTimebar();
-                    scope.api.refreshEventline();
+                    if (scope.dataCtrl.apis.video) {
+                        scope.api.updateTimebar();
+                        scope.api.refreshEventline();
+                    }
+
                     scope.graphAPI.refresh();
                 };
 

@@ -1,22 +1,28 @@
 angular.module('camomileApp.controllers.objects', [])
     .controller('ObjectsCtrl', function ($scope, $interval, $sce, $timeout, Camomile, cappdata) {
-        var updateData = function () {
+        // NOUVEAU CODE
+        $scope.api = {};
+
+        cappdata.clean(); // On clean la facto, pour éviter les restes d'autres composants
+
+        var updateData = function () { // Callback de refresh
             $timeout(function () {
                 $scope.cappdata = cappdata;
-                console.log($scope.cappdata.metadata);
+                $scope.api.api.finished();
             }, 0);
         };
 
-        cappdata.registerObserver(updateData);
+        cappdata.registerObserver(updateData); // On register le composant
 
-        cappdata.update('corpora');
+        cappdata.update('corpora'); // On update les corpus dispos
 
-        $scope.updateObjects = function () {
+        $scope.updateObjects = function () { // Lorsque l'utilisateur sélectionne un corpus, on update les layers & mt
+            $scope.api.api.loading();
             cappdata.update('layers', $scope.corpus);
             cappdata.update('metadata', $scope.corpus, ['objet', 'endroit']);
         };
 
-        $scope.updateObject = function () {
+        $scope.updateObject = function () { // Lorsqu'il choisi un object ou un layer, on doit refresh les media
             cappdata.resetMedium();
             for (m of $scope.object.media) {
                 cappdata.update('medium', m);
@@ -25,33 +31,7 @@ angular.module('camomileApp.controllers.objects', [])
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        // ANCIEN CODE
         /*$scope.corpora = [];
         $scope.layers = [];
         $scope.objects = [];
@@ -217,6 +197,7 @@ angular.module('camomileApp.controllers.objects', [])
             }
         });*/
     })
+    // Filtre de debug, à enlever en prod
     .filter('currentdate',['$filter',  function($filter) {
         return function() {
             return $filter('date')(new Date(), 'hh:mm:ss MMMM');

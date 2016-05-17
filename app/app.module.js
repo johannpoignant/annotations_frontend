@@ -20,6 +20,7 @@ angular.module('camomileApp', [
     'camomileApp.directives.image',
     'camomileApp.directives.video',
     'camomileApp.directives.media',
+    'camomileApp.directives.loader',
 
     // Vendor
     'jsonFormatter',
