@@ -6,10 +6,10 @@
     </div>
 </div>
 
-<div class="row" ng-if="cappdata.mediumInfos">
+<div class="row" ng-if="cappdata.mediaSelected[0]">
     <div class="col-sm-12">
-        <camomile-box api="api">
-            <camomile-media type="cappdata.mediumInfos.description.type" src="cappdata.mediumInfos.urlSecure"></camomile-media>
+        <camomile-box api="details">
+            <camomile-media type="cappdata.mediaSelected[0].description.type" src="cappdata.mediaSelected[0].urlSecure"></camomile-media>
             <camomile-details graph="false"></camomile-details>
         </camomile-box>
         <div class="row">

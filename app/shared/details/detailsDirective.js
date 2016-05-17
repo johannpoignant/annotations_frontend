@@ -19,7 +19,10 @@ angular.module('camomileApp.directives.details', [
                  * An array containing all the events displayed on the eventLine
                  * @type {Array}
                  */
-                $scope.events = [{begin: 5, duration: 4, text: "Test"}, {begin: 12, duration: 6, text: "Test 2"}];
+                //$scope.events = [{begin: 5, duration: 4, text: "Test"}, {begin: 12, duration: 6, text: "Test 2"}];
+                $scope.events = [];
+
+                $scope.index = 0;
 
                 /**
                  * The local event var. Contain temporary informations
@@ -46,23 +49,22 @@ angular.module('camomileApp.directives.details', [
                 /**
                  * Adds the event in the scope to the list of events displayed on the eventLine
                  * event.begin >= 0
-                 * event.duration > 0
+                 * event.duration >= 0
                  * event.text > 0 && event.text < 16 (1-15)
                  * @return {undefined}
                  */
                 $scope.api.addEvent = function(begin, duration, text) {
-                    if (begin
-                        && duration
-                        && text
-                        && begin >= 0
-                        && duration > 0
+                    console.log(text.length);
+                    if (begin >= 0
+                        && duration >= 0
                         && text.length < 16) {
-                        $scope.events.push({begin: begin, duration: duration, text: text});
+                        $scope.events.push({begin: begin, duration: duration, text: text, index: $scope.index});
+                        $scope.index += 1;
                     }
                 };
 
                 $scope.api.getLastEvent = function () {
-                    return $scope.events[$scope.events.length - 1];
+                    return $scope.events[$scope.index - 1];
                 };
 
                 /**
@@ -199,7 +201,7 @@ angular.module('camomileApp.directives.details', [
                 };
 
                 $scope.api.refreshEventline = function () {
-                    let vt = $scope.dataCtrl.facto.video; // vt for videoTime
+                    let vt = $scope.dataCtrl.apis.video.API; // vt for videoTime
                     for (e of $scope.events) {
                         let time = (e.begin / vt.totalTime) * ($scope.dimensions.res.width);
                         let end = (e.duration / vt.totalTime) * ($scope.dimensions.res.width);

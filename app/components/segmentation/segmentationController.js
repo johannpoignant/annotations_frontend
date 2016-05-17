@@ -1,24 +1,28 @@
 angular.module('camomileApp.controllers.segmentation', [])
-    .controller('SegmentationCtrl', ['$scope', 'cappdata', function ($scope, cappdata) {
+    .controller('SegmentationCtrl', ['$scope', '$timeout', '$interval', 'cappdata', function ($scope, $timeout, $interval, cappdata) {
         var updateData = function () {
-            $scope.$apply(function () {
+            $timeout(function () {
                 $scope.cappdata = cappdata;
-            });
+            }, 0);
         };
 
         cappdata.registerObserver(updateData);
 
         $scope.recordingEvent = false;
-        $scope.api = this;
+        $scope.details = {};
 
         $scope.beginEvent = function () {
-            console.log(this.api);
+            console.log($scope.details);
             if (!$scope.recordingEvent) {
                 console.log("Begging the event");
                 $scope.recordingEvent = true;
-                this.api.details.addEvent(window.Math.floor(this.api.video.API.currentTime / 1000), 0, "test");
+                $scope.details.api.details.addEvent($scope.details.api.video.API.currentTime, 0, "test");
+                console.log($scope.details.api.details.getLastEvent());
                 $scope.eventInterval = $interval(function () {
-                    this.api.details.getLastEvent().duration = this.api.details.getLastEvent().begin - window.Math.floor(this.api.video.API.currentTime / 1000);
+                    console.log('Update...');
+                    console.log($scope.details.api.details.getLastEvent());
+                    $scope.details.api.details.getLastEvent().duration = $scope.details.api.video.API.currentTime - $scope.details.api.details.getLastEvent().begin;
+                    $scope.details.api.details.refreshEventline();
                 }, 1000);
             }
         };
@@ -34,10 +38,11 @@ angular.module('camomileApp.controllers.segmentation', [])
         cappdata.update('corpora');
 
         $scope.updateMedium = function () {
-            cappdata.update('media', $scope.corpus);
+            cappdata.update('media', $scope.corpus, 'video');
         };
 
         $scope.updateView = function () {
-            cappdata.getMediumInfos($scope.medium);
+            cappdata.resetMedium();
+            cappdata.update('medium', $scope.medium);
         };
     }]);

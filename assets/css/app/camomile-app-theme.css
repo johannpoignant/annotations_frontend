@@ -85,6 +85,7 @@
     padding-top: 2px;
     overflow: hidden;
     color: white;
+    border-radius: 6px;
 }
 
 .graph {

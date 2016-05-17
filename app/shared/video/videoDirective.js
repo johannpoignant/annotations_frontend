@@ -46,7 +46,7 @@ angular.module('camomileApp.directives.video', [
                  */
                 $scope.video.onPlayerReady = function (API) {
                     $scope.video.API = API;
-                    $scope.video.updateSlider();
+                    if ($scope.dataCtrl) {$scope.video.updateSlider();}
                 };
 
                 /**
@@ -218,6 +218,7 @@ angular.module('camomileApp.directives.video', [
 
                     scope.$on('$destroy', function() {
                         console.log("Destroying");
+                        controllerInstance.apis.video = undefined;
                         $interval.cancel(scope.interval);
                     });
                 };

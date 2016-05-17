@@ -2,13 +2,23 @@ angular.module('camomileApp.services.data', [])
     .factory('cappdata', function ($timeout, $sce, Camomile) {
         var facto = {};
 
+        // Variables contenant les informations disponibles
         facto.corpora = [];
         facto.layers = [];
         facto.media = [];
         facto.annotations = [];
         facto.metadata = [];
 
-        facto.observers = [];
+        // Variables contenant les informations demandées & sélectionnées
+        facto.corpusSelected = undefined;
+        facto.layerSelected = undefined;
+        facto.mediaSelected = [];
+        facto.annotationsSelected = [];
+        facto.metadataSelected = [];
+
+        facto.observers = []; // Observers
+
+        // Updates fonctions
         facto._update = {
             corpora: function () {
                 var cb = function (err, data) {
@@ -22,13 +32,18 @@ angular.module('camomileApp.services.data', [])
                 };
                 Camomile.getCorpora(cb);
             },
-            media: function (corpus_id) {
+            media: function (corpus_id, filter) {
                 var cb = function (err, data) {
                     if (err) {
                         console.warn('Error in the retrieval of media');
                     } else {
                         facto.media = data;
                     }
+
+                    if (filter) {
+                        facto.filterMedium(filter);
+                    }
+
                     facto.notifyObservers();
                 };
                 Camomile.getMedia(cb, {
@@ -69,49 +84,66 @@ angular.module('camomileApp.services.data', [])
                     facto.notifyObservers();
                 };
                 Camomile.getMetadata(cb);
+            },
+            medium: function (medium_id) {
+                var cb = function (err, data) {
+                    if (err) {
+                        console.warn("Error: can't retrieve medium informations.");
+                    } else {
+                        var legit = data;
+
+                        if (legit.description.type === "video") {
+                            legit.urlSecure = [{
+                                src: $sce.trustAsResourceUrl(Camomile.getMediumURL(legit._id, legit.description.extension)),
+                                type: "video/" + legit.description.extension
+                            }, {
+                                src: $sce.trustAsResourceUrl(Camomile.getMediumURL(legit._id, 'ogg')),
+                                type: "video/ogg"
+                            }];
+                        } else if (legit.description.type === "image") {
+                            legit.urlSecure = $sce.trustAsResourceUrl(Camomile.getMediumURL(legit._id, legit.description.extension));
+                        }
+
+                        facto.mediaSelected.push(legit);
+
+                        facto.notifyObservers();
+                    }
+                };
+
+                Camomile.getMedium(medium_id, cb);
             }
+        };
+
+        facto.filterMedium = function (ext) {
+            var nMedia = [];
+            var filterByType = false;
+            if (ext === "image" || ext === "video") {filterByType = true;}
+            for (m of facto.media) {
+                var mExt;
+                if (filterByType) {mExt = m.description.type;}
+                else {mExt = m.description.extension;}
+
+                if (ext == mExt) {
+                    nMedia.push(m);
+                }
+            }
+            facto.media = nMedia;
         };
 
         facto.update = function (wtu, ...args) {
             facto._update[wtu](...args);
         };
 
-        facto.getMediumInfos = function (medium_id) {
-            var cb = function (err, data) {
-                if (err) {
-                    console.warn("qzddqz");
-                } else {
-                    var legit = data;
-                    legit.description.extension = legit.description.type;
-                    if ( legit.description.extension === 'jpg'
-                        || legit.description.extension === 'png') {
-                        legit.urlSecure = $sce.trustAsResourceUrl(Camomile.getMediumURL(legit._id, legit.description.extension));
-                        legit.description.type = 'image';
-                    } else if (legit.description.extension === 'mp4'
-                        || legit.description.extension === 'webm') {
-                        legit.urlSecure = [{
-                            src: $sce.trustAsResourceUrl(Camomile.getMediumURL(legit._id, legit.description.extension)),
-                            type: "video/" + legit.description.extension
-                        }, {
-                            src: $sce.trustAsResourceUrl(Camomile.getMediumURL(legit._id, 'ogg')),
-                            type: "video/ogg"
-                        }];
-                        legit.description.type = 'video';
-                    }
-                    facto.mediumInfos = legit;
-                    console.log(facto.mediumInfos);
-                    facto.notifyObservers();
-                }
-            };
-            Camomile.getMedium(medium_id, cb);
+        facto.resetMedium = function () {
+            facto.mediaSelected = [];
         };
 
         facto.registerObserver = function (callback) {
             facto.observers.push(callback);
         };
 
-        facto.notifyObservers = function () {
-            console.log('Change occured');
+        facto.notifyObservers = function () { // Call this function when data changed
+            console.log('Change occured; notifying ' + facto.observers.length + " observers.");
             angular.forEach(facto.observers, function (cb) {
                 cb();
             });
