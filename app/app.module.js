@@ -21,6 +21,7 @@ angular.module('camomileApp', [
     'camomileApp.directives.video',
     'camomileApp.directives.media',
     'camomileApp.directives.loader',
+    'camomileApp.directives.popup',
 
     // Vendor
     'jsonFormatter',

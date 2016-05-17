@@ -8,7 +8,7 @@ angular.module('camomileApp.controllers.objects', [])
         var updateData = function () { // Callback de refresh
             $timeout(function () {
                 $scope.cappdata = cappdata;
-                $scope.api.api.finished();
+                $scope.api.loader.finished();
             }, 0);
         };
 
@@ -17,7 +17,7 @@ angular.module('camomileApp.controllers.objects', [])
         cappdata.update('corpora'); // On update les corpus dispos
 
         $scope.updateObjects = function () { // Lorsque l'utilisateur sélectionne un corpus, on update les layers & mt
-            $scope.api.api.loading();
+            $scope.api.loader.loading();
             cappdata.update('layers', $scope.corpus);
             cappdata.update('metadata', $scope.corpus, ['objet', 'endroit']);
         };

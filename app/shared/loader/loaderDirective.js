@@ -36,7 +36,7 @@ angular.module('camomileApp.directives.loader', [
                     }
                 };
 
-                $scope.api.api = $scope;
+                $scope.api.loader = $scope;
             },
             link: function (scope, elem, attrs) {
                 // Nothing
