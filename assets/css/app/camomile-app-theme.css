@@ -55,7 +55,7 @@
 
 .timebar {
     border: 1px solid black;
-    width: 0%;
+    width: 0;
     height: 525px;
     z-index: 4;
     position: absolute;
@@ -119,7 +119,7 @@
     100% { transform: rotate(360deg); }
 }
 
-.inf-msg {
+#inf-msg {
     -webkit-transition:all linear 0.5s;
     transition:all linear 0.5s;
 
@@ -138,11 +138,11 @@
     background: white;
 }
 
-.inf-msg.ng-hide {
+#inf-msg.ng-hide {
     opacity: 0;
 }
 
-.inf-msg-bg {
+#inf-msg-bg {
     -webkit-transition:all linear 0.5s;
     transition:all linear 0.5s;
 
@@ -152,11 +152,11 @@
     bottom: 0;
     left: 0;
     right: 0;
-    opacity: 0.75;
-    background: #555;
+    opacity: 0.5;
+    //background: #555;
 }
 
-.inf-msg-bg.ng-hide {
+#inf-msg-bg.ng-hide {
     opacity: 0;
 }
 

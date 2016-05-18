@@ -3,29 +3,39 @@ angular.module('camomileApp.controllers.objects', [])
         // NOUVEAU CODE
         $scope.api = {};
 
-        cappdata.clean(); // On clean la facto, pour éviter les restes d'autres composants
+        var refresh = function () {
+            cappdata.clean(); // On clean la facto, pour éviter les restes d'autres composants
+            cappdata.update('corpora'); // On update les corpus dispos
+            cappdata.registerObserver(updateData); // On register le composant
+            console.log('Refreshing');
+        };
+
+        $scope.$parent.onLogin(refresh);
 
         var updateData = function () { // Callback de refresh
             $timeout(function () {
                 $scope.cappdata = cappdata;
                 $scope.api.loader.finished();
+                $scope.api.popup.showMessage("Chargement terminé.", 3000, "#07f");
             }, 0);
         };
 
-        cappdata.registerObserver(updateData); // On register le composant
-
-        cappdata.update('corpora'); // On update les corpus dispos
+        refresh();
 
         $scope.updateObjects = function () { // Lorsque l'utilisateur sélectionne un corpus, on update les layers & mt
-            $scope.api.loader.loading();
-            cappdata.update('layers', $scope.corpus);
-            cappdata.update('metadata', $scope.corpus, ['objet', 'endroit']);
+            if ($scope.corpus) {
+                $scope.api.loader.loading();
+                cappdata.update('layers', $scope.corpus);
+                cappdata.update('metadata', $scope.corpus, ['objet', 'endroit']);
+            }
         };
 
         $scope.updateObject = function () { // Lorsqu'il choisi un object ou un layer, on doit refresh les media
             cappdata.resetMedium();
-            for (m of $scope.object.media) {
-                cappdata.update('medium', m);
+            if ($scope.object) {
+                for (m of $scope.object.media) {
+                    cappdata.update('medium', m);
+                }
             }
         };
 

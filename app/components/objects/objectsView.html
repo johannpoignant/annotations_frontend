@@ -5,7 +5,6 @@
             <label for="corpus" class="col-sm-1 control-label">Corpus</label>
             <div class="col-sm-11">
                 <select
-                        type="button"
                         class="form-control"
                         ng-options="c._id as c.name for c in cappdata.corpora"
                         ng-model="corpus"
@@ -17,7 +16,6 @@
             <label for="layer" class="col-sm-1 control-label">Layer</label>
             <div class="col-sm-11">
                 <select
-                        type="button"
                         class="form-control"
                         ng-options="l._id as l.name for l in cappdata.layers"
                         ng-model="layer"
@@ -37,10 +35,10 @@
         </div>
     </form>
 
-    <div class="row objets-info" ng-show="objectSelected">
+    <div class="row objets-info" ng-show="object">
         <div class="col-sm-12">
             <h3>Informations sur l'objet</h3>
-            <json-formatter json="objectSelected" open="1"></json-formatter>
+            <json-formatter json="object" open="1"></json-formatter>
         </div>
     </div>
 
@@ -58,3 +56,4 @@
 </div>
 
 <camomile-loader api="api"></camomile-loader>
+<camomile-popup api="api"></camomile-popup>

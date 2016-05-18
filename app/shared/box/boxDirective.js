@@ -1,7 +1,7 @@
 angular.module('camomileApp.directives.box', [
     "ngAnimate"
 ])
-    .directive('camomileBox', function ($interval, $timeout, camomileToolsConfig) {
+    .directive('camomileBox', function ($interval, camomileToolsConfig) {
         return {
             restrict: 'AE',
             scope: {
@@ -9,10 +9,7 @@ angular.module('camomileApp.directives.box', [
                 extApi: '=?api'
             },
             transclude: true,
-            template: '<div ng-transclude></div>' +
-            '<div class="inf-msg" ng-show="infMsg.show">' +
-            '<b>Message:</b> {{infMsg.message}}' +
-            '</div><div class="inf-msg-bg" ng-show="infMsg.show"></div>',
+            template: '<div ng-transclude></div>',
             controller: function ($scope) {
                 var facto = this.facto = {};
                 var apis = this.apis = $scope.apis = {};
@@ -123,30 +120,6 @@ angular.module('camomileApp.directives.box', [
                     } else if (apis.image) {
                         return apis.image.dimensions;
                     }
-                };
-
-                /**
-                 * Utility for the little popup
-                 * @type {Object}
-                 */
-                $scope.infMsg = {
-                    show: false, // Is it displayed?
-                    message: '' // The message stored
-                };
-
-                /**
-                 * Shows a message
-                 * @param  {string} message  the message to show
-                 * @param  {int} duration the duration to show it
-                 * @return {undefined}
-                 */
-                $scope.showMessage = this.showMessage = function(message, duration) {
-                    duration = duration === undefined ? 5000 : duration;
-                    $scope.infMsg.show = true;
-                    $scope.infMsg.message = message;
-                    $timeout(function() {
-                        $scope.infMsg.show = false;
-                    }, duration);
                 };
 
                 if ($scope.extApi) { // Bind api if provided
