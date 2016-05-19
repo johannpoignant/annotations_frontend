@@ -76,7 +76,7 @@ angular.module('camomileApp.directives.box', [
                         facto.annotations.push(JSON.parse(JSON.stringify(a)));
                         apis.canvas.clearCanvas(true);
 
-                        $scope.showMessage("Saved annotation!", 3000);
+                        $scope.$parent.api.popup.showMessage("Saved annotation!", 3000);
                     }
                 };
 

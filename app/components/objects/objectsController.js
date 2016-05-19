@@ -7,7 +7,6 @@ angular.module('camomileApp.controllers.objects', [])
             cappdata.clean(); // On clean la facto, pour éviter les restes d'autres composants
             cappdata.update('corpora'); // On update les corpus dispos
             cappdata.registerObserver(updateData); // On register le composant
-            console.log('Refreshing');
         };
 
         $scope.$parent.onLogin(refresh);
@@ -16,7 +15,7 @@ angular.module('camomileApp.controllers.objects', [])
             $timeout(function () {
                 $scope.cappdata = cappdata;
                 $scope.api.loader.finished();
-                $scope.api.popup.showMessage("Chargement terminé.", 3000, "#07f");
+                //$scope.api.popup.showMessage("Chargement terminé.", 3000, "#07f");
             }, 0);
         };
 
@@ -38,8 +37,6 @@ angular.module('camomileApp.controllers.objects', [])
                 }
             }
         };
-
-
 
         // ANCIEN CODE
         /*$scope.corpora = [];

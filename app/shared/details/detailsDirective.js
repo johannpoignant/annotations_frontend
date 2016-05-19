@@ -184,9 +184,7 @@ angular.module('camomileApp.directives.details', [
                 };
 
                 $scope.graphCallback = function(scope, element) {
-                    var api = scope.api;
-
-                    $scope.graphAPI = api;
+                    $scope.graphAPI = scope.api;
                 };
 
                 $scope.api.updateTimebar = function () {
@@ -230,12 +228,23 @@ angular.module('camomileApp.directives.details', [
                         height: eventLine.height()
                     };
 
-                    if (scope.dataCtrl.apis.video) {
+                    /*if (scope.dataCtrl.apis.video) {
                         scope.api.updateTimebar();
                         scope.api.refreshEventline();
-                    }
+                    }*/
 
                     scope.graphAPI.refresh();
+                    if (scope.dataCtrl.apis.video) {
+                        if (scope.inter) scope.inter = undefined;
+                        scope.interv = $interval(function () {
+                            scope.api.updateTimebar();
+                            scope.api.refreshEventline();
+                        }, 250);
+                        scope.$on('$destroy', function () {
+                            console.log('Destroying details interval');
+                            $interval.cancel(scope.interv);
+                        });
+                    }
                 };
 
                 controllerInstance.apis.details = scope.api;

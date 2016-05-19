@@ -1,21 +1,52 @@
 angular.module("camomileApp.controllers.backoffice", [])
-    .controller('BackofficeCtrl', ['$scope', '$log', 'Camomile', '$uibModal', '$timeout', function($scope, $log, Camomile, $uibModal, $timeout) {
+    .controller('BackofficeCtrl', ['$scope', '$log', 'Camomile', '$uibModal', '$timeout', 'cappdata',
+    function($scope, $log, Camomile, $uibModal, $timeout, cappdata) {
+        $scope.api = {};
+
+        var refresh = function () {
+            cappdata.clean();
+            $scope.api.loader.loading(5);
+            cappdata.update('corpora');
+            cappdata.update('media');
+            cappdata.update('layers');
+            cappdata.update('users');
+            cappdata.update('groups');
+            cappdata.registerObserver(updateData);
+        };
+
+        var updateData = function () {
+            $timeout(function () {
+                $scope.cappdata = cappdata;
+                $scope.initCreation();
+                $scope.api.loader.finished();
+            }, 0);
+        };
+
+        $scope.$parent.onLogin(refresh);
+
+        $timeout(function () {
+            refresh();
+        }, 0);
+
         // Creates modal allowing to edit the description of the object selected
-        $scope.setDescription = function(descObject) {
+        $scope.setFields = function(fieldObject, field) {
             var modalInstance = $uibModal.open({
                 animation: true,
-                templateUrl: 'app/shared/modal/customizeDescription.html',
-                controller: 'CustomizeDescriptionCtrl',
+                templateUrl: 'app/shared/modal/setFields.html',
+                controller: 'SetFieldsCtrl',
                 size: 'small',
                 resolve: {
-                    descObject: function () {
-                        return descObject;
+                    fieldObject: function () {
+                        return fieldObject;
+                    },
+                    field: function () {
+                        return field;
                     }
                 }
             });
 
             modalInstance.result.then(function () {
-                $log.info('Finished with description');
+                $log.info('Finished with fields');
             }, function () {
                 $log.info('Canceled edit');
             });
@@ -98,16 +129,6 @@ angular.module("camomileApp.controllers.backoffice", [])
 
         $scope.initCreation();
 
-        // Array of users
-        $scope.usersExisting = undefined;
-        // Array of group
-        $scope.groupsExisting = undefined;
-        // Array of corpus
-        $scope.corporaExisting = undefined;
-        // Array of medium
-        $scope.mediaExisting = undefined;
-        // Array of layer
-        $scope.layersExisting = undefined;
         // Array of rights
         $scope.rightsExisting = [
             {key: 1, value: 'Read'},
@@ -115,17 +136,8 @@ angular.module("camomileApp.controllers.backoffice", [])
             {key: 3, value: 'Admin'}
         ];
 
-        // Runs at init of module
-        $scope.init = function() {
-            $scope.getAllUsers();
-            $scope.getAllGroups();
-            $scope.getAllCorpora();
-            $scope.getAllMedia();
-            $scope.getAllLayers();
-        };
-
         // Read (getters)
-        $scope.getAllUsers = function() {
+        /*$scope.getAllUsers = function() {
             Camomile.getUsers(function(err, data) {
                 if (err) {
                     $scope.usersExisting = [];
@@ -183,11 +195,11 @@ angular.module("camomileApp.controllers.backoffice", [])
                     });
                 }
             });
-        };
+        };*/
 
         // Convert id into objects
-        $scope.convertCorpus = function (id) {
-            for (c of $scope.corporaExisting) {
+        /*$scope.convertCorpus = function (id) {
+            for (c of cappdata.corpora) {
                 if (c._id === id)
                     return c
             }
@@ -258,7 +270,7 @@ angular.module("camomileApp.controllers.backoffice", [])
                 }
             };
             Camomile.createLayer(da.corpus, da.name, $scope.arrayFromDescObject(da.description), {}, {}, callback);
-        };
+        };*/
 
         $scope.addUserToGroup = function() {
             var da = $scope.creation.userToGroup;
@@ -301,7 +313,7 @@ angular.module("camomileApp.controllers.backoffice", [])
 
         // Transforms an object
         // Needed to be able to send the description to the server
-        $scope.arrayFromDescObject = function(object, mode) {
+        /*$scope.arrayFromDescObject = function(object, mode) {
             mode = mode ? mode : 1; // 0: Array, 1: Object
             let output = undefined;
 
@@ -317,10 +329,10 @@ angular.module("camomileApp.controllers.backoffice", [])
             }
 
             return output;
-        };
+        };*/
 
         // Delete
-        $scope.deleteUser = function(id) {
+        /*$scope.deleteUser = function(id) {
             var callback = function(err, data) {
                 if (err) {
                     window.alert('Deletion of user failed.');
@@ -373,14 +385,12 @@ angular.module("camomileApp.controllers.backoffice", [])
                 }
             };
             Camomile.deleteLayer(id, callback);
-        };
-
-        $scope.init();
+        };*/
     }])
     // Controller for the description modal
-    .controller('CustomizeDescriptionCtrl', function($scope, $uibModalInstance, $log, descObject) {
-        $scope.ve = descObject.description; // Gets the description
-        $scope.descObject = descObject;
+    .controller('SetFieldsCtrl', function($scope, $uibModalInstance, fieldObject, field) {
+        $scope.ve = fieldObject[field]; // Gets the field
+        $scope.fieldObject = fieldObject;
 
         // Adds a new field in ve if needed
         $scope.addField = function() {
@@ -390,7 +400,7 @@ angular.module("camomileApp.controllers.backoffice", [])
 
         // Validate the entries
         $scope.ok = function () {
-            $scope.descObject.description = $scope.ve.slice(0, $scope.ve.length - 1);
+            $scope.fieldObject[field] = $scope.arrayFromDescObject($scope.ve.slice(0, $scope.ve.length - 1));
             $uibModalInstance.close();
         };
 
@@ -398,6 +408,36 @@ angular.module("camomileApp.controllers.backoffice", [])
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
         };
+
+        $scope.arrayFromDescObject = function(object, mode) {
+            mode = mode ? mode : 1; // 0: Array, 1: Object
+            let output = undefined;
+
+            if (mode === 0) { // {key: "...", value: "..."} into ["...", "..."]
+                output = [];
+                for (v of object)
+                    output.push([v.key, v.value])
+            } else if (mode === 1) { // {key: "...", value: "..."} into {"...": "..."}
+                output = {};
+                for (v of object)
+                    if (!output.hasOwnProperty(v.key))
+                        output[v.key] = v.value;
+            } else { // {"...": "..."} into {key: "...", value: "..."}
+                output = [];
+                for (k in object) {
+                    let o = object[k];
+                    output.push({key: k, value: o});
+                }
+            }
+
+            return output;
+        };
+
+        if (!$scope.ve) {
+            $scope.ve = [];
+        } else {
+            $scope.ve = $scope.arrayFromDescObject($scope.ve, 2);
+        }
 
         $scope.addField(); // Add a field if needed
     });

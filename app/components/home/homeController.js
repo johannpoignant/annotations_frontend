@@ -1,9 +1,58 @@
 angular.module('camomileApp.controllers.browse', [
     "ngSanitize"
 ])
-    .controller('BrowseCtrl', ['$scope', '$sce', 'Camomile', '$log', '$window', '$timeout',
-        function ($scope, $sce, Camomile, $log, $window, $timeout) {
-            $scope.Math = window.Math;
+    .controller('BrowseCtrl', ['$scope', '$sce', 'Camomile', '$timeout', 'cappdata',
+        function ($scope, $sce, Camomile, $timeout, cappdata) {
+            // Nouveau code
+            $scope.api = {};
+            $scope.infos = {
+                corpus: undefined,
+                medium: undefined,
+                layer: undefined
+            };
+
+            var refresh = function () {
+                cappdata.clean(); // On clean la facto, pour éviter les restes d'autres composants
+                cappdata.update('corpora'); // On update les corpus dispos
+                cappdata.registerObserver(updateData); // On register le composant
+            };
+
+            $scope.$parent.onLogin(refresh);
+
+            var updateData = function () { // Callback de refresh
+                $timeout(function () {
+                    $scope.cappdata = cappdata;
+                    $scope.api.loader.finished();
+                    //$scope.api.popup.showMessage("Chargement terminé.", 3000, "#07f");
+                }, 0);
+            };
+
+            refresh();
+
+            $scope.updateMedia = function () { // Lorsque l'utilisateur sélectionne un corpus, on update les layers & mt
+                if ($scope.corpus) {
+                    $scope.api.loader.loading();
+                    $scope.infos.corpus = $scope.corpus;
+                    cappdata.update('layers', $scope.corpus);
+                    cappdata.update('media', $scope.corpus);
+                }
+            };
+
+            $scope.updateMedium = function () { // Lorsqu'il choisi un object ou un layer, on doit refresh les media
+                cappdata.resetMedium();
+
+                if ($scope.medium) {
+                    $scope.infos.medium = $scope.medium;
+                    cappdata.update('medium', $scope.medium);
+                }
+
+                if ($scope.layer) {
+                    $scope.infos.layer = $scope.layer;
+                }
+            };
+
+            // Ancien code
+            /*$scope.Math = window.Math;
 
             $scope.loaded = false;
 
@@ -145,7 +194,7 @@ angular.module('camomileApp.controllers.browse', [
                 if ($scope.browse.layer) {
                     $scope.infos.layer = $scope.browse.layer;
                 }
-            })
+            })*/
         }])
     .filter('filterByExt', function() {
         return function(input, ext, filtering) {

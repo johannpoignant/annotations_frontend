@@ -1,5 +1,5 @@
 angular.module('camomileApp.directives.edit', [])
-    .directive('camomileAnnotations', function ($interval, Camomile, camomileToolsConfig) {
+    .directive('camomileAnnotations', function ($interval, $timeout, Camomile, camomileToolsConfig, cappdata) {
         return {
             restrict: 'AE',
             templateUrl: camomileToolsConfig.moduleFolder + 'edit/editView.html',
@@ -10,22 +10,25 @@ angular.module('camomileApp.directives.edit', [])
             controller: function ($scope) {
                 $scope.api = {};
 
+                var updateData = function () {
+                    $timeout(function () {
+                        $scope.cappdata = cappdata;
+                        //$scope.api.loader.finished();
+                    }, 0);
+                };
+
+                cappdata.registerObserver(updateData);
+
                 $scope.api.sendAnnotations = function () {
                     var i = $scope.dataCtrl.infos();
+
                     if (!i.layer || !i.medium) {
                         console.warn('Pas de layer ou medium sélectionné');
                         return;
                     }
-                    var callback = function (err, data) {
-                        if (err) {
-                            console.warn('Save annotation fail');
-                        } else {
-                            console.info('Save annotation succeeded');
-                            $scope.api.getAnnotations();
-                        }
-                    };
 
                     var sa = [];
+
                     for (a of $scope.dataCtrl.facto.annotations) {
                         if (a.id == 0) {
                             delete a['$$hashKey'];
@@ -39,7 +42,8 @@ angular.module('camomileApp.directives.edit', [])
                     }
 
                     if (sa.length) {
-                        Camomile.createAnnotations(i.layer, sa, callback);
+                        cappdata.create('annotations', i.layer, sa);
+                        //Camomile.createAnnotations(i.layer, sa, callback);
                     }
                 };
 
@@ -48,23 +52,7 @@ angular.module('camomileApp.directives.edit', [])
                         var i = $scope.dataCtrl.infos();
 
                         if (i.layer && i.medium) {
-                            var ans = [];
-                            Camomile.getAnnotations(function (err, data) {
-                                if (err) {
-                                    console.warn('Error in retrieving of annotations data');
-                                } else {
-                                    for (obj of data) { // We push every fragment to recreate the array
-                                        ans.push({fragment: obj.fragment, id: obj._id});
-                                    }
-                                }
-
-                                $scope.dataCtrl.setAnnotations(ans);
-                            }, {
-                                'filter': {
-                                    id_layer: i.layer,
-                                    id_medium: i.medium
-                                }
-                            });
+                            cappdata.update('annotations', i.layer, i.medium);
                         } else {
                             console.warn('Infos non complètes');
                         }
@@ -75,13 +63,7 @@ angular.module('camomileApp.directives.edit', [])
 
                 $scope.api.deleteAnnotation = function (annotation) {
                     if (annotation.id) {
-                        Camomile.deleteAnnotation(annotation.id, function (err, data) {
-                            if (err) {
-                                console.warn('Delete failed.');
-                            } else {
-                                $scope.api.getAnnotations();
-                            }
-                        });
+                        cappdata.delete('annotation', annotation.id);
                     } else {
                         let t = $scope.dataCtrl.facto.annotations;
                         let p = t.indexOf(annotation);

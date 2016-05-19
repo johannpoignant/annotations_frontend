@@ -9,6 +9,8 @@ angular.module('camomileApp.services.data', [])
             facto.media = [];
             facto.annotations = [];
             facto.metadata = {};
+            facto.users = [];
+            facto.groups = [];
 
             // Variables contenant les informations demandées & sélectionnées
             facto.corpusSelected = undefined;
@@ -16,6 +18,7 @@ angular.module('camomileApp.services.data', [])
             facto.mediaSelected = [];
             facto.annotationsSelected = [];
             facto.metadataSelected = [];
+            facto.userSelected = undefined;
 
             facto.observers = []; // Observers
         };
@@ -50,11 +53,18 @@ angular.module('camomileApp.services.data', [])
 
                     facto.notifyObservers();
                 };
-                Camomile.getMedia(cb, {
-                    'filter': {
-                        'id_corpus': corpus_id
-                    }
-                });
+
+                if (corpus_id === undefined) {
+                    filt = {};
+                } else {
+                    filt = {
+                        'filter': {
+                            'id_corpus': corpus_id
+                        }
+                    };
+                }
+
+                Camomile.getMedia(cb, filt);
             },
             layers: function (corpus_id) {
                 var cb = function (err, data) {
@@ -65,7 +75,12 @@ angular.module('camomileApp.services.data', [])
                     }
                     facto.notifyObservers();
                 };
-                Camomile.getLayers(corpus_id, cb);
+
+                if (corpus_id === undefined) {
+                    Camomile.getLayers(cb);
+                } else {
+                    Camomile.getLayers(corpus_id, cb);
+                }
             },
             annotations: function (medium_id, layer_id) {
                 var cb = function (err, data) {
@@ -73,10 +88,18 @@ angular.module('camomileApp.services.data', [])
                         console.warn('Error in the retrieval of annotations');
                     } else {
                         facto.annotations = data;
+                        /*for (obj of data) { // We push every fragment to recreate the array
+                            ans.push({fragment: obj.fragment, id: obj._id});
+                        }*/
                     }
                     facto.notifyObservers();
                 };
-                Camomile.getAnnotations(medium_id, layer_id, cb);
+                Camomile.getAnnotations(cb, {
+                    'filter': {
+                        id_layer: layer_id,
+                        id_medium: medium_id
+                    }
+                });
             },
             metadata: function (corpus_id, metadata) {
                 for (let m of metadata) {
@@ -117,6 +140,152 @@ angular.module('camomileApp.services.data', [])
                 };
 
                 Camomile.getMedium(medium_id, cb);
+            },
+            users: function () {
+                Camomile.getUsers(function(err, data) {
+                    if (err) {
+                        facto.users = [];
+                    } else {
+                        facto.users = data;
+                        facto.notifyObservers();
+                    }
+                });
+            },
+            groups: function () {
+                Camomile.getGroups(function(err, data) {
+                    if (err) {
+                        facto.groups = [];
+                    } else {
+                        facto.groups = data;
+                        facto.notifyObservers();
+                    }
+                });
+            }
+        };
+
+        facto._delete = {
+            corpus: function () {
+                var cb = function (err, data) {
+                    if (err) {}
+                    else {
+                        facto.notifyObservers();
+                    }
+                };
+                Camomile.deleteCorpus(id, cb);
+            },
+            medium: function () {
+                var cb = function (err, data) {
+                    if (err) {}
+                    else {
+                        facto.notifyObservers();
+                    }
+                };
+                Camomile.deleteMedium(id, cb);
+            },
+            layer: function () {
+                var cb = function (err, data) {
+                    if (err) {}
+                    else {
+                        facto.notifyObservers();
+                    }
+                };
+                Camomile.deleteLayer(id, cb);
+            },
+            user: function () {
+                var cb = function (err, data) {
+                    if (err) {}
+                    else {
+                        facto.notifyObservers();
+                    }
+                };
+                Camomile.deleteUser(id, cb);
+            },
+            group: function () {
+                var cb = function (err, data) {
+                    if (err) {}
+                    else {
+                        facto.notifyObservers();
+                    }
+                };
+                Camomile.deleteGroup(id, cb);
+            },
+            annotation: function (annotation_id) {
+                Camomile.deleteAnnotation(annotation_id, function (err, data) {
+                    if (err) {
+                        console.warn('Deletion of the annotation failed.');
+                    } else {
+                        facto.notifyObservers();
+                    }
+                });
+            }
+        };
+
+        facto._create = {
+            user: function (name, password, description, role) {
+                var cb = function (err, data) {
+                    if (err) {
+                        console.warn('Creation of user failed.');
+                    } else {
+                        facto.notifyObservers();
+                    }
+                };
+
+                Camomile.createUser(name, password, description, role, cb);
+            },
+            group: function (name, description) {
+                var cb = function (err, data) {
+                    if (err) {
+                        console.warn('Creation of group failed.');
+                    } else {
+                        facto.notifyObservers();
+                    }
+                };
+
+                Camomile.createGroup(name, description, cb);
+            },
+            corpus: function (name, description) {
+                var cb = function (err, data) {
+                    if (err) {
+                        console.warn('Creation of corpus failed.');
+                    } else {
+                        facto.notifyObservers();
+                    }
+                };
+
+                Camomile.createCorpus(name, description, cb);
+            },
+            medium: function (corpus_id, name, url, description) {
+                var cb = function (err, data) {
+                    if (err) {
+                        console.warn('Creation of medium failed.');
+                    } else {
+                        facto.notifyObservers();
+                    }
+                };
+
+                Camomile.createMedium(corpus_id, name, url, description, cb);
+            },
+            layer: function (corpus_id, name, description, fragment_type, data_type) {
+                var cb = function (err, data) {
+                    if (err) {
+                        console.warn('Creation of layer failed.');
+                    } else {
+                        facto.notifyObservers();
+                    }
+                };
+
+                Camomile.createLayer(corpus_id, name, description, fragment_type, data_type, cb);
+            },
+            annotations: function (layer_id, annotations) {
+                var cb = function (err, data) {
+                    if (err) {
+                        console.warn('Creation of annotations failed.');
+                    } else {
+                        facto.notifyObservers();
+                    }
+                };
+
+                Camomile.createAnnotations(layer_id, annotations, cb);
             }
         };
 
@@ -138,6 +307,14 @@ angular.module('camomileApp.services.data', [])
 
         facto.update = function (wtu, ...args) {
             facto._update[wtu](...args);
+        };
+
+        facto.delete = function (wtu, ...args) {
+            facto._delete[wtu](...args);
+        };
+
+        facto.create = function (wtu, ...args) {
+            facto._create[wtu](...args);
         };
 
         facto.resetMedium = function () {

@@ -8,13 +8,13 @@
                     <div class="form-group">
                         <label for="au_uname" class="control-label col-sm-5">User name</label>
                         <div class="col-sm-7">
-                            <input type="text" class="form-control" type="text" id="au_uname" ng-model="creation.user.name">
+                            <input class="form-control" type="text" id="au_uname" ng-model="creation.user.name">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="au_psw" class="control-label col-sm-5">User password</label>
                         <div class="col-sm-7">
-                            <input type="password" class="form-control" type="password" id="au_psw" ng-model="creation.user.password">
+                            <input class="form-control" type="password" id="au_psw" ng-model="creation.user.password">
                         </div>
                     </div>
                     <div class="form-group">
@@ -26,8 +26,11 @@
                             </select>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.user)">Customize description</button>
-                    <button type="button" class="btn btn-primary form-control" ng-click="createNewUser()">Create</button>
+                    <button type="button" class="btn btn-default form-control" ng-click="setFields(creation.user, 'description')">Customize description</button>
+                    <button
+                            type="button"
+                            class="btn btn-primary form-control"
+                            ng-click="cappdata.create('user', creation.user.name, creation.user.password, creation.user.description, creation.user.role)">Create</button>
                 </form>
             </div>
             <div class="backoffice-pannel">
@@ -39,8 +42,11 @@
                             <input class="form-control" type="text" id="ag_gname" ng-model="creation.group.name">
                         </div>
                     </div>
-                    <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.group)">Customize description</button>
-                    <button type="button" class="btn btn-primary form-control" ng-click="createNewGroup()">Create</button>
+                    <button type="button" class="btn btn-default form-control" ng-click="setFields(creation.group, 'description')">Customize description</button>
+                    <button
+                            type="button"
+                            class="btn btn-primary form-control"
+                            ng-click="cappdata.create('group', creation.group.name, creation.group.description)">Create</button>
                 </form>
             </div>
             <div class="backoffice-pannel">
@@ -52,8 +58,11 @@
                             <input class="form-control" type="text" id="ac_cname" ng-model="creation.corpus.name">
                         </div>
                     </div>
-                    <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.corpus)">Customize description</button>
-                    <button type="button" class="btn btn-primary form-control" ng-click="createNewCorpus()">Create</button>
+                    <button type="button" class="btn btn-default form-control" ng-click="setFields(creation.corpus, 'description')">Customize description</button>
+                    <button
+                            type="button"
+                            class="btn btn-primary form-control"
+                            ng-click="cappdata.create('corpus', creation.corpus.name, creation.corpus.description)">Create</button>
                 </form>
             </div>
         </div>
@@ -72,11 +81,16 @@
                     <div class="form-group">
                         <label for="al_cname" class="control-label col-sm-5">Corpus</label>
                         <div class="col-sm-7">
-                            <select id="al_cname" class="form-control" ng-options="c._id as c.name for c in corporaExisting" ng-model="creation.layer.corpus"></select>
+                            <select id="al_cname" class="form-control" ng-options="c._id as c.name for c in cappdata.corpora" ng-model="creation.layer.corpus"></select>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.layer)">Customize description</button>
-                    <button type="button" class="btn btn-primary form-control" ng-click="createNewLayer()">Create</button>
+                    <button type="button" class="btn btn-default form-control" ng-click="setFields(creation.layer, 'description')">Customize description</button>
+                    <button type="button" class="btn btn-default form-control" ng-click="setFields(creation.layer, 'fragment_type')">Customize fragment type</button>
+                    <button type="button" class="btn btn-default form-control" ng-click="setFields(creation.layer, 'data_type')">Customize data type</button>
+                    <button
+                            type="button"
+                            class="btn btn-primary form-control"
+                            ng-click="cappdata.create('layer', creation.layer.corpus, creation.layer.name, creation.layer.description, creation.layer.fragment_type, creation.layer.data_type)">Create</button>
                 </form>
             </div>
             <div class="backoffice-pannel">
@@ -97,26 +111,29 @@
                     <div class="form-group">
                         <label for="am_cname" class="control-label col-sm-5">Corpus to add to</label>
                         <div class="col-sm-7">
-                            <select id="am_cname" class="form-control" ng-options="c._id as c.name for c in corporaExisting" ng-model="creation.medium.corpus"></select>
+                            <select id="am_cname" class="form-control" ng-options="c._id as c.name for c in cappdata.corpora" ng-model="creation.medium.corpus"></select>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-default form-control" ng-click="setDescription(creation.medium)">Customize description</button>
-                    <button type="button" class="btn btn-primary form-control" ng-click="createNewMedium()">Create</button>
+                    <button type="button" class="btn btn-default form-control" ng-click="setFields(creation.medium, 'description')">Customize description</button>
+                    <button
+                            type="button"
+                            class="btn btn-primary form-control"
+                            ng-click="cappdata.create('medium', creation.medium.corpus, creation.medium.name, creation.medium.url, creation.medium.description)">Create</button>
                 </form>
             </div>
             <div class="backoffice-pannel">
                 <h4>Add user into a group</h4>
                 <form class="form-horizontal">
-                    <div class="form-group" ng-show="usersExisting">
+                    <div class="form-group">
                         <label class="control-label col-sm-5">Add user...</label>
                         <div class="col-sm-7">
-                            <select class="form-control" ng-options="u._id as u.username for u in usersExisting" id="userselect" ng-model="creation.userToGroup.userId"></select>
+                            <select class="form-control" ng-options="u._id as u.username for u in cappdata.users" id="userselect" ng-model="creation.userToGroup.userId"></select>
                         </div>
                     </div>
-                    <div class="form-group" ng-show="groupsExisting">
+                    <div class="form-group">
                         <label class="control-label col-sm-5">To group...</label>
                         <div class="col-sm-7">
-                            <select class="form-control" ng-options="g._id as g.name for g in groupsExisting" id="groupselect" ng-model="creation.userToGroup.groupId"></select>
+                            <select class="form-control" ng-options="g._id as g.name for g in cappdata.groups" id="groupselect" ng-model="creation.userToGroup.groupId"></select>
                         </div>
                     </div>
                     <button type="button" class="btn btn-primary form-control" ng-click="addUserToGroup()">Add</button>
@@ -132,13 +149,13 @@
                     <div class="form-group">
                         <label class="control-label col-sm-5">User</label>
                         <div class="col-sm-7">
-                            <select class="form-control" ng-options="u._id as u.username for u in usersExisting" ng-model="creation.rightsToUserOnCorpus.userId"></select>
+                            <select class="form-control" ng-options="u._id as u.username for u in cappdata.users" ng-model="creation.rightsToUserOnCorpus.userId"></select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-sm-5">Corpus</label>
                         <div class="col-sm-7">
-                            <select class="form-control" ng-options="c._id as c.name for c in corporaExisting" ng-model="creation.rightsToUserOnCorpus.corpusId"></select>
+                            <select class="form-control" ng-options="c._id as c.name for c in cappdata.corpora" ng-model="creation.rightsToUserOnCorpus.corpusId"></select>
                         </div>
                     </div>
                     <div class="form-group">
@@ -183,14 +200,16 @@
         <h4>Existing users</h4>
         <table class="table">
             <thead>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Description</th>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Description</th>
+            </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="p in usersExisting">
-                <td><a href="" ng-click="deleteUser(p._id)">{{ p._id }}</a></td>
+            <tr ng-repeat="p in cappdata.users">
+                <td><a href="" ng-click="cappdata.delete('user', p._id)">{{ p._id }}</a></td>
                 <td>{{ p.username }}</td>
                 <td>{{ p.role }}</td>
                 <td><json-tree object="p.description"></json-tree></td>
@@ -204,14 +223,16 @@
         <h4>Existing groups</h4>
         <table class="table">
             <thead>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Users</th>
-            <th>Description</th>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Users</th>
+                <th>Description</th>
+            </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="p in groupsExisting">
-                <td><a href="" ng-click="deleteGroup(p._id)">{{ p._id }}</a></td>
+            <tr ng-repeat="p in cappdata.groups">
+                <td><a href="" ng-click="cappdata.delete('group', p._id)">{{ p._id }}</a></td>
                 <td>{{ p.name }}</td>
                 <td><json-tree object="p.users"></json-tree></td>
                 <td><json-tree object="p.description"></json-tree></td>
@@ -225,13 +246,15 @@
         <h4>Existing corpora</h4>
         <table class="table">
             <thead>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="p in corporaExisting">
-                <td><a href="" ng-click="deleteCorpus(p._id)">{{ p._id }}</a></td>
+            <tr ng-repeat="p in cappdata.corpora">
+                <td><a href="" ng-click="cappdata.delete('corpus', p._id)">{{ p._id }}</a></td>
                 <td>{{ p.name }}</td>
                 <td><json-tree object="p.description"></json-tree></td>
             </tr>
@@ -244,14 +267,16 @@
         <h4>Existing layers</h4>
         <table class="table">
             <thead>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Corpus</th>
-            <th>Description</th>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Corpus</th>
+                <th>Description</th>
+            </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="p in layersExisting">
-                <td><a href="" ng-click="deleteLayer(p._id)">{{ p._id }}</a></td>
+            <tr ng-repeat="p in cappdata.layers">
+                <td><a href="" ng-click="cappdata.delete('layer', p._id)">{{ p._id }}</a></td>
                 <td>{{ p.name }}</td>
                 <td>{{ convertCorpus(p.id_corpus).name }}</td>
                 <td><json-tree object="p.description"></json-tree></td>
@@ -265,15 +290,17 @@
         <h4>Existing media</h4>
         <table class="table">
             <thead>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Url</th>
-            <th>Corpus</th>
-            <th>Description</th>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Url</th>
+                <th>Corpus</th>
+                <th>Description</th>
+            </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="p in mediaExisting">
-                <td><a href="" ng-click="deleteMedium(p._id)">{{ p._id }}</a></td>
+            <tr ng-repeat="p in cappdata.media">
+                <td><a href="" ng-click="cappdata.delete('medium', p._id)">{{ p._id }}</a></td>
                 <td>{{ p.name }}</td>
                 <td>{{ p.url }}</td>
                 <td>{{ convertCorpus(p.id_corpus).name }}</td>
@@ -283,3 +310,6 @@
         </table>
     </div>
 </div>
+
+<camomile-loader api="api"></camomile-loader>
+<camomile-popup api="api"></camomile-popup>

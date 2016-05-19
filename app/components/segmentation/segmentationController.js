@@ -1,15 +1,23 @@
 angular.module('camomileApp.controllers.segmentation', [])
     .controller('SegmentationCtrl', ['$scope', '$timeout', '$interval', 'cappdata', function ($scope, $timeout, $interval, cappdata) {
-        cappdata.clean();
-        
+        $scope.api = {};
+
+        var refresh = function () {
+            cappdata.clean();
+            cappdata.update('corpora');
+            cappdata.registerObserver(updateData);
+        };
+
         var updateData = function () {
             $timeout(function () {
                 $scope.cappdata = cappdata;
+                $scope.api.loader.finished();
             }, 0);
         };
 
-        cappdata.registerObserver(updateData);
+        $scope.$parent.onLogin(refresh);
 
+        refresh();
         $scope.recordingEvent = false;
         $scope.details = {};
 
@@ -23,7 +31,7 @@ angular.module('camomileApp.controllers.segmentation', [])
                 $scope.eventInterval = $interval(function () {
                     $scope.details.api.details.getLastEvent().duration = $scope.details.api.video.API.currentTime - $scope.details.api.details.getLastEvent().begin;
                     $scope.details.api.details.refreshEventline();
-                }, 1000);
+                }, 250);
             }
         };
 
@@ -35,14 +43,17 @@ angular.module('camomileApp.controllers.segmentation', [])
             }
         };
 
-        cappdata.update('corpora');
-
         $scope.updateMedium = function () {
-            cappdata.update('media', $scope.corpus, 'video');
+            if ($scope.corpus) {
+                $scope.api.loader.loading();
+                cappdata.update('media', $scope.corpus, 'video');
+            }
         };
 
         $scope.updateView = function () {
-            cappdata.resetMedium();
-            cappdata.update('medium', $scope.medium);
+            if ($scope.medium) {
+                cappdata.resetMedium();
+                cappdata.update('medium', $scope.medium);
+            }
         };
     }]);

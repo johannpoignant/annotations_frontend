@@ -1,100 +1,93 @@
-<div ng-show="loaded">
-    <h2 style="margin: 0 auto 20px auto;">Choix des paramètres</h2>
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="col-sm-6">
-                <form class="form-horizontal">
-                    <div class="form-group">
-                        <label for="selectCorpus" class="col-sm-3 control-label">Corpus</label>
-                        <div class="col-sm-9">
-                            <select ng-options="corpus._id as corpus.name for corpus in browse.corpora"
-                                    ng-model="browse.corpus"
-                                    class="form-control" id="selectCorpus"></select>
-                        </div>
+<h2 style="margin: 0 auto 20px auto;">Choix des paramètres</h2>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="col-sm-6">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="selectCorpus" class="col-sm-3 control-label">Corpus</label>
+                    <div class="col-sm-9">
+                        <select ng-options="corpus._id as corpus.name for corpus in cappdata.corpora"
+                                ng-model="corpus"
+                                ng-change="updateMedia()"
+                                class="form-control"
+                                id="selectCorpus"></select>
                     </div>
-                    <div class="form-group">
-                        <label for="selectMedium" class="col-sm-3 control-label">Medium</label>
-                        <div class="col-sm-9">
-                            <select ng-options="medium._id as medium.name for medium in browse.media | filterByExt:mediaType:filterNames"
-                                    ng-model="browse.medium" class="form-control" id="selectMedium"></select>
-                        </div>
+                </div>
+                <div class="form-group">
+                    <label for="selectMedium" class="col-sm-3 control-label">Medium</label>
+                    <div class="col-sm-9">
+                        <select ng-options="medium._id as medium.name for medium in cappdata.media | filterByExt:mediaType:filterNames"
+                                ng-model="medium"
+                                ng-change="updateMedium()"
+                                class="form-control"
+                                id="selectMedium"></select>
                     </div>
-                    <div class="form-group">
-                        <label for="selectLayer" class="col-sm-3 control-label">Layer</label>
-                        <div class="col-sm-9">
-                            <select ng-options="layer._id as layer.name for layer in browse.layers"
-                                    ng-model="browse.layer"
-                                    class="form-control" id="selectLayer"></select>
-                        </div>
+                </div>
+                <div class="form-group">
+                    <label for="selectLayer" class="col-sm-3 control-label">Layer</label>
+                    <div class="col-sm-9">
+                        <select ng-options="layer._id as layer.name for layer in cappdata.layers"
+                                ng-model="layer"
+                                ng-change="updateMedium()"
+                                class="form-control"
+                                id="selectLayer"></select>
                     </div>
-                </form>
-            </div>
-            <div class="col-sm-6">
-                <form class="form-horizontal">
-                    <div class="form-group">
-                        <div class="col-sm-9">
-                            <select ng-model="mediaType" class="form-control" id="selectCorpus">
-                                <optgroup label="Vidéo">
-                                    <option value="mp4">MP4</option>
-                                    <option value="webm">WebM</option>
-                                </optgroup>
-                                <optgroup label="Image">
-                                    <option value="jpg">JPG</option>
-                                    <option value="png">PNG</option>
-                                </optgroup>
-                            </select>
-                        </div>
-                        <label for="selectCorpus" class="col-sm-3 control-label">Extension</label>
-                    </div>
-                    <!-- <div class="form-group">
-                      <div class="col-sm-9">
-                        <select ng-options="ext as ext for ext in mediaExts[mediaType]"
-                        ng-model="mediaExt"
-                        class="form-control" id="selectMedium"></select>
-                      </div>
-                      <label for="selectMedium" class="col-sm-3 control-label">Format</label>
-                    </div> -->
-                    <div class="form-group">
-                        <div class="col-sm-4">
-                            <input type="checkbox" class="form-control" id="filterNames" ng-model="filterNames" checked>
-                        </div>
-                        <label for="filterNames" class="col-sm-8 control-label">Filtrer par extension</label>
-                    </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
-    </div>
-
-    <!-- <div ng-if="browse.media.length > 0">
-      <p ng-repeat="medium in browse.media">
-        <list-view video="medium"></list-view>
-      </p>
-    </div> -->
-
-    <div ng-show="browse.medium">
-        <!--
-         Que doit-on avoir?
-           1: Possibilité de créer un player à partir d'une url et d'activer/désac les annotations
-           2: Affichage d'un graph et d'une Eventline (infos depuis ou??)
-           3: Annotation edit
-
-          api-player src browse.medium annotations true
-          api-details data data
-          api-annotations
-
-          api-player:
-          * Variables (annotations, annotation)
-          * Fonctions (API avec videoplayer, draw canvas)
-          * Interval
-        -->
-        <camomile-box infos="{{infos}}">
-            <camomile-canvas></camomile-canvas>
-            <camomile-image ng-if="browse.mediumType === 'image'" src={{browse.mediumSrc}}></camomile-image>
-            <camomile-video ng-if="browse.mediumType === 'video'" src="browse.mediumSrc"></camomile-video>
-            <camomile-details data="true"></camomile-details>
-            <camomile-annotations></camomile-annotations>
-        </camomile-box>
+        <div class="col-sm-6">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-sm-9">
+                        <select ng-model="mediaType" class="form-control">
+                            <optgroup label="Vidéo">
+                                <option value="mp4">MP4</option>
+                                <option value="webm">WebM</option>
+                            </optgroup>
+                            <optgroup label="Image">
+                                <option value="jpg">JPG</option>
+                                <option value="png">PNG</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <label for="selectCorpus" class="col-sm-3 control-label">Extension</label>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        <input type="checkbox" class="form-control" id="filterNames" ng-model="filterNames" checked>
+                    </div>
+                    <label for="filterNames" class="col-sm-8 control-label">Filtrer par extension</label>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div class="loader" ng-hide="loaded"></div>
+<div ng-show="cappdata.mediaSelected[0]">
+    <!--
+     Que doit-on avoir?
+       1: Possibilité de créer un player à partir d'une url et d'activer/désac les annotations
+       2: Affichage d'un graph et d'une Eventline (infos depuis ou??)
+       3: Annotation edit
+
+      api-player src browse.medium annotations true
+      api-details data data
+      api-annotations
+
+      api-player:
+      * Variables (annotations, annotation)
+      * Fonctions (API avec videoplayer, draw canvas)
+      * Interval
+    -->
+    <camomile-box infos="{{infos}}">
+        <camomile-canvas></camomile-canvas>
+        <!--<camomile-image ng-if="browse.mediumType === 'image'" src={{browse.mediumSrc}}></camomile-image>-->
+        <!--<camomile-video ng-if="browse.mediumType === 'video'" src="browse.mediumSrc"></camomile-video>-->
+        <camomile-media type="cappdata.mediaSelected[0].description.type" src="cappdata.mediaSelected[0].urlSecure"></camomile-media>
+        <camomile-details data="true"></camomile-details>
+        <camomile-annotations></camomile-annotations>
+    </camomile-box>
+</div>
+
+<camomile-loader api="api"></camomile-loader>
+<camomile-popup api="api"></camomile-popup>
