@@ -76,11 +76,17 @@ angular.module('camomileApp.services.data', [])
                     facto.notifyObservers();
                 };
 
-                if (corpus_id === undefined) {
-                    Camomile.getLayers(cb);
-                } else {
-                    Camomile.getLayers(corpus_id, cb);
+                let filter = {};
+
+                if (corpus_id !== undefined) {
+                    filter = {
+                        'filter': {
+                            'corpus_id': corpus_id
+                        }
+                    };
                 }
+
+                Camomile.getLayers(cb, filter);
             },
             annotations: function (medium_id, layer_id) {
                 var cb = function (err, data) {

@@ -212,7 +212,7 @@
                 <td><a href="" ng-click="cappdata.delete('user', p._id)">{{ p._id }}</a></td>
                 <td>{{ p.username }}</td>
                 <td>{{ p.role }}</td>
-                <td><json-tree object="p.description"></json-tree></td>
+                <td><json-formatter json="p.description"></json-formatter></td>
             </tr>
             </tbody>
         </table>
@@ -234,8 +234,8 @@
             <tr ng-repeat="p in cappdata.groups">
                 <td><a href="" ng-click="cappdata.delete('group', p._id)">{{ p._id }}</a></td>
                 <td>{{ p.name }}</td>
-                <td><json-tree object="p.users"></json-tree></td>
-                <td><json-tree object="p.description"></json-tree></td>
+                <td><json-formatter json="p.users"></json-formatter></td>
+                <td><json-formatter json="p.description"></json-formatter></td>
             </tr>
             </tbody>
         </table>
@@ -256,7 +256,7 @@
             <tr ng-repeat="p in cappdata.corpora">
                 <td><a href="" ng-click="cappdata.delete('corpus', p._id)">{{ p._id }}</a></td>
                 <td>{{ p.name }}</td>
-                <td><json-tree object="p.description"></json-tree></td>
+                <td><json-formatter json="p.description"></json-formatter></td>
             </tr>
             </tbody>
         </table>
@@ -272,6 +272,8 @@
                 <th>Name</th>
                 <th>Corpus</th>
                 <th>Description</th>
+                <th>Fragment type</th>
+                <th>Data type</th>
             </tr>
             </thead>
             <tbody>
@@ -279,7 +281,9 @@
                 <td><a href="" ng-click="cappdata.delete('layer', p._id)">{{ p._id }}</a></td>
                 <td>{{ p.name }}</td>
                 <td>{{ convertCorpus(p.id_corpus).name }}</td>
-                <td><json-tree object="p.description"></json-tree></td>
+                <td><json-formatter json="p.description"></json-formatter></td>
+                <td><json-formatter json="p.fragment_type"></json-formatter></td>
+                <td><json-formatter json="p.data_type"></json-formatter></td>
             </tr>
             </tbody>
         </table>
@@ -288,7 +292,7 @@
 <div class="row">
     <div class="col-sm-12">
         <h4>Existing media</h4>
-        <table class="table">
+        <table class="table" ng-show="corpusShow">
             <thead>
             <tr>
                 <th>ID</th>
@@ -304,9 +308,12 @@
                 <td>{{ p.name }}</td>
                 <td>{{ p.url }}</td>
                 <td>{{ convertCorpus(p.id_corpus).name }}</td>
-                <td><json-tree object="p.description"></json-tree></td>
+                <td><json-formatter json="p.description"></json-formatter></td>
             </tr>
             </tbody>
+            <div ng-hide="corpusShow">
+                <button ng-click="corpusShow = true;" class="btn btn-default form-control">Montrer les media</button>
+            </div>
         </table>
     </div>
 </div>

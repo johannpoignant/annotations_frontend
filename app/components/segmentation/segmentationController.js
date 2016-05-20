@@ -45,8 +45,9 @@ angular.module('camomileApp.controllers.segmentation', [])
 
         $scope.updateMedium = function () {
             if ($scope.corpus) {
-                $scope.api.loader.loading();
+                $scope.api.loader.loading(2);
                 cappdata.update('media', $scope.corpus, 'video');
+                cappdata.update('layers', $scope.corpus);
             }
         };
 

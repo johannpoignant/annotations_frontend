@@ -198,7 +198,7 @@ angular.module("camomileApp.controllers.backoffice", [])
         };*/
 
         // Convert id into objects
-        /*$scope.convertCorpus = function (id) {
+        $scope.convertCorpus = function (id) {
             for (c of cappdata.corpora) {
                 if (c._id === id)
                     return c
@@ -207,7 +207,7 @@ angular.module("camomileApp.controllers.backoffice", [])
         };
 
         // Create
-        $scope.createNewUser = function() {
+        /*$scope.createNewUser = function() {
             var da = $scope.creation.user;
             var callback = function(err, data) {
                 if (err) {
