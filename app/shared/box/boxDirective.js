@@ -6,7 +6,7 @@ angular.module('camomileApp.directives.box', [
             restrict: 'AE',
             scope: {
                 infos: '@', // Needed: id_layer, id_medium in {layer: '', medium: ''}
-                extApi: '=?api'
+                api: '=?'
             },
             transclude: true,
             template: '<div ng-transclude></div>',
@@ -80,6 +80,73 @@ angular.module('camomileApp.directives.box', [
                     }
                 };
 
+                // Event
+                function Event () {
+                    this.begin = 0.0;
+                    this.duration = 0.0;
+                    
+                    this.data = {};
+                    this.data.text = "";
+                    this.data.color = "blue";
+                }
+
+                Event.prototype.setBeginning = function (begin) {
+                    this.begin = begin;
+                };
+
+                Event.prototype.setDuration = function (duration) {
+                    this.duration = duration;
+                };
+
+                Event.prototype.setDataField = function (field, value) {
+                    this.data[field] = value;
+                };
+
+                Event.prototype.getBeginning = function (duration) {
+                    return this.begin;
+                };
+
+                Event.prototype.getDuration = function (duration) {
+                    return this.duration;
+                };
+
+                Event.prototype.getDataField = function (field) {
+                    return this.data[field];
+                };
+
+                Event.prototype.getData = function () {
+                    return this.data;
+                };
+
+                // Events
+                function Events () {
+                    this.events = [];
+                }
+
+                Events.prototype.getEvents = function () {
+                    return this.events;
+                };
+
+                Events.prototype.newEvent = function () {
+                    var ev = new Event();
+                    this.addEvent(ev);
+                };
+
+                Events.prototype.addEvent = function (ev) {
+                    if (!ev.getDataField("number")) ev.setDataField("number", this.events.length);
+                    this.events.push(ev);
+                };
+
+                Events.prototype.getLastEvent = function () {
+                    return this.events[this.events.length - 1];
+                };
+
+                Events.prototype.eventsLength = function () {
+                    return this.events.length;
+                };
+
+                this.events = new Events();
+
                 /**
                  * Resets the annotation
                  * @return {undefined}
@@ -122,8 +189,8 @@ angular.module('camomileApp.directives.box', [
                     }
                 };
 
-                if ($scope.extApi) { // Bind api if provided
-                    $scope.extApi.api = $scope.apis;
+                if ($scope.api) { // Bind api if provided
+                    $scope.api.box = $scope.apis;
                 }
             },
             link: function (scope, elem, attrs) {

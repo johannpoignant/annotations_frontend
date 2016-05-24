@@ -35,17 +35,10 @@
 
 <div class="row" ng-if="cappdata.mediaSelected[0]">
     <div class="col-sm-12">
-        <camomile-box api="details">
+        <camomile-box api="api">
             <camomile-media type="cappdata.mediaSelected[0].description.type" src="cappdata.mediaSelected[0].urlSecure"></camomile-media>
             <camomile-details graph="false"></camomile-details>
         </camomile-box>
-        <div class="row">
-            <div class="col-sm-12 text-center" style="margin-top: 12px">
-                <button type="button" class="btn btn-success" ng-click="beginEvent()">Début segment</button>
-                <button type="button" class="btn btn-warning" ng-click="endEvent()">Fin segment</button>
-                <button type="button" class="btn btn-primary" ng-click="endEvent()">Sauvegarde des segments</button>
-            </div>
-        </div>
     </div>
 </div>
 

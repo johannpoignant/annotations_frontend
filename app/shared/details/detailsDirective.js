@@ -1,7 +1,8 @@
 angular.module('camomileApp.directives.details', [
-    "nvd3"
+    "nvd3",
+    "ui.bootstrap"
 ])
-    .directive('camomileDetails', function ($log, $interval, $timeout, camomileToolsConfig) {
+    .directive('camomileDetails', function ($log, $interval, $timeout, $uibModal, camomileToolsConfig) {
         return {
             restrict: 'AE',
             templateUrl: camomileToolsConfig.moduleFolder + 'details/detailsView.html',
@@ -199,21 +200,84 @@ angular.module('camomileApp.directives.details', [
 
                 $scope.api.refreshEventline = function () {
                     let vt = $scope.dataCtrl.apis.video.API; // vt for videoTime
-                    for (e of $scope.events) {
+                    for (e of $scope.dataCtrl.events.getEvents()) {
                         let time = (e.begin / vt.totalTime) * ($scope.dimensions.res.width);
                         let end = (e.duration / vt.totalTime) * ($scope.dimensions.res.width);
-                        e.style = {
+                        e.setDataField("style", {
                             'margin-left': time + 'px',
-                            'width': end
-                        };
+                            'width': end,
+                            'background-color': e.getDataField('color')
+                        });
                         if (!vt.totalTime) {
                             e.style.display = "none";
                         }
                     }
                 };
+
+                $scope.beginEvent = function () {
+                    if (!$scope.recordingEvent) {
+                        console.log("Beginning the event");
+                        $scope.recordingEvent = true;
+                        $scope.dataCtrl.events.newEvent();
+                        var le = $scope.dataCtrl.events.getLastEvent();
+                        le.setBeginning($scope.dataCtrl.apis.video.API.currentTime);
+                        le.setDataField("text", "Testing");
+                        $scope.eventInterval = $interval(function () {
+                            le.setDuration($scope.dataCtrl.apis.video.API.currentTime - le.begin);
+                            $scope.api.refreshEventline();
+                        }, 250);
+                    }
+                };
+
+                $scope.endEvent = function () {
+                    if ($scope.recordingEvent) {
+                        console.log("Ending the event");
+                        $scope.recordingEvent = false;
+                        $interval.cancel($scope.eventInterval);
+                        console.log($scope.dataCtrl.events.getEvents());
+                    }
+                };
+
+                $scope.editSegment = function (event) {
+                    $scope.stopInterval();
+
+                    var modalInstance = $uibModal.open({
+                        animation: true,
+                        templateUrl: 'app/shared/modal/editSegment.html',
+                        controller: 'EditSegmentCtrl',
+                        size: 'md',
+                        resolve: {
+                            event: function () {
+                                return event;
+                            }
+                        }
+                    });
+
+                    modalInstance.result.then(function (event) {
+                        //$scope.selected = selectedItem;
+                        $scope.launchInterval();
+                    }, function () {
+                        $log.info('Modal dismissed at: ' + new Date());
+                        $scope.launchInterval();
+                    });
+                };
             },
             link: function (scope, elem, attrs, controllerInstance) {
                 scope.dataCtrl = controllerInstance;
+
+                scope.launchInterval = function () {
+                    if (!scope.interval) scope.interval = [];
+                    scope.interval.push($interval(function () {
+                        scope.api.updateTimebar();
+                        scope.api.refreshEventline();
+                    }, 250));
+                };
+
+                scope.stopInterval = function () {
+                    for (i of scope.interval) {
+                        $interval.cancel(i);
+                    }
+                };
 
                 scope.api.refresh = function () {
                     let div = elem.find('div');
@@ -235,11 +299,8 @@ angular.module('camomileApp.directives.details', [
 
                     scope.graphAPI.refresh();
                     if (scope.dataCtrl.apis.video) {
-                        if (scope.inter) scope.inter = undefined;
-                        scope.interv = $interval(function () {
-                            scope.api.updateTimebar();
-                            scope.api.refreshEventline();
-                        }, 250);
+                        //if (scope.inter) scope.inter = undefined;
+                        scope.launchInterval();
                         scope.$on('$destroy', function () {
                             console.log('Destroying details interval');
                             $interval.cancel(scope.interv);
@@ -255,4 +316,26 @@ angular.module('camomileApp.directives.details', [
         return {
             template: '<div class="eventLine"></div>'
         }
+    })
+    .controller('EditSegmentCtrl', function ($scope, $uibModalInstance, event) {
+        $scope.event = event;
+
+        $scope.ok = function () {
+            $uibModalInstance.close($scope.event);
+        };
+
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    })
+    .filter('onlyPrimitives', function() {
+        return function(x) {
+            var i = {};
+            for (c in x) {
+                if (typeof x[c] != "object") {
+                    i[c] = x[c];
+                }
+            }
+            return i;
+        };
     });

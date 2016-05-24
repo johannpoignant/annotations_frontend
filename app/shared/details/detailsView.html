@@ -1,10 +1,17 @@
 <div ng-show="dataCtrl.apis.video">
     <div class="timebar" ng-style="timebarClass"></div>
 
-    <div ng-repeat="e in events">
-        <div class="event" ng-style="e.style">{{e.text}}</div>
+    <div ng-repeat="e in dataCtrl.events.getEvents()">
+        <div class="event" ng-style="e.getDataField('style')" ng-click="editSegment(e)">{{e.getDataField('text')}}</div>
     </div>
     <event-div></event-div>
+
+    <div class="row">
+        <div class="col-sm-12 text-center" style="margin-top: 12px">
+            <button type="button" class="btn btn-success" ng-click="beginEvent()">Début segment</button>
+            <button type="button" class="btn btn-warning" ng-click="endEvent()">Fin segment</button>
+        </div>
+    </div>
 
     <div class="graph" ng-show="graph">
         <nvd3 options="graph.options" data="graph.data" on-ready="graphCallback"></nvd3>

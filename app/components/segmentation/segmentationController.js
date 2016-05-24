@@ -19,29 +19,6 @@ angular.module('camomileApp.controllers.segmentation', [])
 
         refresh();
         $scope.recordingEvent = false;
-        $scope.details = {};
-
-        $scope.beginEvent = function () {
-            console.log($scope.details);
-            if (!$scope.recordingEvent) {
-                console.log("Begging the event");
-                $scope.recordingEvent = true;
-                $scope.details.api.details.addEvent($scope.details.api.video.API.currentTime, 0, "test");
-                console.log($scope.details.api.details.getLastEvent());
-                $scope.eventInterval = $interval(function () {
-                    $scope.details.api.details.getLastEvent().duration = $scope.details.api.video.API.currentTime - $scope.details.api.details.getLastEvent().begin;
-                    $scope.details.api.details.refreshEventline();
-                }, 250);
-            }
-        };
-
-        $scope.endEvent = function () {
-            if ($scope.recordingEvent) {
-                console.log("Ending the event");
-                $scope.recordingEvent = false;
-                $interval.cancel($scope.eventInterval);
-            }
-        };
 
         $scope.updateMedium = function () {
             if ($scope.corpus) {

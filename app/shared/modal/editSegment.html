@@ -1,0 +1,17 @@
+<div class="modal-header">
+    <h3 class="modal-title">Edition du segment</h3>
+</div>
+<div class="modal-body">
+    Début segment: {{ event.getBeginning() }}<br>
+    Durée segment: {{ event.getDuration() }}<br>
+    Data:
+    <ul>
+        <li ng-repeat="(k, d) in event.data | onlyPrimitives">
+            {{ k }}: <input type="text" ng-model="event.data[k]">
+        </li>
+    </ul>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>
