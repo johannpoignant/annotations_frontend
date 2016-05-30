@@ -1,3 +1,8 @@
+/**
+ * Module de base contenant tous les autres modules.
+ * Est utilisé pour permettre l'interface entre ceux-ci dans un scope précis, sans polluer le reste de l'application.
+ * Toutes les méthodes "communes" doivent être déclarées et implémentées ici même, et les données relatives aussi.
+ */
 angular.module('camomileApp.directives.box', [
     "ngAnimate"
 ])
@@ -68,7 +73,7 @@ angular.module('camomileApp.directives.box', [
                 this.saveAnnotation = function () {
                     var a = facto.annotation; // Shortcut
                     if (a.id == 0 && a.fragment.points.length > 1 && a.fragment.name != "") {
-                        if (isVideo()) {
+                        if (isVideo()) { // If its a video, we have to keep the timestamp too
                             a.fragment.timestamp = apis.video.API.currentTime;
                         }
 
@@ -76,7 +81,7 @@ angular.module('camomileApp.directives.box', [
                         facto.annotations.push(JSON.parse(JSON.stringify(a)));
                         apis.canvas.clearCanvas(true);
 
-                        $scope.$parent.api.popup.showMessage("Saved annotation!", 3000);
+                        $scope.showMessage("Saved annotation!", 3000);
                     }
                 };
 
@@ -99,11 +104,12 @@ angular.module('camomileApp.directives.box', [
                     };
                 }
 
+                // Set a field of the fragment object
                 Event.prototype.setFragmentField = function (field, value) {
                     this.fragment[field] = value;
                 };
 
-
+                // Get a field of the data object
                 Event.prototype.setDataField = function (field, value) {
                     this.data[field] = value;
                 };
@@ -140,6 +146,15 @@ angular.module('camomileApp.directives.box', [
                     return this.id;
                 };
 
+                Event.prototype.delete = function () {
+                    var cb = function () {
+                        $scope.events.refreshEvents();
+                    };
+
+                    cappdata.delete('annotation', this.getId(), cb);
+                };
+
+                // Saves the event in the camomile server or update it if already exists
                 Event.prototype.save = function () {
                     var cb = function () {
                         $scope.events.refreshEvents();
@@ -157,19 +172,23 @@ angular.module('camomileApp.directives.box', [
                     this.events = [];
                 }
 
+                // Removes all the events stored locally
                 Events.prototype.emptyEvents = function () {
                     this.events = [];
                 };
 
+                // Returns the events stored locally
                 Events.prototype.getEvents = function () {
                     return this.events;
                 };
 
+                // Creates a new event
                 Events.prototype.newEvent = function () {
                     var ev = new Event();
                     this.addEvent(ev);
                 };
 
+                // Converts an object (from the server for example) to an event and adds it to the local events
                 Events.prototype.convertObject = function (obj) {
                     var ev = new Event();
                     ev.setFragment(obj.fragment);
@@ -178,21 +197,25 @@ angular.module('camomileApp.directives.box', [
                     this.addEvent(ev);
                 };
 
+                // Add the event ev to the local events (NOTE: ev must be an instance of Event)
+                // It its an object from the camomile server, use convertObject
                 Events.prototype.addEvent = function (ev) {
                     if (!ev.getDataField("number")) ev.setDataField("number", this.events.length);
                     this.events.push(ev);
                 };
 
+                // Returns the last event created
                 Events.prototype.getLastEvent = function () {
                     return this.events[this.events.length - 1];
                 };
 
+                // Returns the number of events stored locally
                 Events.prototype.eventsLength = function () {
                     return this.events.length;
                 };
 
+                // Sync the events with the remote ones
                 Events.prototype.refreshEvents = function () {
-                    console.info('Refreshing events');
                     this.emptyEvents();
                     var t = this;
                     if ($scope.api.infos.layer && $scope.api.infos.medium) {
@@ -207,6 +230,10 @@ angular.module('camomileApp.directives.box', [
                 };
 
                 this.events = $scope.events = new Events();
+
+                this.showMessage = function (...args) {
+                    $scope.$parent.api.popup.showMessage(...args);
+                };
 
                 /**
                  * Resets the annotation

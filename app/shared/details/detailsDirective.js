@@ -227,9 +227,13 @@ angular.module('camomileApp.directives.details', [
                         }
                     });
 
-                    modalInstance.result.then(function (event) {
-                        //$scope.selected = selectedItem;
-                        $scope.saveSegment(event);
+                    modalInstance.result.then(function (result) {
+                        if (result.action == "save") {
+                            result.event.save();
+                        } else if (result.action == "delete") {
+                            result.event.delete();
+                        }
+
                         $scope.launchInterval();
                     }, function () {
                         $log.info('Modal dismissed at: ' + new Date());
@@ -305,22 +309,26 @@ angular.module('camomileApp.directives.details', [
 
         $scope.setNow = function (time) {
             if (time === "begin") {
-                if (parseInt(event.getFragmentField("begin")) > parseInt(currentTime)) {
+                if (parseInt(event.getFragmentField("end")) > parseInt(currentTime)) {
                     event.setFragmentField("begin", currentTime);
                 }
             } else if (time === "end") {
-                if (event.getFragmentField("end") < currentTime) {
+                if (parseInt(event.getFragmentField("begin")) < parseInt(currentTime)) {
                     event.setFragmentField("end", currentTime);
                 }
             }
         };
 
         $scope.ok = function () {
-            $uibModalInstance.close($scope.event);
+            $uibModalInstance.close({event: $scope.event, action: 'save'});
         };
 
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
+        };
+
+        $scope.delete = function () {
+            $uibModalInstance.close({event: $scope.event, action: 'delete'});
         };
     })
     .filter('onlyPrimitives', function() {

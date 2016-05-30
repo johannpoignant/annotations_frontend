@@ -86,6 +86,7 @@
     overflow: hidden;
     color: white;
     border-radius: 6px;
+    cursor: pointer;
 }
 
 .graph {

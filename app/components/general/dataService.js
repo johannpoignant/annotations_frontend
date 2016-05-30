@@ -263,14 +263,15 @@ angular.module('camomileApp.services.data', [])
                 Camomile.deleteGroup(id, cb);
             },
             annotation: function (id, callback) {
+                console.info('Deleting ' + id);
                 Camomile.deleteAnnotation(id, function (err, data) {
                     if (err) {
+                        console.warn('Deletion of the annotation failed.');
+                    } else {
                         if (callback && typeof callback == "function") {
                             callback(data);
                         }
 
-                        console.warn('Deletion of the annotation failed.');
-                    } else {
                         facto.notifyObservers();
                     }
                 });
@@ -409,20 +410,20 @@ angular.module('camomileApp.services.data', [])
             facto.media = nMedia;
         };
 
-        facto.get = function (wtu, ...args) {
-            facto._get[wtu](...args);
+        facto.get = function (model, ...args) {
+            facto._get[model](...args);
         };
 
-        facto.delete = function (wtu, ...args) {
-            facto._delete[wtu](...args);
+        facto.delete = function (model, ...args) {
+            facto._delete[model](...args);
         };
 
-        facto.create = function (wtu, ...args) {
-            facto._create[wtu](...args);
+        facto.create = function (model, ...args) {
+            facto._create[model](...args);
         };
 
-        facto.update = function (wtu, ...args) {
-            facto._update[wtu](...args);
+        facto.update = function (model, ...args) {
+            facto._update[model](...args);
         };
 
         facto.resetMedium = function () {
