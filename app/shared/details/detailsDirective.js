@@ -220,6 +220,9 @@ angular.module('camomileApp.directives.details', [
                         resolve: {
                             event: function () {
                                 return event;
+                            },
+                            currentTime: function () {
+                                return $scope.dataCtrl.apis.video.API.currentTime;
                             }
                         }
                     });
@@ -297,8 +300,20 @@ angular.module('camomileApp.directives.details', [
             template: '<div class="eventLine"></div>'
         }
     })
-    .controller('EditSegmentCtrl', function ($scope, $uibModalInstance, event) {
+    .controller('EditSegmentCtrl', function ($scope, $uibModalInstance, event, currentTime) {
         $scope.event = event;
+
+        $scope.setNow = function (time) {
+            if (time === "begin") {
+                if (parseInt(event.getFragmentField("begin")) > parseInt(currentTime)) {
+                    event.setFragmentField("begin", currentTime);
+                }
+            } else if (time === "end") {
+                if (event.getFragmentField("end") < currentTime) {
+                    event.setFragmentField("end", currentTime);
+                }
+            }
+        };
 
         $scope.ok = function () {
             $uibModalInstance.close($scope.event);
