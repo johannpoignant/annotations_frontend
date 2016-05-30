@@ -5,7 +5,7 @@ angular.module('camomileApp.controllers.objects', [])
 
         var refresh = function () {
             cappdata.clean(); // On clean la facto, pour éviter les restes d'autres composants
-            cappdata.update('corpora'); // On update les corpus dispos
+            cappdata.get('corpora'); // On update les corpus dispos
             cappdata.registerObserver(updateData); // On register le composant
         };
 
@@ -24,8 +24,8 @@ angular.module('camomileApp.controllers.objects', [])
         $scope.updateObjects = function () { // Lorsque l'utilisateur sélectionne un corpus, on update les layers & mt
             if ($scope.corpus) {
                 $scope.api.loader.loading();
-                cappdata.update('layers', $scope.corpus);
-                cappdata.update('metadata', $scope.corpus, ['objet', 'endroit']);
+                cappdata.get('layers', $scope.corpus);
+                cappdata.get('metadata', $scope.corpus, ['objet', 'endroit']);
             }
         };
 
@@ -33,7 +33,7 @@ angular.module('camomileApp.controllers.objects', [])
             cappdata.resetMedium();
             if ($scope.object) {
                 for (m of $scope.object.media) {
-                    cappdata.update('medium', m);
+                    cappdata.get('medium', m);
                 }
             }
         };

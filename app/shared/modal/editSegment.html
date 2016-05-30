@@ -2,8 +2,13 @@
     <h3 class="modal-title">Edition du segment</h3>
 </div>
 <div class="modal-body">
-    Début segment: {{ event.getBeginning() }}<br>
-    Durée segment: {{ event.getDuration() }}<br>
+    Id: {{ event.getId() }}<br>
+    Fragment:
+    <ul>
+        <li ng-repeat="(k, d) in event.fragment | onlyPrimitives">
+            {{ k }}: <input type="text" ng-model="event.fragment[k]">
+        </li>
+    </ul>
     Data:
     <ul>
         <li ng-repeat="(k, d) in event.data | onlyPrimitives">

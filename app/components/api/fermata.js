@@ -193,7 +193,6 @@ fermata._xhrTransport = function (request, callback) {
         url = fermata._stringForURL(request);
 
     xhr.withCredentials = true;
-    console.log(request);
 
     xhr.open(request.method, url, true);
     Object.keys(request.headers).forEach(function (k) {

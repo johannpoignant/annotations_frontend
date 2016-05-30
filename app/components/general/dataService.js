@@ -26,32 +26,38 @@ angular.module('camomileApp.services.data', [])
         facto.clean();
 
         // Updates fonctions
-        facto._update = {
-            corpora: function () {
+        facto._get = {
+            corpora: function (callback) {
                 var cb = function (err, data) {
                     if (err) {
                         console.warn('Error in the retrieval of corpora');
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.corpora = data;
-                        console.log(facto);
+                        facto.notifyObservers();
                     }
-                    facto.notifyObservers();
                 };
                 Camomile.getCorpora(cb);
             },
-            media: function (corpus_id, filter) {
+            media: function (corpus_id, filter, callback) {
                 var cb = function (err, data) {
                     if (err) {
                         console.warn('Error in the retrieval of media');
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.media = data;
+                        facto.notifyObservers();
                     }
 
                     if (filter) {
                         facto.filterMedium(filter);
                     }
-
-                    facto.notifyObservers();
                 };
 
                 if (corpus_id === undefined) {
@@ -66,14 +72,18 @@ angular.module('camomileApp.services.data', [])
 
                 Camomile.getMedia(cb, filt);
             },
-            layers: function (corpus_id) {
+            layers: function (corpus_id, callback) {
                 var cb = function (err, data) {
                     if (err) {
                         console.warn('Error in the retrieval of layers');
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.layers = data;
+                        facto.notifyObservers();
                     }
-                    facto.notifyObservers();
                 };
 
                 let filter = {};
@@ -88,17 +98,18 @@ angular.module('camomileApp.services.data', [])
 
                 Camomile.getLayers(cb, filter);
             },
-            annotations: function (medium_id, layer_id) {
+            annotations: function (layer_id, medium_id, callback) {
                 var cb = function (err, data) {
                     if (err) {
                         console.warn('Error in the retrieval of annotations');
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.annotations = data;
-                        /*for (obj of data) { // We push every fragment to recreate the array
-                            ans.push({fragment: obj.fragment, id: obj._id});
-                        }*/
+                        facto.notifyObservers();
                     }
-                    facto.notifyObservers();
                 };
                 Camomile.getAnnotations(cb, {
                     'filter': {
@@ -107,24 +118,32 @@ angular.module('camomileApp.services.data', [])
                     }
                 });
             },
-            metadata: function (corpus_id, metadata) {
+            metadata: function (corpus_id, metadata, callback) {
                 for (let m of metadata) {
                     var cb = function (err, data) {
                         if (err) {
                             console.warn('Error in the retrieval of metadata');
                         } else {
+                            if (callback && typeof callback == "function") {
+                                callback(data);
+                            }
+
                             facto.metadata[m] = data;
+                            facto.notifyObservers();
                         }
-                        facto.notifyObservers();
                     };
                     Camomile.getCorpusMetadata(corpus_id, m, cb);
                 }
             },
-            medium: function (medium_id) {
+            medium: function (medium_id, callback) {
                 var cb = function (err, data) {
                     if (err) {
                         console.warn("Error: can't retrieve medium informations.");
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         var legit = data;
 
                         if (legit.description.type === "video") {
@@ -147,21 +166,29 @@ angular.module('camomileApp.services.data', [])
 
                 Camomile.getMedium(medium_id, cb);
             },
-            users: function () {
+            users: function (callback) {
                 Camomile.getUsers(function(err, data) {
                     if (err) {
                         facto.users = [];
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.users = data;
                         facto.notifyObservers();
                     }
                 });
             },
-            groups: function () {
+            groups: function (callback) {
                 Camomile.getGroups(function(err, data) {
                     if (err) {
                         facto.groups = [];
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.groups = data;
                         facto.notifyObservers();
                     }
@@ -170,54 +197,78 @@ angular.module('camomileApp.services.data', [])
         };
 
         facto._delete = {
-            corpus: function () {
+            corpus: function (id, callback) {
                 var cb = function (err, data) {
                     if (err) {}
                     else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.notifyObservers();
                     }
                 };
                 Camomile.deleteCorpus(id, cb);
             },
-            medium: function () {
+            medium: function (id, callback) {
                 var cb = function (err, data) {
                     if (err) {}
                     else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.notifyObservers();
                     }
                 };
                 Camomile.deleteMedium(id, cb);
             },
-            layer: function () {
+            layer: function (id, callback) {
                 var cb = function (err, data) {
                     if (err) {}
                     else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.notifyObservers();
                     }
                 };
                 Camomile.deleteLayer(id, cb);
             },
-            user: function () {
+            user: function (id, callback) {
                 var cb = function (err, data) {
                     if (err) {}
                     else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.notifyObservers();
                     }
                 };
                 Camomile.deleteUser(id, cb);
             },
-            group: function () {
+            group: function (id, callback) {
                 var cb = function (err, data) {
                     if (err) {}
                     else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.notifyObservers();
                     }
                 };
                 Camomile.deleteGroup(id, cb);
             },
-            annotation: function (annotation_id) {
-                Camomile.deleteAnnotation(annotation_id, function (err, data) {
+            annotation: function (id, callback) {
+                Camomile.deleteAnnotation(id, function (err, data) {
                     if (err) {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         console.warn('Deletion of the annotation failed.');
                     } else {
                         facto.notifyObservers();
@@ -227,62 +278,96 @@ angular.module('camomileApp.services.data', [])
         };
 
         facto._create = {
-            user: function (name, password, description, role) {
+            user: function (name, password, description, role, callback) {
                 var cb = function (err, data) {
                     if (err) {
                         console.warn('Creation of user failed.');
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.notifyObservers();
                     }
                 };
 
                 Camomile.createUser(name, password, description, role, cb);
             },
-            group: function (name, description) {
+            group: function (name, description, callback) {
                 var cb = function (err, data) {
                     if (err) {
                         console.warn('Creation of group failed.');
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.notifyObservers();
                     }
                 };
 
                 Camomile.createGroup(name, description, cb);
             },
-            corpus: function (name, description) {
+            corpus: function (name, description, callback) {
                 var cb = function (err, data) {
                     if (err) {
                         console.warn('Creation of corpus failed.');
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.notifyObservers();
                     }
                 };
 
                 Camomile.createCorpus(name, description, cb);
             },
-            medium: function (corpus_id, name, url, description) {
+            medium: function (corpus_id, name, url, description, callback) {
                 var cb = function (err, data) {
                     if (err) {
                         console.warn('Creation of medium failed.');
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.notifyObservers();
                     }
                 };
 
                 Camomile.createMedium(corpus_id, name, url, description, cb);
             },
-            layer: function (corpus_id, name, description, fragment_type, data_type) {
+            layer: function (corpus_id, name, description, fragment_type, data_type, callback) {
                 var cb = function (err, data) {
                     if (err) {
                         console.warn('Creation of layer failed.');
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.notifyObservers();
                     }
                 };
 
                 Camomile.createLayer(corpus_id, name, description, fragment_type, data_type, cb);
             },
-            annotations: function (layer_id, annotations) {
+            annotation: function (layer_id, medium_id, fragment, data, callback) {
+                var cb = function (err, data) {
+                    if (err) {
+                        console.warn('Creation of annotation failed.');
+                    } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
+                        facto.notifyObservers();
+                    }
+                };
+                Camomile.createAnnotation(layer_id, medium_id, fragment, data, cb);
+            },
+            annotations: function (layer_id, annotations, callback) {
                 var cb = function (err, data) {
                     if (err) {
                         console.warn('Creation of annotations failed.');
@@ -292,6 +377,19 @@ angular.module('camomileApp.services.data', [])
                 };
 
                 Camomile.createAnnotations(layer_id, annotations, cb);
+            }
+        };
+
+        facto._update = {
+            annotation: function (annotation_id, fragment, data, callback) {
+                var cb = function (err, data) {
+                    if (err) {
+                        console.warn('Error in updating annotation');
+                    } else {
+                        facto.notifyObservers();
+                    }
+                };
+                Camomile.updateAnnotation(annotation_id, {fragment: fragment, data: data}, cb);
             }
         };
 
@@ -311,8 +409,8 @@ angular.module('camomileApp.services.data', [])
             facto.media = nMedia;
         };
 
-        facto.update = function (wtu, ...args) {
-            facto._update[wtu](...args);
+        facto.get = function (wtu, ...args) {
+            facto._get[wtu](...args);
         };
 
         facto.delete = function (wtu, ...args) {
@@ -321,6 +419,10 @@ angular.module('camomileApp.services.data', [])
 
         facto.create = function (wtu, ...args) {
             facto._create[wtu](...args);
+        };
+
+        facto.update = function (wtu, ...args) {
+            facto._update[wtu](...args);
         };
 
         facto.resetMedium = function () {
@@ -333,6 +435,7 @@ angular.module('camomileApp.services.data', [])
 
         facto.notifyObservers = function () { // Call this function when data changed
             console.log('Change occured; notifying ' + facto.observers.length + " observers.");
+
             angular.forEach(facto.observers, function (cb) {
                 cb();
             });

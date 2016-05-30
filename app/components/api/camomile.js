@@ -907,8 +907,8 @@
         _getMetadataKeys(_corpus(corpus), path, callback);
     };
 
-    my.setCorpusMetadata = function(corpus, metadatas, callback) {
-        _setMetadata(_corpus(corpus), metadatas, callback);
+    my.setCorpusMetadata = function(corpus, metadatas, path, callback) {
+        _setMetadata(_corpus(corpus), metadatas, path, callback);
     };
 
     my.sendCorpusMetadataFile = function(corpus, path, file, callback) {
@@ -928,8 +928,8 @@
         _getMetadataKeys(_layer(layer), path, callback);
     };
 
-    my.setLayerMetadata = function(layer, metadatas, callback) {
-        _setMetadata(_layer(layer), metadatas, callback);
+    my.setLayerMetadata = function(layer, metadatas, path, callback) {
+        _setMetadata(_layer(layer), metadatas, path, callback);
     };
 
     my.sendLayerMetadataFile = function(layer, path, file, callback) {
@@ -949,8 +949,8 @@
         _getMetadataKeys(_medium(medium), path, callback);
     };
 
-    my.setMediumMetadata = function(medium, metadatas, callback) {
-        _setMetadata(_medium(medium), metadatas, callback);
+    my.setMediumMetadata = function(medium, metadatas, path, callback) {
+        _setMetadata(_medium(medium), metadatas, path, callback);
     };
 
     my.sendMediumMetadataFile = function(medium, path, file, callback) {
@@ -963,18 +963,31 @@
 
     ////
 
-    function _setMetadata(resource, metadatas, callback) {
+    function _setMetadata(resource, metadatas, path, callback) {
+        if (typeof (path) === 'function') {
+            callback = path || default_callback;
+        }
+
         callback = callback || default_callback;
+
+        if (typeof (path) === 'string') {
+            metadatas = _constructMetadataPathObject(path, metadatas);
+        }
+
         resource('metadata').post(metadatas, callback);
     }
 
     function _getMetadata(resource, path, callback) {
-        callback = callback || default_callback;
-        resource('metadata')(path).get(callback);
+        if (typeof (path) === 'function') {
+            _getMetadataKeys(resource, path);
+        } else {
+            callback = callback || default_callback;
+            resource('metadata')(path).get(callback);
+        }
     }
 
     function _getMetadataKeys(resource, path, callback) {
-        if (typeof path === 'function') {
+        if (typeof (path) === 'function') {
             callback = path;
             path = '';
         }
@@ -995,25 +1008,32 @@
         reader.onload = function(e) {
             var base64 = e.target.result;
             var infos = base64.split(',');
-            var paths = path.split('.');
+            var object = _constructMetadataPathObject(path, {
+                type: 'file',
+                filename: file.name,
+                data: infos[1]
+            });
 
-            var object = {};
-            var accessor = object;
-            for (var i = 0; i < paths.length; i++) {
-                accessor[paths[i]] = {};
-                if ( i === paths.length - 1 ) {
-                    accessor[paths[i]] = {
-                        type: 'file',
-                        filename: file.name,
-                        data: infos[1]
-                    };
-                } else {
-                    accessor = accessor[paths[i]];
-                }
-            }
             _setMetadata(resource, object, callback);
         };
         reader.readAsDataURL(file);
+    }
+
+    function _constructMetadataPathObject(path, metadatas) {
+        var paths = path.split('.');
+
+        var object = {};
+        var accessor = object;
+        for (var i = 0; i < paths.length; i++) {
+            accessor[paths[i]] = {};
+            if ( i === paths.length - 1 ) {
+                accessor[paths[i]] = metadatas;
+            } else {
+                accessor = accessor[paths[i]];
+            }
+        }
+
+        return object;
     }
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1065,7 +1085,6 @@
                     return callback(err);
                 }
 
-                console.log('create ' + type + ':' + id + ' listener');
                 _evSource.addEventListener(type + ':' + id, callback);
             }
 
@@ -1074,7 +1093,6 @@
                     return callback(err);
                 }
 
-                console.log('remove ' + type + ':' + id + ' listener');
                 _evSource.removeEventListener(type + ':' + id, callback);
             }
 

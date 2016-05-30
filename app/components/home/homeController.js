@@ -13,7 +13,7 @@ angular.module('camomileApp.controllers.browse', [
 
             var refresh = function () {
                 cappdata.clean(); // On clean la facto, pour éviter les restes d'autres composants
-                cappdata.update('corpora'); // On update les corpus dispos
+                cappdata.get('corpora'); // On update les corpus dispos
                 cappdata.registerObserver(updateData); // On register le composant
             };
 
@@ -33,8 +33,8 @@ angular.module('camomileApp.controllers.browse', [
                 if ($scope.corpus) {
                     $scope.api.loader.loading();
                     $scope.infos.corpus = $scope.corpus;
-                    cappdata.update('layers', $scope.corpus);
-                    cappdata.update('media', $scope.corpus);
+                    cappdata.get('layers', $scope.corpus);
+                    cappdata.get('media', $scope.corpus);
                 }
             };
 
@@ -43,7 +43,7 @@ angular.module('camomileApp.controllers.browse', [
 
                 if ($scope.medium) {
                     $scope.infos.medium = $scope.medium;
-                    cappdata.update('medium', $scope.medium);
+                    cappdata.get('medium', $scope.medium);
                 }
 
                 if ($scope.layer) {

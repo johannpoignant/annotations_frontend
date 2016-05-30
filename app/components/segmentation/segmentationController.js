@@ -4,7 +4,7 @@ angular.module('camomileApp.controllers.segmentation', [])
 
         var refresh = function () {
             cappdata.clean();
-            cappdata.update('corpora');
+            cappdata.get('corpora');
             cappdata.registerObserver(updateData);
         };
 
@@ -12,6 +12,8 @@ angular.module('camomileApp.controllers.segmentation', [])
             $timeout(function () {
                 $scope.cappdata = cappdata;
                 $scope.api.loader.finished();
+                /*if ($scope.api.box && $scope.api.box.details)
+                    $scope.api.box.details.getEvents();*/
             }, 0);
         };
 
@@ -23,15 +25,23 @@ angular.module('camomileApp.controllers.segmentation', [])
         $scope.updateMedium = function () {
             if ($scope.corpus) {
                 $scope.api.loader.loading(2);
-                cappdata.update('media', $scope.corpus, 'video');
-                cappdata.update('layers', $scope.corpus);
+                cappdata.get('media', $scope.corpus, 'video');
+                cappdata.get('layers', $scope.corpus);
             }
         };
 
         $scope.updateView = function () {
+            if (!$scope.api.infos) {$scope.api.infos = {};}
             if ($scope.medium) {
+                $scope.api.infos.medium = $scope.medium;
                 cappdata.resetMedium();
-                cappdata.update('medium', $scope.medium);
+                cappdata.get('medium', $scope.medium);
+            }
+            if ($scope.layer) {
+                $scope.api.infos.layer = $scope.layer;
+            }
+            if ($scope.layer && $scope.medium) {
+                $scope.api.box.details.getEvents();
             }
         };
     }]);

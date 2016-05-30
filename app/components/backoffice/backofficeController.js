@@ -6,11 +6,11 @@ angular.module("camomileApp.controllers.backoffice", [])
         var refresh = function () {
             cappdata.clean();
             $scope.api.loader.loading(5);
-            cappdata.update('corpora');
-            cappdata.update('media');
-            cappdata.update('layers');
-            cappdata.update('users');
-            cappdata.update('groups');
+            cappdata.get('corpora');
+            cappdata.get('media');
+            cappdata.get('layers');
+            cappdata.get('users');
+            cappdata.get('groups');
             cappdata.registerObserver(updateData);
         };
 

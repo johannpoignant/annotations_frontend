@@ -2,7 +2,7 @@ angular.module('camomileApp.directives.details', [
     "nvd3",
     "ui.bootstrap"
 ])
-    .directive('camomileDetails', function ($log, $interval, $timeout, $uibModal, camomileToolsConfig) {
+    .directive('camomileDetails', function ($log, $interval, $timeout, $uibModal, camomileToolsConfig, cappdata) {
         return {
             restrict: 'AE',
             templateUrl: camomileToolsConfig.moduleFolder + 'details/detailsView.html',
@@ -16,56 +16,20 @@ angular.module('camomileApp.directives.details', [
 
                 $scope.api = {};
 
-                /**
-                 * An array containing all the events displayed on the eventLine
-                 * @type {Array}
-                 */
-                //$scope.events = [{begin: 5, duration: 4, text: "Test"}, {begin: 12, duration: 6, text: "Test 2"}];
-                $scope.events = [];
-
                 $scope.index = 0;
 
-                /**
-                 * The local event var. Contain temporary informations
-                 * @type {Object}
-                 */
-                $scope.event = {
-                    begin: 0,
-                    end: 0,
-                    text: ""
+                var updateData = $scope.updateData = function () {
+                    $timeout(function () {
+                        $scope.cappdata = cappdata;
+
+                        for (ann of cappdata.annotations)
+                            $scope.dataCtrl.events.convertObject(ann);
+
+                        if ($scope.dataCtrl.apis.video) $scope.api.refreshEventline();
+                    }, 0);
                 };
 
-                /**
-                 * Watcher on $scope.event; exec function when the events array changed
-                 * @param  {Array} $scope.events the events Array
-                 * @param  {function} function(     the function to be executed when a change
-                 * is made (the watcher will automatically trigger it)
-                 * @return {undefined}
-                 */
-                $scope.$watch("events", function() {
-                    $log.log('Events changed!');
-                    $scope.loaded = true;
-                });
-
-                /**
-                 * Adds the event in the scope to the list of events displayed on the eventLine
-                 * event.begin >= 0
-                 * event.duration >= 0
-                 * event.text > 0 && event.text < 16 (1-15)
-                 * @return {undefined}
-                 */
-                $scope.api.addEvent = function(begin, duration, text) {
-                    if (begin >= 0
-                        && duration >= 0
-                        && text.length < 16) {
-                        $scope.events.push({begin: begin, duration: duration, text: text, index: $scope.index});
-                        $scope.index += 1;
-                    }
-                };
-
-                $scope.api.getLastEvent = function () {
-                    return $scope.events[$scope.index - 1];
-                };
+                cappdata.registerObserver(updateData);
 
                 /**
                  * Generates curves for the example output in the graph
@@ -200,18 +164,23 @@ angular.module('camomileApp.directives.details', [
 
                 $scope.api.refreshEventline = function () {
                     let vt = $scope.dataCtrl.apis.video.API; // vt for videoTime
-                    for (e of $scope.dataCtrl.events.getEvents()) {
-                        let time = (e.begin / vt.totalTime) * ($scope.dimensions.res.width);
-                        let end = (e.duration / vt.totalTime) * ($scope.dimensions.res.width);
-                        e.setDataField("style", {
-                            'margin-left': time + 'px',
-                            'width': end,
-                            'background-color': e.getDataField('color')
-                        });
-                        if (!vt.totalTime) {
-                            e.style.display = "none";
+                    if ($scope.dimensions)
+                        for (e of $scope.dataCtrl.events.getEvents()) {
+                            let time = (e.fragment.begin / vt.totalTime) * ($scope.dimensions.res.width);
+                            let end = ((e.fragment.end - e.fragment.begin) / vt.totalTime) * ($scope.dimensions.res.width);
+                            e.setDataField("style", {
+                                'margin-left': time,
+                                'width': end,
+                                'background-color': e.getDataField('color')
+                            });
+                            if (!vt.totalTime) {
+                                e.style.display = "none";
+                            }
                         }
-                    }
+                };
+
+                $scope.api.getEvents = function () {
+                    $scope.dataCtrl.events.refreshEvents();
                 };
 
                 $scope.beginEvent = function () {
@@ -220,10 +189,10 @@ angular.module('camomileApp.directives.details', [
                         $scope.recordingEvent = true;
                         $scope.dataCtrl.events.newEvent();
                         var le = $scope.dataCtrl.events.getLastEvent();
-                        le.setBeginning($scope.dataCtrl.apis.video.API.currentTime);
+                        le.setFragmentField("begin", $scope.dataCtrl.apis.video.API.currentTime);
                         le.setDataField("text", "Testing");
                         $scope.eventInterval = $interval(function () {
-                            le.setDuration($scope.dataCtrl.apis.video.API.currentTime - le.begin);
+                            le.setFragmentField("end", $scope.dataCtrl.apis.video.API.currentTime);
                             $scope.api.refreshEventline();
                         }, 250);
                     }
@@ -234,12 +203,14 @@ angular.module('camomileApp.directives.details', [
                         console.log("Ending the event");
                         $scope.recordingEvent = false;
                         $interval.cancel($scope.eventInterval);
-                        console.log($scope.dataCtrl.events.getEvents());
+                        //console.log($scope.dataCtrl.events.getEvents());
+                        $scope.saveSegment($scope.dataCtrl.events.getLastEvent());
                     }
                 };
 
                 $scope.editSegment = function (event) {
                     $scope.stopInterval();
+                    $scope.dataCtrl.apis.video.videoPause();
 
                     var modalInstance = $uibModal.open({
                         animation: true,
@@ -255,11 +226,20 @@ angular.module('camomileApp.directives.details', [
 
                     modalInstance.result.then(function (event) {
                         //$scope.selected = selectedItem;
+                        $scope.saveSegment(event);
                         $scope.launchInterval();
                     }, function () {
                         $log.info('Modal dismissed at: ' + new Date());
                         $scope.launchInterval();
                     });
+                };
+
+                $scope.saveSegment = function (event) {
+                    let a = $scope.dataCtrl.api.infos;
+                    if (a.layer && a.medium) {
+                        event.save();
+                    }
+
                 };
             },
             link: function (scope, elem, attrs, controllerInstance) {
@@ -279,8 +259,12 @@ angular.module('camomileApp.directives.details', [
                     }
                 };
 
+                /*scope.$on('$destroy', function() {
+                    $interval.cancel(scope.interval);
+                });*/
+
                 scope.api.refresh = function () {
-                    let div = elem.find('div');
+                    let div = elem.find('div.details-display');
                     scope.dimensions = {};
                     scope.dimensions.div = {
                         width: div.width(),
@@ -292,20 +276,16 @@ angular.module('camomileApp.directives.details', [
                         height: eventLine.height()
                     };
 
-                    /*if (scope.dataCtrl.apis.video) {
-                        scope.api.updateTimebar();
-                        scope.api.refreshEventline();
-                    }*/
-
-                    scope.graphAPI.refresh();
+                    if (scope.graph) scope.graphAPI.refresh();
                     if (scope.dataCtrl.apis.video) {
                         //if (scope.inter) scope.inter = undefined;
                         scope.launchInterval();
                         scope.$on('$destroy', function () {
                             console.log('Destroying details interval');
-                            $interval.cancel(scope.interv);
+                            scope.stopInterval();
                         });
                     }
+                    scope.updateData();
                 };
 
                 controllerInstance.apis.details = scope.api;

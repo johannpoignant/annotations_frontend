@@ -11,6 +11,7 @@ angular.module('camomileApp', [
     'camomileApp.controllers.backoffice',
     'camomileApp.controllers.objects',
     'camomileApp.controllers.segmentation',
+    'camomileApp.controllers.debug',
 
     // Directives
     'camomileApp.directives.box',

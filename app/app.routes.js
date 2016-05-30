@@ -19,6 +19,10 @@ angular.module('app.routes', [
                 templateUrl: 'app/components/segmentation/segmentationView.html',
                 controller: 'SegmentationCtrl'
             })
+            .when('/debug', {
+                templateUrl: 'app/components/debug/debugView.html',
+                controller: 'DebugCtrl'
+            })
             .otherwise({
                 redirectTo: '/home'
             });

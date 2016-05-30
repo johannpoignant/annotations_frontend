@@ -1,7 +1,7 @@
 angular.module('camomileApp.directives.box', [
     "ngAnimate"
 ])
-    .directive('camomileBox', function ($interval, camomileToolsConfig) {
+    .directive('camomileBox', function ($interval, camomileToolsConfig, cappdata) {
         return {
             restrict: 'AE',
             scope: {
@@ -80,42 +80,76 @@ angular.module('camomileApp.directives.box', [
                     }
                 };
 
-                // Event
-                function Event () {
-                    this.begin = 0.0;
-                    this.duration = 0.0;
-                    
-                    this.data = {};
-                    this.data.text = "";
-                    this.data.color = "blue";
+                function randomColorGen() {
+                    return '#' + ("000000" + Math.random().toString(16).slice(2, 8).toUpperCase()).slice(-6);
                 }
 
-                Event.prototype.setBeginning = function (begin) {
-                    this.begin = begin;
+                // Event
+                function Event () {
+                    this.id = 0;
+
+                    this.fragment = {
+                        begin: 0.0,
+                        end: 0.0
+                    };
+
+                    this.data = {
+                        color: randomColorGen(),
+                        text: ""
+                    };
+                }
+
+                Event.prototype.setFragmentField = function (field, value) {
+                    this.fragment[field] = value;
                 };
 
-                Event.prototype.setDuration = function (duration) {
-                    this.duration = duration;
-                };
 
                 Event.prototype.setDataField = function (field, value) {
                     this.data[field] = value;
                 };
 
-                Event.prototype.getBeginning = function (duration) {
-                    return this.begin;
-                };
-
-                Event.prototype.getDuration = function (duration) {
-                    return this.duration;
+                Event.prototype.getFragmentField = function (field) {
+                    return this.fragment[field];
                 };
 
                 Event.prototype.getDataField = function (field) {
                     return this.data[field];
                 };
 
+                Event.prototype.getFragment = function () {
+                    return this.fragment;
+                };
+
                 Event.prototype.getData = function () {
                     return this.data;
+                };
+
+                Event.prototype.setFragment = function (fragment) {
+                    this.fragment = fragment;
+                };
+
+                Event.prototype.setData = function (data) {
+                    this.data = data;
+                };
+
+                Event.prototype.setId = function (_id) {
+                    this.id = _id;
+                };
+
+                Event.prototype.getId = function () {
+                    return this.id;
+                };
+
+                Event.prototype.save = function () {
+                    var cb = function () {
+                        $scope.events.refreshEvents();
+                    };
+
+                    if (this.id != 0) {
+                        cappdata.update('annotation', this.getId(), this.getFragment(), this.getData());
+                    } else {
+                        cappdata.create('annotation', $scope.api.infos.layer, $scope.api.infos.medium, this.getFragment(), this.getData(), cb);
+                    }
                 };
 
                 // Events
@@ -123,12 +157,24 @@ angular.module('camomileApp.directives.box', [
                     this.events = [];
                 }
 
+                Events.prototype.emptyEvents = function () {
+                    this.events = [];
+                };
+
                 Events.prototype.getEvents = function () {
                     return this.events;
                 };
 
                 Events.prototype.newEvent = function () {
                     var ev = new Event();
+                    this.addEvent(ev);
+                };
+
+                Events.prototype.convertObject = function (obj) {
+                    var ev = new Event();
+                    ev.setFragment(obj.fragment);
+                    ev.setData(obj.data);
+                    ev.setId(obj._id);
                     this.addEvent(ev);
                 };
 
@@ -145,7 +191,22 @@ angular.module('camomileApp.directives.box', [
                     return this.events.length;
                 };
 
-                this.events = new Events();
+                Events.prototype.refreshEvents = function () {
+                    console.info('Refreshing events');
+                    this.emptyEvents();
+                    var t = this;
+                    if ($scope.api.infos.layer && $scope.api.infos.medium) {
+                        var cb = function (data) {
+                            for (e of data) {
+                                t.convertObject(e);
+                            }
+                        };
+
+                        cappdata.get('annotations', $scope.api.infos.layer, $scope.api.infos.medium, cb);
+                    }
+                };
+
+                this.events = $scope.events = new Events();
 
                 /**
                  * Resets the annotation
@@ -191,6 +252,7 @@ angular.module('camomileApp.directives.box', [
 
                 if ($scope.api) { // Bind api if provided
                     $scope.api.box = $scope.apis;
+                    this.api = $scope.api;
                 }
             },
             link: function (scope, elem, attrs) {
