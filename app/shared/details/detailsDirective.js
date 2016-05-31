@@ -18,7 +18,67 @@ angular.module('camomileApp.directives.details', [
 
                 $scope.index = 0;
 
-                var updateData = $scope.updateData = function () {
+                $scope.lignes = [];
+                $scope.nbLignes = 1;
+
+                $scope.analyseLignes = function () {
+                    let segments = $scope.dataCtrl.events.getEvents();
+                    let i = 0;
+                    let conflit = false;
+
+                    // Pour chaque segment,
+                    for (let origin of segments) {
+                        i += 1;
+
+                        // On analyse les suivants,
+                        for (let j = i; j < segments.length; j++) {
+                            let s = segments[j];
+
+                            // Et si un de ceux-ci se trouve en zone de conflit, on déclenche le split ligne
+                            if (s.getFragmentField('begin') > origin.getFragmentField('begin')
+                                && s.getFragmentField('end') < origin.getFragmentField('end')) {
+                                conflit = true;
+                            }
+                        }
+                    }
+
+                    if (conflit) {
+                        $scope.api.splitLigne(1);
+                    }
+                };
+
+                /**
+                 * Function used to set up the lines.
+                 * @param add Number of lines to add
+                 */
+                $scope.api.splitLigne = function (add) {
+                    $scope.lignes = []; // On reset les lignes
+                    if (add && add > 0) $scope.nbLignes += add; // On ajoute les lignes
+
+                    // Pour chaque ligne, on ajoute un nouvel array
+                    for (let i = 0; i < $scope.nbLignes; i++) {
+                        let na = [];
+                        $scope.lignes.push(na);
+                    }
+
+                    // Pour chaque segment, on l'ajoute à la ligne en alternant
+                    let i = 0;
+                    for (let segment of $scope.dataCtrl.events.getEvents()) {
+                        let ln = i % $scope.nbLignes; // Ligne number
+                        $scope.lignes[ln].push(segment);
+                        i += 1;
+                    }
+
+                    i = 0;
+                    for (let l of $scope.lignes) {
+                        console.log('Ligne ' + i);
+                        console.log(l);
+                    }
+
+                    $scope.analyseLignes();
+                };
+
+                /*var updateData = $scope.updateData = function () {
                     $timeout(function () {
                         $scope.cappdata = cappdata;
 
@@ -29,7 +89,7 @@ angular.module('camomileApp.directives.details', [
                     }, 0);
                 };
 
-                cappdata.registerObserver(updateData);
+                cappdata.registerObserver(updateData);*/
 
                 /**
                  * Generates curves for the example output in the graph
@@ -163,8 +223,8 @@ angular.module('camomileApp.directives.details', [
                 };
 
                 $scope.api.refreshEventline = function () {
-                    let vt = $scope.dataCtrl.apis.video.API; // vt for videoTime
-                    if ($scope.dimensions)
+                    if ($scope.dimensions && $scope.dataCtrl.apis.video) {
+                        let vt = $scope.dataCtrl.apis.video.API; // vt for videoTime
                         for (e of $scope.dataCtrl.events.getEvents()) {
                             let time = (e.fragment.begin / vt.totalTime) * ($scope.dimensions.res.width);
                             let end = ((e.fragment.end - e.fragment.begin) / vt.totalTime) * ($scope.dimensions.res.width);
@@ -177,6 +237,7 @@ angular.module('camomileApp.directives.details', [
                                 e.style.display = "none";
                             }
                         }
+                    }
                 };
 
                 $scope.api.getEvents = function () {
@@ -191,6 +252,7 @@ angular.module('camomileApp.directives.details', [
                         var le = $scope.dataCtrl.events.getLastEvent();
                         le.setFragmentField("begin", $scope.dataCtrl.apis.video.API.currentTime);
                         le.setDataField("text", "Testing");
+                        $scope.api.splitLigne();
                         $scope.eventInterval = $interval(function () {
                             le.setFragmentField("end", $scope.dataCtrl.apis.video.API.currentTime);
                             $scope.api.refreshEventline();
@@ -234,6 +296,7 @@ angular.module('camomileApp.directives.details', [
                             result.event.delete();
                         }
 
+                        $scope.api.splitLigne();
                         $scope.launchInterval();
                     }, function () {
                         $log.info('Modal dismissed at: ' + new Date());
@@ -284,6 +347,7 @@ angular.module('camomileApp.directives.details', [
                     };
 
                     if (scope.graph) scope.graphAPI.refresh();
+                    scope.api.splitLigne();
                     if (scope.dataCtrl.apis.video) {
                         //if (scope.inter) scope.inter = undefined;
                         scope.launchInterval();
@@ -292,7 +356,6 @@ angular.module('camomileApp.directives.details', [
                             scope.stopInterval();
                         });
                     }
-                    scope.updateData();
                 };
 
                 controllerInstance.apis.details = scope.api;

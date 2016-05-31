@@ -223,6 +223,8 @@ angular.module('camomileApp.directives.box', [
                             for (e of data) {
                                 t.convertObject(e);
                             }
+
+                            $scope.apis.details.splitLigne();
                         };
 
                         cappdata.get('annotations', $scope.api.infos.layer, $scope.api.infos.medium, cb);

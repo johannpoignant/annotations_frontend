@@ -9,10 +9,18 @@
     <div class="details-display">
         <div class="timebar" ng-style="timebarClass"></div>
 
-        <div ng-repeat="e in dataCtrl.events.getEvents()">
-            <div class="event" ng-style="e.getDataField('style')" ng-click="editSegment(e)">{{e.getDataField('text')}}</div>
+        <div ng-repeat="l in lignes">
+            <div ng-repeat="e in l">
+                <div class="event" ng-style="e.getDataField('style')" ng-click="editSegment(e)">{{e.getDataField('text')}}</div>
+            </div>
+            <event-div></event-div>
         </div>
-        <event-div></event-div>
+
+
+        <!--<div ng-repeat="e in dataCtrl.events.events">-->
+            <!--<div class="event" ng-style="e.getDataField('style')" ng-click="editSegment(e)">{{e.getDataField('text')}}</div>-->
+        <!--</div>-->
+        <!--<event-div></event-div>-->
 
         <div class="graph" ng-if="graph">
             <nvd3 options="graph.options" data="graph.data" on-ready="graphCallback"></nvd3>
