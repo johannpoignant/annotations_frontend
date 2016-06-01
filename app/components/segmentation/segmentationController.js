@@ -40,8 +40,5 @@ angular.module('camomileApp.controllers.segmentation', [])
             if ($scope.layer) {
                 $scope.api.infos.layer = $scope.layer;
             }
-            if ($scope.layer && $scope.medium) {
-                $scope.api.box.details.getEvents();
-            }
         };
     }]);

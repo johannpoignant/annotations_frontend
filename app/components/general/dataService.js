@@ -37,7 +37,7 @@ angular.module('camomileApp.services.data', [])
                         }
 
                         facto.corpora = data;
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'get', model: 'corpora'});
                     }
                 };
                 Camomile.getCorpora(cb);
@@ -52,7 +52,7 @@ angular.module('camomileApp.services.data', [])
                         }
 
                         facto.media = data;
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'get', model: 'media'});
                     }
 
                     if (filter) {
@@ -82,7 +82,7 @@ angular.module('camomileApp.services.data', [])
                         }
 
                         facto.layers = data;
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'get', model: 'layers'});
                     }
                 };
 
@@ -104,11 +104,12 @@ angular.module('camomileApp.services.data', [])
                         console.warn('Error in the retrieval of annotations');
                     } else {
                         if (callback && typeof callback == "function") {
+                            console.log('Got ' + data.length + ' events!');
                             callback(data);
                         }
 
                         facto.annotations = data;
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'get', model: 'annotations'});
                     }
                 };
                 Camomile.getAnnotations(cb, {
@@ -129,7 +130,7 @@ angular.module('camomileApp.services.data', [])
                             }
 
                             facto.metadata[m] = data;
-                            facto.notifyObservers();
+                            facto.notifyObservers({type: 'get', model: 'metadata'});
                         }
                     };
                     Camomile.getCorpusMetadata(corpus_id, m, cb);
@@ -160,7 +161,7 @@ angular.module('camomileApp.services.data', [])
 
                         facto.mediaSelected.push(legit);
 
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'get', model: 'medium'});
                     }
                 };
 
@@ -176,7 +177,7 @@ angular.module('camomileApp.services.data', [])
                         }
 
                         facto.users = data;
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'get', model: 'users'});
                     }
                 });
             },
@@ -190,7 +191,7 @@ angular.module('camomileApp.services.data', [])
                         }
 
                         facto.groups = data;
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'get', model: 'groups'});
                     }
                 });
             }
@@ -205,7 +206,7 @@ angular.module('camomileApp.services.data', [])
                             callback(data);
                         }
 
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'delete', model: 'corpus'});
                     }
                 };
                 Camomile.deleteCorpus(id, cb);
@@ -218,7 +219,7 @@ angular.module('camomileApp.services.data', [])
                             callback(data);
                         }
 
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'delete', model: 'medium'});
                     }
                 };
                 Camomile.deleteMedium(id, cb);
@@ -231,7 +232,7 @@ angular.module('camomileApp.services.data', [])
                             callback(data);
                         }
 
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'delete', model: 'layer'});
                     }
                 };
                 Camomile.deleteLayer(id, cb);
@@ -244,7 +245,7 @@ angular.module('camomileApp.services.data', [])
                             callback(data);
                         }
 
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'delete', model: 'user'});
                     }
                 };
                 Camomile.deleteUser(id, cb);
@@ -257,7 +258,7 @@ angular.module('camomileApp.services.data', [])
                             callback(data);
                         }
 
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'delete', model: 'group'});
                     }
                 };
                 Camomile.deleteGroup(id, cb);
@@ -272,7 +273,7 @@ angular.module('camomileApp.services.data', [])
                             callback(data);
                         }
 
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'delete', model: 'annotation'});
                     }
                 });
             }
@@ -288,7 +289,7 @@ angular.module('camomileApp.services.data', [])
                             callback(data);
                         }
 
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'create', model: 'user'});
                     }
                 };
 
@@ -303,7 +304,7 @@ angular.module('camomileApp.services.data', [])
                             callback(data);
                         }
 
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'create', model: 'group'});
                     }
                 };
 
@@ -318,7 +319,7 @@ angular.module('camomileApp.services.data', [])
                             callback(data);
                         }
 
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'create', model: 'corpus'});
                     }
                 };
 
@@ -333,7 +334,7 @@ angular.module('camomileApp.services.data', [])
                             callback(data);
                         }
 
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'create', model: 'medium'});
                     }
                 };
 
@@ -348,7 +349,7 @@ angular.module('camomileApp.services.data', [])
                             callback(data);
                         }
 
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'create', model: 'layer'});
                     }
                 };
 
@@ -363,7 +364,7 @@ angular.module('camomileApp.services.data', [])
                             callback(data);
                         }
 
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'create', model: 'annotation'});
                     }
                 };
                 Camomile.createAnnotation(layer_id, medium_id, fragment, data, cb);
@@ -373,7 +374,7 @@ angular.module('camomileApp.services.data', [])
                     if (err) {
                         console.warn('Creation of annotations failed.');
                     } else {
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'create', model: 'annotations'});
                     }
                 };
 
@@ -387,7 +388,7 @@ angular.module('camomileApp.services.data', [])
                     if (err) {
                         console.warn('Error in updating annotation');
                     } else {
-                        facto.notifyObservers();
+                        facto.notifyObservers({type: 'update', model: 'annotation'});
                     }
                 };
                 Camomile.updateAnnotation(annotation_id, {fragment: fragment, data: data}, cb);
@@ -434,8 +435,8 @@ angular.module('camomileApp.services.data', [])
             facto.observers.push(callback);
         };
 
-        facto.notifyObservers = function () { // Call this function when data changed
-            console.log('Change occured; notifying ' + facto.observers.length + " observers.");
+        facto.notifyObservers = function (informations) { // Call this function when data changed
+            console.log('Change occured; notifying ' + facto.observers.length + " observers. (" + informations.type + ": " + informations.model + ")");
 
             angular.forEach(facto.observers, function (cb) {
                 cb();

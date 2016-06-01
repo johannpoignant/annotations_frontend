@@ -216,11 +216,12 @@ angular.module('camomileApp.directives.box', [
 
                 // Sync the events with the remote ones
                 Events.prototype.refreshEvents = function () {
-                    this.emptyEvents();
                     var t = this;
                     if ($scope.api.infos.layer && $scope.api.infos.medium) {
                         var cb = function (data) {
-                            for (e of data) {
+                            t.emptyEvents();
+
+                            for (var e of data) {
                                 t.convertObject(e);
                             }
 
@@ -229,6 +230,7 @@ angular.module('camomileApp.directives.box', [
 
                         cappdata.get('annotations', $scope.api.infos.layer, $scope.api.infos.medium, cb);
                     }
+                    
                 };
 
                 this.events = $scope.events = new Events();

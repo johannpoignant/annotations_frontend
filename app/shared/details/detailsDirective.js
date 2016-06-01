@@ -22,22 +22,23 @@ angular.module('camomileApp.directives.details', [
                 $scope.nbLignes = 1;
 
                 $scope.analyseLignes = function () {
-                    let segments = $scope.dataCtrl.events.getEvents();
                     let i = 0;
                     let conflit = false;
 
-                    // Pour chaque segment,
-                    for (let origin of segments) {
-                        i += 1;
+                    for (let line of $scope.lignes) {
+                        // Pour chaque segment,
+                        for (let origin of line) {
+                            i += 1;
 
-                        // On analyse les suivants,
-                        for (let j = i; j < segments.length; j++) {
-                            let s = segments[j];
+                            // On analyse les suivants,
+                            for (let j = i; j < line.length; j++) {
+                                let s = line[j];
 
-                            // Et si un de ceux-ci se trouve en zone de conflit, on déclenche le split ligne
-                            if (s.getFragmentField('begin') > origin.getFragmentField('begin')
-                                && s.getFragmentField('end') < origin.getFragmentField('end')) {
-                                conflit = true;
+                                // Et si un de ceux-ci se trouve en zone de conflit, on déclenche le split ligne
+                                if (!(origin.getFragmentField('begin') > s.getFragmentField('end')
+                                    && origin.getFragmentField('end') < s.getFragmentField('begin'))) {
+                                    conflit = true;
+                                }
                             }
                         }
                     }
@@ -52,7 +53,9 @@ angular.module('camomileApp.directives.details', [
                  * @param add Number of lines to add
                  */
                 $scope.api.splitLigne = function (add) {
+                    let segments = $scope.dataCtrl.events.getEvents();
                     $scope.lignes = []; // On reset les lignes
+
                     if (add && add > 0) $scope.nbLignes += add; // On ajoute les lignes
 
                     // Pour chaque ligne, on ajoute un nouvel array
@@ -63,19 +66,15 @@ angular.module('camomileApp.directives.details', [
 
                     // Pour chaque segment, on l'ajoute à la ligne en alternant
                     let i = 0;
-                    for (let segment of $scope.dataCtrl.events.getEvents()) {
-                        let ln = i % $scope.nbLignes; // Ligne number
+                    for (let segment of segments) {
+                        let ln = i % $scope.nbLignes; // Line number
                         $scope.lignes[ln].push(segment);
                         i += 1;
                     }
 
-                    i = 0;
-                    for (let l of $scope.lignes) {
-                        console.log('Ligne ' + i);
-                        console.log(l);
-                    }
-
                     $scope.analyseLignes();
+
+                    console.log('Segments: ' + segments);
                 };
 
                 /*var updateData = $scope.updateData = function () {
@@ -181,7 +180,7 @@ angular.module('camomileApp.directives.details', [
                                 axisLabelDistance: -10
                             },
                             callback: function(chart) {
-                                console.log("!!! lineChart callback !!!");
+                                //console.log("!!! lineChart callback !!!");
                             }
                         },
                         title: {
@@ -346,8 +345,8 @@ angular.module('camomileApp.directives.details', [
                         height: eventLine.height()
                     };
 
+                    scope.dataCtrl.events.refreshEvents();
                     if (scope.graph) scope.graphAPI.refresh();
-                    scope.api.splitLigne();
                     if (scope.dataCtrl.apis.video) {
                         //if (scope.inter) scope.inter = undefined;
                         scope.launchInterval();
