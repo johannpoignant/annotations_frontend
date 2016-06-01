@@ -36,6 +36,8 @@ All the installation procedure is based on Linux environments, more precisely Ub
 You may need to adapt the procedure for others distributions, or others OS.
 
 First, let's install docker. The procedure is written [on this page](https://docs.docker.com/engine/installation/linux/ubuntulinux/).
+Some values differ depending on your OS and distribution. Please check the page linked before
+executing commands below.
 ```
 # Let's update the package list.
 sudo apt-get update
@@ -66,71 +68,48 @@ sudo docker run hello-world
 # https://docs.docker.com/engine/installation/linux/ubuntulinux/
 ```
 
+Now, let's install docker-compose. The procedure is taken from [here](https://docs.docker.com/compose/install/).
+Make sure to adapt the commands below with links [here](https://github.com/docker/compose/releases)
+```
+# Get the binary from the net
+curl -L https://github.com/docker/compose/releases/download/1.7.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+
+# Add the execution rights
+chmod +x /usr/local/bin/docker-compose
+
+# Show the version installed
+docker-compose --version
+```
+
+Ok, so next, Node.js. It's the easy part.
+```
+# Install Node.js
+sudo apt-get install nodejs
+
+# If the command node doesn't exists, maybe the alias wasn't made?
+# So we create a symlink to correct that
+if ! hash node 2>/dev/null; then
+    sudo ln -s /usr/bin/nodejs /usr/bin/node
+fi
+```
+
+Now: npm. Even easier.
+```
+sudo curl http://npmjs.org/install.sh | sh
+```
+
 ## Installation
-1. Use bower to install dependencies.
-2. Include all the js files in your main page.
-3. Include all the css files in your main page.
-4. Include the module config (camomileApp) as a dependency for your angular module.
-5. Start using those directives
-
-* Clone or download this repository first.
-* Clone or download Camomile-server from [here](http://github.com/repo/ssss).
-*
-
-## JS files to include
+Everything is available in this repository. To install this application and begin using it,
+you have to clone or download the repository. To clone it:
 ```
-<script src="bower_components/jquery/dist/jquery.min.js"></script>
-<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-
-<script src="bower_components/angular/angular.min.js"></script>
-<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
-<script src="bower_components/angular-route/angular-route.js"></script>
-<script src="bower_components/angular-animate/angular-animate.js"></script>
-
-<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js" charset="utf-8"></script>
-<script src="bower_components/videogular/videogular.js"></script>
-<script src="bower_components/videogular-controls/vg-controls.js"></script>
-<script src="bower_components/d3/d3.js"></script>
-<script src="bower_components/angularjs-slider/dist/rzslider.min.js"></script>
-<script src="bower_components/nvd3/build/nv.d3.min.js"></script>
-<script src="bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
-<script src="bower_components/autofill-event/src/autofill-event.js"></script>
-<script src="bower_components/json-tree/json-tree.js"></script>
-<script src="bower_components/json-formatter/dist/json-formatter.js"></script>
-
-<script src="app/components/api/fermata.js"></script>
-<script src="app/components/api/camomile.js"></script>
-
-<script src="app/components/general/authController.js"></script>
-<script src="app/components/home/homeController.js"></script>
-<script src="app/components/objects/objectsController.js"></script>
-<script src="app/components/backoffice/backofficeController.js"></script>
-<script src="app/components/segmentation/segmentationController.js"></script>
-<script src="app/components/general/dataService.js"></script>
-
-<!-- DIRECTIVES -->
-<script src="app/shared/box/boxDirective.js"></script>
-<script src="app/shared/canvas/canvasDirective.js"></script>
-<script src="app/shared/details/detailsDirective.js"></script>
-<script src="app/shared/edit/editDirective.js"></script>
-<script src="app/shared/image/imageDirective.js"></script>
-<script src="app/shared/media/mediaDirective.js"></script>
-<script src="app/shared/video/videoDirective.js"></script>
-
-<script src="app/app.module.js"></script>
-<script src="app/app.routes.js"></script>
+git clone https://github.com/johannpoignant/annotations_frontend.git
 ```
 
-## CSS files to include
-```
-<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
-<link rel="stylesheet" href="bower_components/angular-bootstrap/ui-bootstrap-csp.css" media="screen" title="no title" charset="utf-8">
-<link rel="stylesheet" href="bower_components/angularjs-slider/dist/rzslider.css"/>
-<link rel="stylesheet" href="bower_components/videogular-themes-default/videogular.css">
-<link rel="stylesheet" href="bower_components/nvd3/build/nv.d3.min.css">
-<link rel="stylesheet" href="bower_components/json-tree/json-tree.css">
-<link rel="stylesheet" href="bower_components/json-formatter/dist/json-formatter.css" charset="utf-8">
+## Structure
+Structure explained here.
 
-<link rel="stylesheet" href="assets/css/app/camomile-app-theme.css" charset="utf-8">
-```
+# Developpement
+Developpement documentation on its way.
+
+# Others
+Off-topic subjects here.
