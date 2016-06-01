@@ -106,7 +106,36 @@ git clone https://github.com/johannpoignant/annotations_frontend.git
 ```
 
 ## Structure
-Structure explained here.
+Structure explained here. **Bold** items are folders.
+
+* **annotations_frontend**
+  * **app**
+    * **components**
+      * **api**
+      * **...**
+    * **doc**
+    * **shared**
+      * **box**
+      * **...**
+    * app.module.js
+    * app.routes.js
+  * **assets**
+    * **css**
+    * **fonts**
+    * **icons**
+    * **img**
+    * **js**
+  * **bower_components**
+    * **angular-aaaa**
+    * **angular-bbbb**
+    * **...**
+  * index.html
+
+**app**: Contains all the angularjs code. Inside that folder, there is **components** and **shared**.
+The first one contains the components of your application, while the second one contains the reusable
+components that are used across the site.
+
+
 
 # Developpement
 Developpement documentation on its way.
