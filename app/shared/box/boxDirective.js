@@ -217,7 +217,7 @@ angular.module('camomileApp.directives.box', [
                 // Sync the events with the remote ones
                 Events.prototype.refreshEvents = function () {
                     var t = this;
-                    if ($scope.api.infos.layer && $scope.api.infos.medium) {
+                    if ($scope.api.infos && $scope.api.infos.layer && $scope.api.infos.medium) {
                         var cb = function (data) {
                             t.emptyEvents();
 
@@ -284,7 +284,9 @@ angular.module('camomileApp.directives.box', [
                 if ($scope.api) { // Bind api if provided
                     $scope.api.box = $scope.apis;
                     this.api = $scope.api;
-                }
+                } else {
+					$scope.api = {};
+				}
             },
             link: function (scope, elem, attrs) {
                 scope.interval = $interval(function () { // Check for dimensions changes
