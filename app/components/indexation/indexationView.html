@@ -19,7 +19,6 @@
                         class="form-control"
                         ng-options="q._id as q.name for q in cappdata.queues"
                         ng-model="queueOut"
-                        ng-change="loadNextAnnotation()"
                         id="queueOut"></select>
             </div>
         </div>       
@@ -47,9 +46,9 @@
         <div class="col-sm-6">
 
         <form>
-            <input type="checkbox" name="var1" id="var1" ng-model="form[m.name].var1"/> <label for="var1"> <var>var1</var> </label> <br />
-            <input type="checkbox" name="var2" id="var2" ng-model="form[m.name].var2"/> <label for="var2"> <var>var2</var> </label> <br />
-            <input type="checkbox" name="var3" id="var3" ng-model="form[m.name].var3"/> <label for="var3"> <var>var3</var> </label> <br />
+            <input type="checkbox" name="var1" id="var1" ng-model="form[m._id].var1"/> <label for="var1"> <var>var1</var> </label> <br />
+            <input type="checkbox" name="var2" id="var2" ng-model="form[m._id].var2"/> <label for="var2"> <var>var2</var> </label> <br />
+            <input type="checkbox" name="var3" id="var3" ng-model="form[m._id].var3"/> <label for="var3"> <var>var3</var> </label> <br />
         </form>
 
 

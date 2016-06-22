@@ -23,7 +23,7 @@ angular.module('camomileApp.controllers.indexation', [])
                     }
                 }
 
-                if (res.type == "get" && res.type == "medium" && $scope.cappdata.mediaSelected[1]) {
+                if (res.type == "get" && res.model == "medium" && $scope.cappdata.mediaSelected[1]) {
                     console.log($scope.cappdata.mediaSelected);
 
                     $scope.ImageTrain = $scope.cappdata.mediaSelected.slice(1, $scope.cappdata.mediaSelected.lenght);
@@ -34,6 +34,7 @@ angular.module('camomileApp.controllers.indexation', [])
         refresh();
 
         $scope.loadNextAnnotation = function() {
+            cappdata.resetMedium();
             if ($scope.queueIn) {
                 $scope.cappdata.dequeue($scope.queueIn);
             }
@@ -43,7 +44,9 @@ angular.module('camomileApp.controllers.indexation', [])
             if ($scope.queueOut) {
                 console.log($scope.form);
                 
-                $scope.cappdata.enqueue($scope.queueOut, $scope.form, function () {
+                var Items = {id_test : $scope.cappdata.currentQueueItem.id_test, annotations:$scope.form}
+
+                $scope.cappdata.enqueue($scope.queueOut, [Items], function () {
                     $scope.form = {};
                 });
 
