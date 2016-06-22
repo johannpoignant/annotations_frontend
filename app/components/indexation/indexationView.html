@@ -1,0 +1,72 @@
+<div class="obj">
+    <h2 style="margin: 0 auto 20px auto;">Objets</h2>
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="queue" class="col-sm-1 control-label">Queue In</label>
+            <div class="col-sm-11">
+                <select
+                        class="form-control"
+                        ng-options="q._id as q.name for q in cappdata.queues"
+                        ng-model="queueIn"
+                        ng-change="loadNextAnnotation()"
+                        id="queueIn"></select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="queue" class="col-sm-1 control-label">Queue Out</label>
+            <div class="col-sm-11">
+                <select
+                        class="form-control"
+                        ng-options="q._id as q.name for q in cappdata.queues"
+                        ng-model="queueOut"
+                        ng-change="loadNextAnnotation()"
+                        id="queueOut"></select>
+            </div>
+        </div>       
+    </form>
+
+
+    <div class="row" ng-show="queueIn">
+        <div class="col-sm-12">
+            <h3>Image à vérifier : {{cappdata.mediaSelected[0].name}}</h3>
+            <camomile-box>
+                <camomile-media type="cappdata.mediaSelected[0].description.type" src="cappdata.mediaSelected[0].urlSecure"></camomile-media>
+            </camomile-box>
+        </div>
+    </div>
+
+
+    <div class="row" ng-repeat="m in ImageTrain" ng-if="ImageTrain[0]">
+        <h3>{{m.name}}</h3>
+
+        <div class="col-sm-6">
+            <camomile-box infos="{{m.infos}}">
+                <camomile-media type="m.description.type" src="m.urlSecure"></camomile-media>
+            </camomile-box>
+        </div>
+        <div class="col-sm-6">
+
+        <form>
+            <input type="checkbox" name="var1" id="var1" ng-model="form[m.name].var1"/> <label for="var1"> <var>var1</var> </label> <br />
+            <input type="checkbox" name="var2" id="var2" ng-model="form[m.name].var2"/> <label for="var2"> <var>var2</var> </label> <br />
+            <input type="checkbox" name="var3" id="var3" ng-model="form[m.name].var3"/> <label for="var3"> <var>var3</var> </label> <br />
+        </form>
+
+
+
+        </div>
+    </div>
+
+    <button ng-click="sendAnnotation()"> 
+
+        Send Annotation
+
+    </button>
+
+
+
+</div>
+
+
+<camomile-loader api="api"></camomile-loader>
+<camomile-popup api="api"></camomile-popup>

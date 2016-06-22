@@ -5,6 +5,7 @@ angular.module('camomileApp.services.data', [])
         facto.clean = function () {
             // Variables contenant les informations disponibles
             facto.corpora = [];
+            facto.queues = [];
             facto.layers = [];
             facto.media = [];
             facto.annotations = [];
@@ -13,14 +14,10 @@ angular.module('camomileApp.services.data', [])
             facto.groups = [];
 
             // Variables contenant les informations demandées & sélectionnées
-            facto.corpusSelected = undefined;
-            facto.layerSelected = undefined;
             facto.mediaSelected = [];
-            facto.annotationsSelected = [];
-            facto.metadataSelected = [];
-            facto.userSelected = undefined;
 
             facto.observers = []; // Observers
+            facto.currentQueueItem = undefined;
         };
 
         facto.clean();
@@ -194,6 +191,21 @@ angular.module('camomileApp.services.data', [])
                         facto.notifyObservers({type: 'get', model: 'groups'});
                     }
                 });
+            },
+            queues: function (callback) {
+                var cb = function (err, data) {
+                    if (err) {
+                        console.warn('Error in the retrieval of queues');
+                    } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
+                        facto.queues = data;
+                        facto.notifyObservers({type: 'get', model: 'queues'});
+                    }
+                };
+                Camomile.getQueues(cb);
             }
         };
 
@@ -411,6 +423,29 @@ angular.module('camomileApp.services.data', [])
             facto.media = nMedia;
         };
 
+        facto.dequeue = function (queue_id) {
+            var cb = function (err, data) {
+                if (err) {
+                    console.warn('Error in dequeue');
+                } else {
+                    facto.currentQueueItem = data;
+                    facto.notifyObservers({type: 'dequeue', model: 'queue'});
+                }
+            };
+            Camomile.dequeue(queue_id, cb);
+        };
+
+        facto.enqueue = function (queue_id, data) {
+            var cb = function (err, data) {
+                if (err) {
+                    console.warn('Error in enqueue');
+                } else {
+                    facto.notifyObservers({type: 'enqueue', model: 'queue'});
+                }
+            };
+            Camomile.enqueue(queue_id, data, cb);
+        };
+
         facto.get = function (model, ...args) {
             facto._get[model](...args);
         };
@@ -439,7 +474,7 @@ angular.module('camomileApp.services.data', [])
             console.log('Change occured; notifying ' + facto.observers.length + " observers. (" + informations.type + ": " + informations.model + ")");
 
             angular.forEach(facto.observers, function (cb) {
-                cb();
+                cb(informations);
             });
         };
 

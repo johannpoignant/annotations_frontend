@@ -10,6 +10,7 @@ angular.module('camomileApp', [
     'camomileApp.controllers.browse',
     'camomileApp.controllers.backoffice',
     'camomileApp.controllers.objects',
+    'camomileApp.controllers.indexation',
     'camomileApp.controllers.segmentation',
     'camomileApp.controllers.debug',
 

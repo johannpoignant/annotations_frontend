@@ -15,6 +15,10 @@ angular.module('app.routes', [
                 templateUrl: 'app/components/objects/objectsView.html',
                 controller: 'ObjectsCtrl'
             })
+            .when('/indexation', {
+                templateUrl: 'app/components/indexation/indexationView.html',
+                controller: 'IndexationCtrl'
+            })            
             .when('/segmentation', {
                 templateUrl: 'app/components/segmentation/segmentationView.html',
                 controller: 'SegmentationCtrl'
