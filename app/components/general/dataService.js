@@ -423,11 +423,12 @@ angular.module('camomileApp.services.data', [])
             facto.media = nMedia;
         };
 
-        facto.dequeue = function (queue_id) {
+        facto.dequeue = function (queue_id, callback) {
             var cb = function (err, data) {
                 if (err) {
                     console.warn('Error in dequeue');
                 } else {
+                    callback && callback(data);
                     facto.currentQueueItem = data;
                     facto.notifyObservers({type: 'dequeue', model: 'queue'});
                 }
@@ -435,11 +436,12 @@ angular.module('camomileApp.services.data', [])
             Camomile.dequeue(queue_id, cb);
         };
 
-        facto.enqueue = function (queue_id, data) {
+        facto.enqueue = function (queue_id, data, callback) {
             var cb = function (err, data) {
                 if (err) {
                     console.warn('Error in enqueue');
                 } else {
+                    callback && callback(data);
                     facto.notifyObservers({type: 'enqueue', model: 'queue'});
                 }
             };

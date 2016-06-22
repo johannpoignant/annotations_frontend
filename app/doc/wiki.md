@@ -139,6 +139,172 @@ components that are used across the site.
 
 # Developpement
 
+## Project start
+If you don't take this projet to start developping and want to start from scratch, follow this
+tutorial.
+
+To get your project started using the modules here, you'll need to include some files to your main
+html file, and configure your angular installation correctly.
+
+First, you'll need several JavaScript imports (at the end of the body tag, main html file).
+Check the paths and correct them if needed:
+```
+<!-- JQuery, mandatory -->
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap, if you use it -->
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- AngularJS and plugins -->
+<script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+<script src="bower_components/angular-route/angular-route.js"></script>
+<script src="bower_components/angular-animate/angular-animate.js"></script>
+
+<!-- Plugins needed for the modules -->
+<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js" charset="utf-8"></script>
+<script src="bower_components/videogular/videogular.js"></script>
+<script src="bower_components/videogular-controls/vg-controls.js"></script>
+<script src="bower_components/d3/d3.js"></script>
+<script src="bower_components/angularjs-slider/dist/rzslider.min.js"></script>
+<script src="bower_components/nvd3/build/nv.d3.min.js"></script>
+<script src="bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
+<script src="bower_components/autofill-event/src/autofill-event.js"></script>
+<script src="bower_components/json-tree/json-tree.js"></script>
+<script src="bower_components/json-formatter/dist/json-formatter.js"></script>
+
+<!-- Camomile client -->
+<script src="app/components/api/fermata.js"></script>
+<script src="app/components/api/camomile.js"></script>
+
+<!-- Components of your interface; include the ones you need only
+<script src="app/components/general/authController.js"></script>
+<script src="app/components/home/homeController.js"></script>
+<script src="app/components/objects/objectsController.js"></script>
+<script src="app/components/backoffice/backofficeController.js"></script>
+<script src="app/components/segmentation/segmentationController.js"></script>
+<script src="app/components/debug/debugController.js"></script>
+
+<!-- Data service, mandatory -->
+<script src="app/components/general/dataService.js"></script>
+
+<!-- Directives -->
+<script src="app/shared/box/boxDirective.js"></script>
+<script src="app/shared/canvas/canvasDirective.js"></script>
+<script src="app/shared/details/detailsDirective.js"></script>
+<script src="app/shared/edit/editDirective.js"></script>
+<script src="app/shared/image/imageDirective.js"></script>
+<script src="app/shared/media/mediaDirective.js"></script>
+<script src="app/shared/video/videoDirective.js"></script>
+<script src="app/shared/loader/loaderDirective.js"></script>
+<script src="app/shared/popup/popupDirective.js"></script>
+
+<!-- Routes, config, imports -->
+<script src="app/app.module.js"></script>
+<script src="app/app.routes.js"></script>
+```
+
+You'll have to include some css files too:
+```
+<!-- Bootstrap 3 and its theme -->
+<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="bower_components/angular-bootstrap/ui-bootstrap-csp.css" media="screen" title="no title" charset="utf-8">
+
+<!-- Plugins's css -->
+<link rel="stylesheet" href="bower_components/angularjs-slider/dist/rzslider.css"/>
+<link rel="stylesheet" href="bower_components/videogular-themes-default/videogular.css">
+<link rel="stylesheet" href="bower_components/nvd3/build/nv.d3.min.css">
+<link rel="stylesheet" href="bower_components/json-tree/json-tree.css">
+<link rel="stylesheet" href="bower_components/json-formatter/dist/json-formatter.css" charset="utf-8">
+```
+
+The app/app.module.js is needed because it's here that we configure AngularJS behaviour.
+You need to take it, and if needed, edit it.
+```
+angular.module('camomileApp', [
+    // Routes
+    'app.routes',
+
+    // Services
+    'camomileApp.services.data',
+
+    // Controllers for components
+    'camomileApp.controllers.auth',
+    'camomileApp.controllers.browse',
+    'camomileApp.controllers.backoffice',
+    'camomileApp.controllers.objects',
+    'camomileApp.controllers.segmentation',
+    'camomileApp.controllers.debug',
+
+    // Directives
+    'camomileApp.directives.box',
+    'camomileApp.directives.canvas',
+    'camomileApp.directives.details',
+    'camomileApp.directives.edit',
+    'camomileApp.directives.image',
+    'camomileApp.directives.video',
+    'camomileApp.directives.media',
+    'camomileApp.directives.loader',
+    'camomileApp.directives.popup',
+
+    // Vendor
+    'jsonFormatter',
+    'ui.bootstrap',
+    'ngAnimate',
+    'json-tree'
+])
+    .constant('camomileConfig', {
+        backend: 'http://localhost:3000' // Maybe you launched Camomile server on another port? Then edit this line
+    })
+    .constant('camomileToolsConfig', {
+        moduleFolder: 'app/shared/',
+        refreshTime: { // Time (in ms) between each refresh of modules.
+            canvas: 250,
+            video: 100,
+            dimensions: 1000
+        } // Decreasing any number will make the modules react faster in some case, but affect performance
+    })
+    .factory('Camomile', ['camomileConfig', function (camomileConfig) {
+        Camomile.setURL(camomileConfig.backend);
+        return Camomile;
+    }]);
+```
+
+The routes need to be adapted for your application.
+You need to specify the controller and the view you want to use.
+The routes:
+```
+angular.module('app.routes', [
+    'ngRoute'
+])
+    .config(['$routeProvider', function($routeProvider) {
+        $routeProvider
+            .when('/backoffice', {
+                templateUrl: 'app/components/backoffice/backofficeView.html',
+                controller: 'BackofficeCtrl'
+            })
+            .when('/home', {
+                templateUrl: 'app/components/home/homeView.html',
+                controller: 'BrowseCtrl'
+            })
+            .when('/objects', {
+                templateUrl: 'app/components/objects/objectsView.html',
+                controller: 'ObjectsCtrl'
+            })
+            .when('/segmentation', {
+                templateUrl: 'app/components/segmentation/segmentationView.html',
+                controller: 'SegmentationCtrl'
+            })
+            .when('/debug', {
+                templateUrl: 'app/components/debug/debugView.html',
+                controller: 'DebugCtrl'
+            })
+            .otherwise({
+                redirectTo: '/home'
+            });
+    }]);
+```
+
 ## Quick start
 
 To develop a new interface, you'll need to know and do several things:
@@ -284,6 +450,8 @@ You don't always need to validate by $sce, but in some case it can be rejected.
 Notice the brackets if you use a link.
 
 ### Canvas
+
+
 
 ### Details
 
