@@ -386,6 +386,10 @@ angular.module('camomileApp.services.data', [])
                     if (err) {
                         console.warn('Creation of annotations failed.');
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.notifyObservers({type: 'create', model: 'annotations'});
                     }
                 };
@@ -400,6 +404,10 @@ angular.module('camomileApp.services.data', [])
                     if (err) {
                         console.warn('Error in updating annotation');
                     } else {
+                        if (callback && typeof callback == "function") {
+                            callback(data);
+                        }
+
                         facto.notifyObservers({type: 'update', model: 'annotation'});
                     }
                 };
@@ -428,7 +436,7 @@ angular.module('camomileApp.services.data', [])
                 if (err) {
                     console.warn('Error in dequeue');
                 } else {
-                    callback && callback(data);
+                    callback && typeof callback == "function" && callback(data);
                     facto.currentQueueItem = data;
                     facto.notifyObservers({type: 'dequeue', model: 'queue'});
                 }
@@ -441,7 +449,7 @@ angular.module('camomileApp.services.data', [])
                 if (err) {
                     console.warn('Error in enqueue');
                 } else {
-                    callback && callback(data);
+                    callback && typeof callback == "function" && callback(data);
                     facto.notifyObservers({type: 'enqueue', model: 'queue'});
                 }
             };

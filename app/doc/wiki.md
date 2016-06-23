@@ -5,7 +5,7 @@
 ### Preface
 To use this application, you'll need to install several items on your system. Everything
 will be documented here, so please make sure to follow those steps carefully before
- beginning to install this web application.
+beginning to install this web application.
 
 ### List of items
 - Docker
@@ -19,10 +19,10 @@ will be documented here, so please make sure to follow those steps carefully bef
 ### Explanation
 [Docker](https://www.docker.com/) is a lightweight, open and secure software that wrap up a piece of software in a complete
 filesystem that contains everything it needs to run: code, runtime, system tools, system libraries
-– anything you can install on a server. It is needed to run Camomile-server.
+– anything you can install on a server. It is needed to simplify the process of running Camomile-server.
 
 [Docker-compose](https://www.docker.com/products/docker-compose) allows to define a multi-container application with all of its dependencies in a
- single file. Again, it will be used when installing Camomile-server, so it's a requirement.
+ single file. Again, it will be used when installing Camomile-server, so it's a requirement to follow this tutorial.
 
 You will need a server to host this application. I recommend a light web server,
 [http-server](https://www.npmjs.com/package/http-server), which is in fact a package for npm, but
@@ -98,6 +98,13 @@ Now: npm. Even easier.
 sudo curl http://npmjs.org/install.sh | sh
 ```
 
+You can install and run http-server with
+```
+sudo npm install -g http-server # Install
+cd /home/user/folder/subfolder
+http-server # Run
+```
+
 ## Installation
 Everything is available in this repository. To install this application and begin using it,
 you have to clone or download the repository. To clone it:
@@ -134,8 +141,6 @@ Structure explained here. **Bold** items are folders.
 **app**: Contains all the angularjs code. Inside that folder, there is **components** and **shared**.
 The first one contains the components of your application, while the second one contains the reusable
 components that are used across the site.
-
-
 
 # Developpement
 
@@ -306,7 +311,6 @@ angular.module('app.routes', [
 ```
 
 ## Quick start
-
 To develop a new interface, you'll need to know and do several things:
 
 Know:
@@ -450,14 +454,86 @@ You don't always need to validate by $sce, but in some case it can be rejected.
 Notice the brackets if you use a link.
 
 ### Canvas
+The canvas allows the user to draw on the video or image display below it. You have to
+make sure that the only element below this module (in the html) is a video, image, or media
+directive. It will not work, or work unexpectedly if this requirement is not fulfilled.
 
-
+```
+<camomile-canvas></camomile-canvas>
+```
 
 ### Details
+The details directive is used to display segments representig events and to display a
+graph. The graph is optional.
+
+```
+<camomile-details graph="false"></camomile-details>
+```
+
+The graph attribute specifies the data to display for the graph. If set to false,
+it will not be displayed.
 
 ### Edit
+The edit transforms, displays and allows users to delete annotations. It uses the canvas
+directive.
 
-### ???
+```
+<camomile-annotations></camomile-annotations>
+```
+
+### Loader
+The loader secondary module it totally optional. If you include it at the bottom of
+the view of your interface, you will be able to show a spinner that indicates to the user
+that some data is loading, or is being processed.
+
+```
+<camomile-loader api="api"></camomile-loader>
+```
+
+To use it in the controller, you'll have to get the api first. So add the attribute api
+like in the example above. Then in your controller, declare api as an object.
+
+```
+$scope.api = {};
+```
+
+Now that you have the api set up, you can use the loader in your code.
+
+```
+$scope.api.loader.loading(); // Turns on the loader
+$scope.api.loader.finished(); // Turns off the loader
+```
+
+Note that the internal behaviour is different: if you call loading twice, and then
+finished only once, the loader will continue to work because maybe one component has finished
+loading but the other one doesn't. Make sure that for each loading you call, a finished
+call is set up in your code.
+
+### Popup
+The popup allows you to display a message to the user. Again, it is optional, but
+if you want to use it, include it at the bottom of the view of your interface.
+
+```
+<camomile-popup api="api"></camomile-popup>
+```
+
+To use it in the controller, you'll have to get the api first. So add the attribute api
+like in the example above. Then in your controller, declare api as an object.
+
+```
+$scope.api = {};
+```
+
+Now that you have the api set up, you can use the popup in your code.
+
+```
+$scope.api.popup.showMessage("Chargement terminé.", 3000, "#07f");
+```
+
+The first argument is the message to display.
+The second one is the time that the message will stay (in milliseconds). By default, 3000.
+The last is the color of the background fade. If you don't specify it, a transparent background
+will be used.
 
 # Others
 Off-topic subjects here.
