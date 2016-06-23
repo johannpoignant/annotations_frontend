@@ -137,25 +137,6 @@ angular.module('camomileApp.directives.video', [
                 };
 
                 /**
-                 * Test method, use this for debug
-                 * @return {undefined}
-                 */
-                $scope.video.testFrame = function () { // Use this as test button
-                    //$log.log($scope.API);
-                    //var tt = $scope.API.totalTime, ta = $scope.API.currentTime;
-                    // 1 sec = 100 / tt
-                    /*
-                     OBSOLETE
-                     EX: 1 sec sur une vidéo de 100s: 100 / 100: 1%
-                     1 / 25 sec : 100 / (1 / 25)
-                     Pour ajouter une frame, il faut transformer le temps actuel en %
-                     Ex: on est a 2s sur 10s: 2000 / 10000 + 100 / (1 / 25)
-                     */
-                    //$scope.API.seekTime(ta / tt + 100 / (1 / 25), true);
-                    //$scope.API.seekTime(0.05, true);
-                };
-
-                /**
                  * Set up the interval for the synchronisation of the slider with the player
                  */
                 $scope.video.updateSlider = function () {

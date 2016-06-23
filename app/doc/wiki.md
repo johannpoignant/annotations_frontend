@@ -509,6 +509,18 @@ finished only once, the loader will continue to work because maybe one component
 loading but the other one doesn't. Make sure that for each loading you call, a finished
 call is set up in your code.
 
+You can also add an argument in these functions. It's the number of components you
+have to load. For example, if you have
+```
+cappdata.get('media', $scope.corpus, 'video');
+cappdata.get('layers', $scope.corpus);
+```
+Then you probably want to call the loading twice. To simplify that process, just specify
+2 as the only argument.
+```
+$scope.api.loader.loading(2);
+```
+
 ### Popup
 The popup allows you to display a message to the user. Again, it is optional, but
 if you want to use it, include it at the bottom of the view of your interface.
@@ -534,6 +546,17 @@ The first argument is the message to display.
 The second one is the time that the message will stay (in milliseconds). By default, 3000.
 The last is the color of the background fade. If you don't specify it, a transparent background
 will be used.
+
+## Links
+[Repo](https://github.com/johannpoignant/annotations_frontend)
+
+[Camomile documentation](http://camomile-project.github.io/)
+
+[NPM http-server](https://www.npmjs.com/package/http-server)
+
+[Camomile GitHub](https://github.com/camomile-project)
+
+[]()
 
 # Others
 Off-topic subjects here.

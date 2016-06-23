@@ -85,6 +85,7 @@ angular.module('camomileApp.directives.box', [
                     }
                 };
 
+                // Generates a random color (#0000000 to #FFFFFF)
                 function randomColorGen() {
                     return '#' + ("000000" + Math.random().toString(16).slice(2, 8).toUpperCase()).slice(-6);
                 }
@@ -230,7 +231,7 @@ angular.module('camomileApp.directives.box', [
 
                         cappdata.get('annotations', $scope.api.infos.layer, $scope.api.infos.medium, cb);
                     }
-                    
+
                 };
 
                 this.events = $scope.events = new Events();
@@ -259,13 +260,9 @@ angular.module('camomileApp.directives.box', [
 
                 this.newAnnotation();
 
+                // Erase all annotations and add new one
                 this.setAnnotations = function (ans) {
                     $scope.$apply(function () {
-                        // HAHAHA
-                        /*for (d in $scope.annotations) {
-                            delete $scope.annotations[d];
-                        }
-                        $scope.annotations.length = 0;*/
                         $scope.annotations = [];
                         for (a of ans) {
                             $scope.annotations.push(a);
@@ -273,6 +270,7 @@ angular.module('camomileApp.directives.box', [
                     });
                 };
 
+                // Returns the dimensions of the media
                 this.mediaDimensions = function () {
                     if (apis.video) {
                         return apis.video.dimensions;
@@ -285,8 +283,8 @@ angular.module('camomileApp.directives.box', [
                     $scope.api.box = $scope.apis;
                     this.api = $scope.api;
                 } else {
-					$scope.api = {};
-				}
+        					  $scope.api = {};
+        				}
             },
             link: function (scope, elem, attrs) {
                 scope.interval = $interval(function () { // Check for dimensions changes

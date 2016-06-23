@@ -36,6 +36,7 @@ angular.module('camomileApp.directives.canvas', [])
                     }
                 };
 
+                // Draw a text, top left of the screen
                 var drawAnnotation = function (annotation) {
                     $scope.canvas.context.fillText(annotation, 10, $scope.dataCtrl.facto.config.fontSize);
                     $scope.canvas.reloadAnnotationStyles(1);
@@ -79,6 +80,7 @@ angular.module('camomileApp.directives.canvas', [])
 
                 $scope.canvas = {};
 
+                // Refresh canvas dimensions
                 $scope.canvas.refresh = function () {
                     let vdims = $scope.dataCtrl.mediaDimensions();
                     if (vdims !== undefined) {
@@ -114,6 +116,7 @@ angular.module('camomileApp.directives.canvas', [])
                     drawFragment($scope.dataCtrl.facto.annotation.fragment);
                 };
 
+                // Reload styles
                 $scope.canvas.reloadAnnotationStyles = function(mode) {
                     mode = mode ? mode : 0;
                     if (mode === 0) {
@@ -164,6 +167,7 @@ angular.module('camomileApp.directives.canvas', [])
                     }
                 };
 
+                // Add a point 'point' in the list of the canvas points
                 $scope.canvas.addPoint = function (point) {
                     let a = $scope.dataCtrl.facto.annotation.fragment;
                     if (!$scope.canvas.isComplete()) {
@@ -175,8 +179,8 @@ angular.module('camomileApp.directives.canvas', [])
                 };
 
                 $scope.interval = $interval(function () {
-                    if ($scope.dataCtrl.isVideo()) {
-                        if ($scope.dataCtrl.apis.video.getStatus() == 'play') {
+                    if ($scope.dataCtrl.isVideo()) { // If a video is present
+                        if ($scope.dataCtrl.apis.video.getStatus() == 'play') { // And is playing
                             $scope.canvas.setupCanvas();
                         }
                     } else {
@@ -205,7 +209,7 @@ angular.module('camomileApp.directives.canvas', [])
                  */
                 elem
                     .bind('mousedown', function (e) {
-                        console.log(e);
+                        //console.log(e);
                         let a = scope.dataCtrl.facto.annotation.fragment;
 
                         if (e.button == 0) {
@@ -224,7 +228,7 @@ angular.module('camomileApp.directives.canvas', [])
                         }
                     })
                     .bind('mouseup', function (e) {
-                        console.log(e);
+                        //console.log(e);
                         scope.canvas.mode = 0;
                     })
                     .bind('mousemove', function (e) {
