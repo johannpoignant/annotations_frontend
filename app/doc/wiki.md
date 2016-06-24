@@ -15,14 +15,13 @@ beginning to install this web application.
 - Http-server
 - Camomile-server
 
-
 ### Explanation
 [Docker](https://www.docker.com/) is a lightweight, open and secure software that wrap up a piece of software in a complete
 filesystem that contains everything it needs to run: code, runtime, system tools, system libraries
 – anything you can install on a server. It is needed to simplify the process of running Camomile-server.
 
 [Docker-compose](https://www.docker.com/products/docker-compose) allows to define a multi-container application with all of its dependencies in a
- single file. Again, it will be used when installing Camomile-server, so it's a requirement to follow this tutorial.
+single file. Again, it will be used when installing Camomile-server, so it's a requirement to follow this tutorial.
 
 You will need a server to host this application. I recommend a light web server,
 [http-server](https://www.npmjs.com/package/http-server), which is in fact a package for npm, but
@@ -38,7 +37,7 @@ You may need to adapt the procedure for others distributions, or others OS.
 First, let's install docker. The procedure is written [on this page](https://docs.docker.com/engine/installation/linux/ubuntulinux/).
 Some values differ depending on your OS and distribution. Please check the page linked before
 executing commands below.
-```
+```sh
 # Let's update the package list.
 sudo apt-get update
 
@@ -70,7 +69,7 @@ sudo docker run hello-world
 
 Now, let's install docker-compose. The procedure is taken from [here](https://docs.docker.com/compose/install/).
 Make sure to adapt the commands below with links [here](https://github.com/docker/compose/releases)
-```
+```sh
 # Get the binary from the net
 curl -L https://github.com/docker/compose/releases/download/1.7.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 
@@ -82,7 +81,7 @@ docker-compose --version
 ```
 
 Ok, so next, Node.js. It's the easy part.
-```
+```sh
 # Install Node.js
 sudo apt-get install nodejs
 
@@ -94,12 +93,12 @@ fi
 ```
 
 Now: npm. Even easier.
-```
+```sh
 sudo curl http://npmjs.org/install.sh | sh
 ```
 
 You can install and run http-server with
-```
+```sh
 sudo npm install -g http-server # Install
 cd /home/user/folder/subfolder
 http-server # Run
@@ -108,7 +107,7 @@ http-server # Run
 ## Installation
 Everything is available in this repository. To install this application and begin using it,
 you have to clone or download the repository. To clone it:
-```
+```sh
 git clone https://github.com/johannpoignant/annotations_frontend.git
 ```
 
@@ -153,7 +152,8 @@ html file, and configure your angular installation correctly.
 
 First, you'll need several JavaScript imports (at the end of the body tag, main html file).
 Check the paths and correct them if needed:
-```
+
+```html
 <!-- JQuery, mandatory -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap, if you use it -->
@@ -181,7 +181,7 @@ Check the paths and correct them if needed:
 <script src="app/components/api/fermata.js"></script>
 <script src="app/components/api/camomile.js"></script>
 
-<!-- Components of your interface; include the ones you need only
+<!-- Components of your interface; include the ones you need only -->
 <script src="app/components/general/authController.js"></script>
 <script src="app/components/home/homeController.js"></script>
 <script src="app/components/objects/objectsController.js"></script>
@@ -209,7 +209,8 @@ Check the paths and correct them if needed:
 ```
 
 You'll have to include some css files too:
-```
+
+```html
 <!-- Bootstrap 3 and its theme -->
 <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
@@ -225,7 +226,8 @@ You'll have to include some css files too:
 
 The app/app.module.js is needed because it's here that we configure AngularJS behaviour.
 You need to take it, and if needed, edit it.
-```
+
+```javascript
 angular.module('camomileApp', [
     // Routes
     'app.routes',
@@ -278,7 +280,8 @@ angular.module('camomileApp', [
 The routes need to be adapted for your application.
 You need to specify the controller and the view you want to use.
 The routes:
-```
+
+```javascript
 angular.module('app.routes', [
     'ngRoute'
 ])
@@ -323,7 +326,8 @@ Do:
 * Enjoy
 
 Example (Controller/JavaScript file):
-```
+
+```javascript
 angular.module('camomileApp.controllers.example', [
     "ngDependency" // Here any dependency this interface has
 ])
@@ -378,7 +382,7 @@ angular.module('camomileApp.controllers.example', [
         }]);
 ```
 Example 2 (View/HTML file):
-```
+```html
 <!--
 Depending on what css you use (maybe Bootstrap?) you'll need to adapt the code shown below.
 This code is here to show how you do it, and the layout is not explained here.
@@ -413,7 +417,7 @@ It'll work either with a video or an image, because everything is handled intern
 
 You can use it like this:
 
-```
+```html
 <camomile-media type="cappdata.mediaSelected[0].description.type" src="cappdata.mediaSelected[0].urlSecure"></camomile-media>
 ```
 
@@ -430,7 +434,7 @@ You probably shouldn't use this one, unless you're sure that the media is a vide
 The video module is useful to display a video and provide advanced controls to the user.
 To use it, you need to use the camomile-video html tag.
 
-```
+```html
 <camomile-video src="browse.src"></camomile-video>
 ```
 
@@ -445,7 +449,7 @@ You probably shouldn't use this one, unless you're sure that the media is an ima
 The image module is useful to display an image and provide support for the canvas.
 To use it, you need to use the camomile-image html tag.
 
-```
+```html
 <camomile-image src={{browse.mediumSrc}}></camomile-image>
 ```
 
@@ -458,7 +462,7 @@ The canvas allows the user to draw on the video or image display below it. You h
 make sure that the only element below this module (in the html) is a video, image, or media
 directive. It will not work, or work unexpectedly if this requirement is not fulfilled.
 
-```
+```html
 <camomile-canvas></camomile-canvas>
 ```
 
@@ -466,7 +470,7 @@ directive. It will not work, or work unexpectedly if this requirement is not ful
 The details directive is used to display segments representig events and to display a
 graph. The graph is optional.
 
-```
+```html
 <camomile-details graph="false"></camomile-details>
 ```
 
@@ -477,7 +481,7 @@ it will not be displayed.
 The edit transforms, displays and allows users to delete annotations. It uses the canvas
 directive.
 
-```
+```html
 <camomile-annotations></camomile-annotations>
 ```
 
@@ -486,20 +490,20 @@ The loader secondary module it totally optional. If you include it at the bottom
 the view of your interface, you will be able to show a spinner that indicates to the user
 that some data is loading, or is being processed.
 
-```
+```html
 <camomile-loader api="api"></camomile-loader>
 ```
 
 To use it in the controller, you'll have to get the api first. So add the attribute api
 like in the example above. Then in your controller, declare api as an object.
 
-```
+```javascript
 $scope.api = {};
 ```
 
 Now that you have the api set up, you can use the loader in your code.
 
-```
+```javascript
 $scope.api.loader.loading(); // Turns on the loader
 $scope.api.loader.finished(); // Turns off the loader
 ```
@@ -511,13 +515,15 @@ call is set up in your code.
 
 You can also add an argument in these functions. It's the number of components you
 have to load. For example, if you have
-```
+
+```javascript
 cappdata.get('media', $scope.corpus, 'video');
 cappdata.get('layers', $scope.corpus);
 ```
 Then you probably want to call the loading twice. To simplify that process, just specify
 2 as the only argument.
-```
+
+```javascript
 $scope.api.loader.loading(2);
 ```
 
@@ -525,20 +531,20 @@ $scope.api.loader.loading(2);
 The popup allows you to display a message to the user. Again, it is optional, but
 if you want to use it, include it at the bottom of the view of your interface.
 
-```
+```html
 <camomile-popup api="api"></camomile-popup>
 ```
 
 To use it in the controller, you'll have to get the api first. So add the attribute api
 like in the example above. Then in your controller, declare api as an object.
 
-```
+```javascript
 $scope.api = {};
 ```
 
 Now that you have the api set up, you can use the popup in your code.
 
-```
+```javascript
 $scope.api.popup.showMessage("Chargement terminé.", 3000, "#07f");
 ```
 
