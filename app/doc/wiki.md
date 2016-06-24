@@ -352,7 +352,6 @@ angular.module('camomileApp.controllers.example', [
                 $timeout(function () {
                     $scope.cappdata = cappdata;
                     $scope.api.loader.finished();
-                    //$scope.api.popup.showMessage("Chargement terminé.", 3000, "#07f");
                 }, 0);
             };
 
@@ -381,6 +380,25 @@ angular.module('camomileApp.controllers.example', [
             };
         }]);
 ```
+
+How does it works?
+
+It's easy: first you declare any variable you will need in your interface.
+
+Next, you have to declare and code two functions:
+* The refresh function. This will be executed every time the interface loads. So in this
+function, you need to clean the cappdata which stores data. Then, you get the initial data
+you need, and finally you register the controller to the changes mades to the model. The
+parameter (updateData) is a function that will be executed by the data service
+each time a change is made.
+* The updataData function. This function is executed when the model changes.
+
+You call the refresh function after that.
+
+And finally, you declare every function that will be needed for the interaction with
+the user (the html buttons, combobox changes, ...). You must attach those functions to
+$scope for them to work in the view.
+
 Example 2 (View/HTML file):
 ```html
 <!--
