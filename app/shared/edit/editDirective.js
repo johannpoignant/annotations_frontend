@@ -13,7 +13,6 @@ angular.module('camomileApp.directives.edit', [])
                 var updateData = function () {
                     $timeout(function () {
                         $scope.cappdata = cappdata;
-                        //$scope.api.loader.finished();
                     }, 0);
                 };
 
@@ -43,7 +42,6 @@ angular.module('camomileApp.directives.edit', [])
 
                     if (sa.length) {
                         cappdata.create('annotations', i.layer, sa);
-                        //Camomile.createAnnotations(i.layer, sa, callback);
                     }
                 };
 

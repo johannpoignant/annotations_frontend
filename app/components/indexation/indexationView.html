@@ -21,9 +21,8 @@
                         ng-model="queueOut"
                         id="queueOut"></select>
             </div>
-        </div>       
+        </div>
     </form>
-
 
     <div class="row" ng-show="queueIn">
         <div class="col-sm-12">
@@ -34,7 +33,6 @@
         </div>
     </div>
 
-
     <div class="row" ng-repeat="m in ImageTrain" ng-if="ImageTrain[0]">
         <h3>{{m.name}}</h3>
 
@@ -43,29 +41,18 @@
                 <camomile-media type="m.description.type" src="m.urlSecure"></camomile-media>
             </camomile-box>
         </div>
+
         <div class="col-sm-6">
-
-        <form>
-            <input type="checkbox" name="var1" id="var1" ng-model="form[m._id].var1"/> <label for="var1"> <var>var1</var> </label> <br />
-            <input type="checkbox" name="var2" id="var2" ng-model="form[m._id].var2"/> <label for="var2"> <var>var2</var> </label> <br />
-            <input type="checkbox" name="var3" id="var3" ng-model="form[m._id].var3"/> <label for="var3"> <var>var3</var> </label> <br />
-        </form>
-
-
-
+          <form>
+              <input type="checkbox" name="var1" id="var1" ng-model="form[m._id].var1"/> <label for="var1"> <var>var1</var> </label> <br />
+              <input type="checkbox" name="var2" id="var2" ng-model="form[m._id].var2"/> <label for="var2"> <var>var2</var> </label> <br />
+              <input type="checkbox" name="var3" id="var3" ng-model="form[m._id].var3"/> <label for="var3"> <var>var3</var> </label> <br />
+          </form>
         </div>
     </div>
 
-    <button ng-click="sendAnnotation()"> 
-
-        Send Annotation
-
-    </button>
-
-
-
+    <button ng-click="sendAnnotation()">Send Annotation</button>
 </div>
-
 
 <camomile-loader api="api"></camomile-loader>
 <camomile-popup api="api"></camomile-popup>

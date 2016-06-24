@@ -64,25 +64,8 @@
 </div>
 
 <div ng-show="cappdata.mediaSelected[0]">
-    <!--
-     Que doit-on avoir?
-       1: Possibilité de créer un player à partir d'une url et d'activer/désac les annotations
-       2: Affichage d'un graph et d'une Eventline (infos depuis ou??)
-       3: Annotation edit
-
-      api-player src browse.medium annotations true
-      api-details data data
-      api-annotations
-
-      api-player:
-      * Variables (annotations, annotation)
-      * Fonctions (API avec videoplayer, draw canvas)
-      * Interval
-    -->
     <camomile-box infos="{{infos}}">
         <camomile-canvas></camomile-canvas>
-        <!--<camomile-image ng-if="browse.mediumType === 'image'" src={{browse.mediumSrc}}></camomile-image>-->
-        <!--<camomile-video ng-if="browse.mediumType === 'video'" src="browse.mediumSrc"></camomile-video>-->
         <camomile-media type="cappdata.mediaSelected[0].description.type" src="cappdata.mediaSelected[0].urlSecure"></camomile-media>
         <camomile-details data="true"></camomile-details>
         <camomile-annotations></camomile-annotations>

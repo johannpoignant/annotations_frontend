@@ -154,7 +154,6 @@
     left: 0;
     right: 0;
     opacity: 0.5;
-    //background: #555;
 }
 
 #inf-msg-bg.ng-hide {
@@ -165,9 +164,7 @@
     margin-top: 5px;
 }
 
-video-control button.btn.btn-default {
-//padding: 0;
-}
+video-control button.btn.btn-default { }
 
 .btn-group > video-control > .btn {
     position: relative;

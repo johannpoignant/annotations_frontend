@@ -4,6 +4,7 @@
 <div class="modal-body">
     <div class="container-fluid">
         <span class="h4">Id</span>&nbsp;<span class="text-muted">{{ event.getId() }}</span><br>
+        
         <h4>Fragment</h4>
         <table class="table">
             <tr ng-repeat="(k, d) in event.fragment | onlyPrimitives">
@@ -12,11 +13,7 @@
                 <td style="vertical-align: middle"><a href="" ng-click="setNow(k)">Set now</a></td>
             </tr>
         </table>
-        <!--<ul>-->
-            <!--<li ng-repeat="(k, d) in event.fragment | onlyPrimitives">-->
-                <!--{{ k }}: <input type="text" ng-model="event.fragment[k]">-->
-            <!--</li>-->
-        <!--</ul>-->
+
         <h4>Data</h4>
         <table class="table">
             <tr ng-repeat="(k, d) in event.data | onlyPrimitives">
@@ -24,11 +21,6 @@
                 <td style="vertical-align: middle"><input type="text" class="form-control" ng-model="event.data[k]"></td>
             </tr>
         </table>
-        <!--<ul>-->
-            <!--<li ng-repeat="(k, d) in event.data | onlyPrimitives">-->
-                <!--{{ k }}: <input type="text" ng-model="event.data[k]">-->
-            <!--</li>-->
-        <!--</ul>-->
     </div>
 </div>
 <div class="modal-footer">

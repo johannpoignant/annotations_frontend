@@ -1,6 +1,3 @@
-/**
- * Created by huchetn on 27/05/16.
- */
 angular.module("camomileApp.controllers.debug", [])
     .controller('DebugCtrl', ['$scope', '$log', 'Camomile', '$uibModal', '$timeout', 'cappdata',
     function($scope, $log, Camomile, $uibModal, $timeout, cappdata) {
@@ -41,7 +38,7 @@ angular.module("camomileApp.controllers.debug", [])
                     $log.info('It worked!');
                 }
             };
-            
+
             var obj = {
                 john: 1,
                 nonjohn: "mais oyui c'est claill"

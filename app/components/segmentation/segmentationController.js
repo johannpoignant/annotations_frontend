@@ -12,8 +12,6 @@ angular.module('camomileApp.controllers.segmentation', [])
             $timeout(function () {
                 $scope.cappdata = cappdata;
                 $scope.api.loader.finished();
-                /*if ($scope.api.box && $scope.api.box.details)
-                    $scope.api.box.details.getEvents();*/
             }, 0);
         };
 

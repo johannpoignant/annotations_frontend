@@ -73,22 +73,7 @@ angular.module('camomileApp.directives.details', [
                     }
 
                     $scope.analyseLignes();
-
-                    console.log('Segments: ' + segments);
                 };
-
-                /*var updateData = $scope.updateData = function () {
-                    $timeout(function () {
-                        $scope.cappdata = cappdata;
-
-                        for (ann of cappdata.annotations)
-                            $scope.dataCtrl.events.convertObject(ann);
-
-                        if ($scope.dataCtrl.apis.video) $scope.api.refreshEventline();
-                    }, 0);
-                };
-
-                cappdata.registerObserver(updateData);*/
 
                 /**
                  * Generates curves for the example output in the graph
@@ -264,7 +249,6 @@ angular.module('camomileApp.directives.details', [
                         console.log("Ending the event");
                         $scope.recordingEvent = false;
                         $interval.cancel($scope.eventInterval);
-                        //console.log($scope.dataCtrl.events.getEvents());
                         $scope.saveSegment($scope.dataCtrl.events.getLastEvent());
                     }
                 };
@@ -328,10 +312,6 @@ angular.module('camomileApp.directives.details', [
                     }
                 };
 
-                /*scope.$on('$destroy', function() {
-                    $interval.cancel(scope.interval);
-                });*/
-
                 scope.api.refresh = function () {
                     let div = elem.find('div.details-display');
                     scope.dimensions = {};
@@ -348,7 +328,6 @@ angular.module('camomileApp.directives.details', [
                     scope.dataCtrl.events.refreshEvents();
                     if (scope.graph) scope.graphAPI.refresh();
                     if (scope.dataCtrl.apis.video) {
-                        //if (scope.inter) scope.inter = undefined;
                         scope.launchInterval();
                         scope.$on('$destroy', function () {
                             console.log('Destroying details interval');

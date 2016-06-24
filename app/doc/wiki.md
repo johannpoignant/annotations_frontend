@@ -553,6 +553,94 @@ The second one is the time that the message will stay (in milliseconds). By defa
 The last is the color of the background fade. If you don't specify it, a transparent background
 will be used.
 
+## The data service
+
+The data service is made to make data creation, read, update and delete easy. So, instead of
+using directly the Camomile javascript client, you can use this one which will handle the data.
+
+There is 4 main requests types atm: 'create', 'get', 'update', 'delete'.
+
+To use them, you have to first 'inject' the module in your controller:
+
+```javascript
+.controller('YourInterfaceCtrl', function ($scope, $interval, $sce, $timeout, Camomile, cappdata) // Note the last one
+```
+
+By adding the 'cappdata' to the arguments to inject, you will tell AngularJS that you need it.
+
+Then, you can use the methods described above:
+
+get
+```javascript
+cappdata.get('model');
+```
+
+create
+```javascript
+cappdata.create('model');
+```
+
+update
+```javascript
+cappdata.update('model');
+```
+
+delete
+```javascript
+cappdata.delete('model');
+```
+
+The model string is the model on which you want to operate. A list of models available is
+given below.
+Each method may require different arguments. Please check and pass the arguments needed:
+
+```javascript
+// Get
+corpora: function (callback)
+media: function (corpus_id, filter, callback)
+layers: function (corpus_id, callback)
+annotations: function (layer_id, medium_id, callback)
+metadata: function (corpus_id, metadata, callback)
+medium: function (medium_id, callback)
+users: function (callback)
+groups: function (callback)
+queues: function (callback)
+
+// Create
+user: function (name, password, description, role, callback)
+group: function (name, description, callback)
+corpus: function (name, description, callback)
+medium: function (corpus_id, name, url, description, callback)
+layer: function (corpus_id, name, description, fragment_type, data_type, callback)
+annotation: function (layer_id, medium_id, fragment, data, callback)
+annotations: function (layer_id, annotations, callback)
+
+// Update
+annotation: function (annotation_id, fragment, data, callback)
+
+// Delete
+corpus: function (id, callback)
+medium: function (id, callback)
+layer: function (id, callback)
+user: function (id, callback)
+group: function (id, callback)
+annotation: function (id, callback)
+```
+
+The callback is always optional. It must be a function, and if not provided (or provided
+incorrect argument) nothing will happen. If provided, this function will be called after
+the response has been fetched from the server. Example of a function passed as a callback:
+
+```javascript
+cappdata.get('users', function (users) { // The users variable is the data fetched from Camomile
+    if (users) {
+        $scope.functionToCall();
+    }
+});
+```
+
+Please note that if an error occur, this callback is not called.
+
 ## Links
 [Repo](https://github.com/johannpoignant/annotations_frontend)
 

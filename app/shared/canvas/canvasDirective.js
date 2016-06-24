@@ -209,7 +209,6 @@ angular.module('camomileApp.directives.canvas', [])
                  */
                 elem
                     .bind('mousedown', function (e) {
-                        //console.log(e);
                         let a = scope.dataCtrl.facto.annotation.fragment;
 
                         if (e.button == 0) {
@@ -228,7 +227,6 @@ angular.module('camomileApp.directives.canvas', [])
                         }
                     })
                     .bind('mouseup', function (e) {
-                        //console.log(e);
                         scope.canvas.mode = 0;
                     })
                     .bind('mousemove', function (e) {
