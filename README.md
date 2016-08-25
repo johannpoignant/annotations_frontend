@@ -1,3 +1,5 @@
+For more informations, please, see the [Wiki page ](https://github.com/johannpoignant/annotations_frontend/wiki)
+
 # annotations_frontend
 Annotation web interface frontend for the Camomile server
 
@@ -12,11 +14,7 @@ It is composed of several views (one for the editing and one for the backoffice 
 
 ### Main view
 
-![Screenshot](/screenshot3_1.png)
-
 ### Backoffice
-
-![Screenshot2](/screenshot3_2.png)
 
 ## Changelog
 
